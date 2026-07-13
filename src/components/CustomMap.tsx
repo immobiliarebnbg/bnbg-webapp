@@ -38,11 +38,10 @@ export default function CustomMap(props: CustomMapProps) {
       attributionControl: false, // We'll render a super clean minimal custom attribution or keep it minimal
     }).setView([40.7233, -74.003], 12);
 
-    // Beautiful, clean, modern map tiles from CartoDB (Positron light theme)
-    // Entirely free, fast, and requires no API key!
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    // Beautiful Google Maps Standard Tiles (Free alternative to full API)
+    L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
       maxZoom: 20,
-      subdomains: 'abcd'
+      subdomains: ['0', '1', '2', '3']
     }).addTo(map);
 
     mapRef.current = map;

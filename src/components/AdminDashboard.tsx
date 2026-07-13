@@ -339,22 +339,21 @@ export default function AdminDashboard({
     }
 
     if (!coordsParsed) {
-      // Auto-geocode using OpenStreetMap Nominatim with fallbacks
+      // Auto-geocode using Photon (Komoot) which is much better for Italian addresses
       try {
         const queriesToTry = [
-          `${address}, ${neighborhood ? neighborhood + ', ' : ''}${city}, Italy`,
-          `${address}, ${city}, Italy`,
-          `${address}, Italy`
+          `${address} ${neighborhood ? neighborhood + ' ' : ''}${city} Italy`,
+          `${address} ${city} Italy`,
+          `${address} Italy`
         ];
         
         for (const query of queriesToTry) {
-          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`, {
-            headers: { "Accept-Language": "it" }
-          });
+          const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=1`);
           const data = await res.json();
-          if (data && data.length > 0) {
-            lat = parseFloat(data[0].lat);
-            lng = parseFloat(data[0].lon);
+          if (data && data.features && data.features.length > 0) {
+            const coords = data.features[0].geometry.coordinates;
+            lat = parseFloat(coords[1]); // lat is the second element
+            lng = parseFloat(coords[0]); // lon is the first element
             break; // Stop trying once we find a match
           }
         }
