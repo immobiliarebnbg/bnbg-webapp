@@ -67,6 +67,11 @@ export default function App() {
   const [copiedLink, setCopiedLink] = useState(false);
   const [showBlueprintModal, setShowBlueprintModal] = useState(false);
 
+  // Description auto-translation
+  const [translatedDescription, setTranslatedDescription] = useState<string>("");
+  const [isTranslating, setIsTranslating] = useState(false);
+  const translationCache = React.useRef<Record<string, string>>({});
+
   // About & Contact Page Form States
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
@@ -102,6 +107,39 @@ export default function App() {
     }
   };
 
+  // Auto-translate description via MyMemory (free, no API key needed)
+  const translateDescription = async (text: string, targetLang: string) => {
+    if (!text) return;
+    // Italian is the source language — no translation needed
+    if (targetLang === 'it') {
+      setTranslatedDescription(text);
+      return;
+    }
+    const cacheKey = `${targetLang}::${text.slice(0, 40)}`;
+    if (translationCache.current[cacheKey]) {
+      setTranslatedDescription(translationCache.current[cacheKey]);
+      return;
+    }
+    setIsTranslating(true);
+    try {
+      const res = await fetch(
+        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=it|${targetLang}`
+      );
+      const data = await res.json();
+      if (data.responseStatus === 200 && data.responseData?.translatedText) {
+        const result = data.responseData.translatedText;
+        translationCache.current[cacheKey] = result;
+        setTranslatedDescription(result);
+      } else {
+        setTranslatedDescription(text); // fallback to original
+      }
+    } catch {
+      setTranslatedDescription(text); // fallback on network error
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   useEffect(() => {
     loadProperties();
     loadMetadata();
@@ -115,6 +153,17 @@ export default function App() {
       fetchFavoriteIds(storedToken);
     }
   }, []);
+
+  // Trigger translation whenever the viewed property or language changes
+  useEffect(() => {
+    if (currentPage === 'details' && navigationParams.propertyId) {
+      const property = properties.find((p) => p.id === navigationParams.propertyId);
+      if (property?.description) {
+        translateDescription(property.description, i18n.language);
+      }
+    }
+  }, [navigationParams.propertyId, i18n.language, properties, currentPage]);
+
 
   const fetchFavoriteIds = async (token: string) => {
     try {
@@ -1056,8 +1105,26 @@ export default function App() {
 
                     {/* Editorial Description */}
                     <div className="space-y-4">
-                      <h3 className="font-bold text-xl text-gray-900 tracking-tight">{t('propertyDetail.descriptionTitle')}</h3>
-                      <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-sans">{property.description}</p>
+                      <div className="flex items-center justify-between gap-4">
+                        <h3 className="font-bold text-xl text-gray-900 tracking-tight">{t('propertyDetail.descriptionTitle')}</h3>
+                        {i18n.language !== 'it' && (
+                          <span className="text-[10px] text-gray-400 font-medium uppercase tracking-widest shrink-0">
+                            {isTranslating ? '⟳ Translating...' : '🌐 Auto-translated'}
+                          </span>
+                        )}
+                      </div>
+                      {isTranslating ? (
+                        <div className="space-y-2 animate-pulse">
+                          <div className="h-3.5 bg-gray-100 rounded-full w-full" />
+                          <div className="h-3.5 bg-gray-100 rounded-full w-5/6" />
+                          <div className="h-3.5 bg-gray-100 rounded-full w-4/5" />
+                          <div className="h-3.5 bg-gray-100 rounded-full w-2/3" />
+                        </div>
+                      ) : (
+                        <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-sans">
+                          {translatedDescription || property.description}
+                        </p>
+                      )}
                     </div>
 
                     {/* Premium Amenities List */}
