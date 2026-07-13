@@ -221,7 +221,7 @@ export default function CustomMap(props: CustomMapProps) {
           <div className="flex gap-3">
             {/* Tooltip Image */}
             <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-50">
-              <img
+              <img width="800" height="600" loading="lazy" decoding="async"
                 src={activeTooltip.images[0]}
                 alt={activeTooltip.title}
                 className="w-full h-full object-cover"

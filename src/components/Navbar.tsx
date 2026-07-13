@@ -34,7 +34,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
             className="flex items-center cursor-pointer group"
             onClick={() => handleLinkClick("home")}
           >
-            <img src="/logo.png" alt="BNBG Immobiliare" className="h-20 w-auto drop-shadow-sm hover:scale-105 transition-transform" />
+            <img width="240" height="80" loading="lazy" decoding="async" src="/logo.png" alt="BNBG Immobiliare" className="h-20 w-auto drop-shadow-sm hover:scale-105 transition-transform" />
           </div>
 
           {/* Desktop Navigation */}
@@ -161,7 +161,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-100 transition-colors focus:outline-hidden"
                 >
-                  <img
+                  <img width="32" height="32" loading="lazy" decoding="async"
                     src={currentUser.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(currentUser.username)}`}
                     alt={currentUser.username}
                     className="w-8 h-8 rounded-full border border-gray-200 object-cover"
@@ -349,7 +349,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
           {currentUser ? (
             <div className="space-y-1 pl-3">
               <div className="flex items-center gap-3 py-2">
-                <img
+                <img width="40" height="40" loading="lazy" decoding="async"
                   src={currentUser.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(currentUser.username)}`}
                   alt={currentUser.username}
                   className="w-10 h-10 rounded-full border border-gray-100 object-cover"

@@ -466,7 +466,7 @@ export default function App() {
               <div id="home-hero" className="relative h-[650px] w-full overflow-hidden bg-slate-900 flex items-center">
                 {/* Background Image Banner */}
                 <div className="absolute inset-0 z-0">
-                  <img
+                  <img width="800" height="600" loading="eager" decoding="async"
                     src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80"
                     alt="Luxury Home Haven"
                     className="w-full h-full object-cover opacity-35"
@@ -718,7 +718,7 @@ export default function App() {
                   </div>
 
                   <div className="mt-12 lg:mt-0 relative aspect-video sm:aspect-4/3 rounded-3xl overflow-hidden shadow-xl border border-gray-100">
-                    <img
+                    <img width="800" height="600" loading="lazy" decoding="async"
                       src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80"
                       alt="Elegant Estate Design"
                       className="w-full h-full object-cover"
@@ -1043,7 +1043,7 @@ export default function App() {
 
                 {/* Gorgeous Sliding Image Gallery */}
                 <div className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-150 shadow-xl mb-10 group aspect-video sm:aspect-21/9 max-h-[500px]">
-                  <img
+                  <img width="800" height="600" loading="lazy" decoding="async"
                     src={property.images[activeImageIndex] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80"}
                     alt={property.title}
                     className="w-full h-full object-cover transition-opacity duration-300"
@@ -1201,7 +1201,7 @@ export default function App() {
                     <div className="bg-white border border-gray-150 rounded-3xl p-6 sm:p-8 shadow-md">
                       <div className="flex gap-4 pb-5 border-b border-gray-100 mb-6 items-center">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-50 border border-gray-150 shrink-0">
-                          <img
+                          <img width="800" height="600" loading="lazy" decoding="async"
                             src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80"
                             alt="Broker Agent"
                             className="w-full h-full object-cover"
@@ -1338,7 +1338,7 @@ export default function App() {
               {/* Story Splits Block */}
               <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
                 <div className="relative aspect-video sm:aspect-4/3 rounded-3xl overflow-hidden shadow-xl border border-gray-150">
-                  <img
+                  <img width="800" height="600" loading="lazy" decoding="async"
                     src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
                     alt="Corporate Workspace Design"
                     className="w-full h-full object-cover"
@@ -1737,7 +1737,7 @@ export default function App() {
                   </button>
                 </div>
                 <div className="overflow-auto max-h-[80vh] p-4 bg-gray-50">
-                  <img
+                  <img width="800" height="600" loading="lazy" decoding="async"
                     src={prop.blueprintUrl}
                     alt={`${prop.title} blueprint`}
                     className="w-full h-auto rounded-xl object-contain"

@@ -254,7 +254,7 @@ export default function UserProfile({ currentUser, authToken, onNavigate, onUpda
               }}
             >
               <div className="relative">
-                <img
+                <img width="96" height="96" loading="lazy" decoding="async"
                   src={currentUser.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(currentUser.username)}`}
                   alt={currentUser.username}
                   className="w-24 h-24 rounded-full border-2 border-blue-500 object-cover shadow-md group-hover:brightness-90 transition-all duration-200"
@@ -436,7 +436,7 @@ export default function UserProfile({ currentUser, authToken, onNavigate, onUpda
                         <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-3">Live Preview</span>
                         <div className="flex items-center gap-4">
                           <div className="relative">
-                            <img
+                            <img width="64" height="64" loading="lazy" decoding="async"
                               src={avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username || currentUser.username)}`}
                               alt="Profile Preview"
                               className="w-16 h-16 rounded-full object-cover border border-gray-200 bg-gray-50"

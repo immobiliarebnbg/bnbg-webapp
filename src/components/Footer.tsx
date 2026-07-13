@@ -16,7 +16,7 @@ export default function Footer({ onNavigate }: FooterProps) {
           {/* Logo & Description */}
           <div className="md:col-span-1 space-y-4">
             <div className="flex items-center cursor-pointer mb-2" onClick={() => onNavigate("home")}>
-              <img src="/logo.png" alt="BNBG Immobiliare" className="h-20 w-auto brightness-0 invert opacity-90" />
+              <img width="240" height="80" loading="lazy" decoding="async" src="/logo.png" alt="BNBG Immobiliare" className="h-20 w-auto brightness-0 invert opacity-90" />
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
               {t('footer.aboutText')}

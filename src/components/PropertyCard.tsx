@@ -24,7 +24,7 @@ export default function PropertyCard({ property, isFavorited, onToggleFavorite, 
     >
       {/* Property Image & Badges */}
       <div className="relative aspect-video sm:aspect-4/3 w-full overflow-hidden bg-gray-100">
-        <img
+        <img width="800" height="600"
           src={property.images[0] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80"}
           alt={property.title}
           loading="lazy"

@@ -1005,7 +1005,7 @@ export default function AdminDashboard({
                   <tr key={prop.id} className="hover:bg-slate-50/40 transition-colors">
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
-                        <img
+                        <img width="44" height="44" loading="lazy" decoding="async"
                           src={prop.images[0]}
                           alt=""
                           className="w-11 h-11 rounded-lg object-cover shrink-0 border border-gray-100"
@@ -1867,7 +1867,7 @@ export default function AdminDashboard({
                       <div className="flex flex-wrap gap-2.5 max-h-[140px] overflow-y-auto p-1 border border-gray-50 rounded-xl bg-gray-50/20">
                         {images.map((img, idx) => (
                           <div key={idx} className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-150 group shrink-0 shadow-xs">
-                            <img src={img} alt="" className="w-full h-full object-cover" />
+                            <img width="800" height="600" loading="lazy" decoding="async" src={img} alt="" className="w-full h-full object-cover" />
                             <button
                               type="button"
                               onClick={() => handleRemoveImage(idx)}
