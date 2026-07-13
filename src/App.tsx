@@ -152,6 +152,33 @@ export default function App() {
       setAuthToken(storedToken);
       fetchFavoriteIds(storedToken);
     }
+
+    // Handle hash-based routing
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        const [pagePath, queryParams] = hash.slice(1).split('?');
+        if (pagePath) {
+          setCurrentPage(pagePath);
+          if (queryParams) {
+            const params = Object.fromEntries(new URLSearchParams(queryParams));
+            setNavigationParams(params);
+            if (params.filterCity) setFilterCity(params.filterCity);
+          } else {
+            setNavigationParams({});
+          }
+        }
+      } else {
+        setCurrentPage("home");
+        setNavigationParams({});
+      }
+    };
+    
+    // Call once on mount
+    handleHashChange();
+    
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   // Trigger translation whenever the viewed property or language changes
@@ -183,6 +210,11 @@ export default function App() {
     setNavigationParams(params);
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Update URL hash
+    const searchParams = new URLSearchParams(params);
+    const hash = `#${page}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
+    window.history.pushState(null, '', hash);
 
     // Handle direct city pre-filtering from links
     if (params.filterCity) {
