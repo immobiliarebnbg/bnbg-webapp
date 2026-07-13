@@ -637,6 +637,23 @@ export default function App() {
               </div>
 
 
+              {/* Core Statistics Block */}
+              <div className="bg-slate-900 text-white py-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+                  <div>
+                    <p className="text-4xl sm:text-5xl font-bold text-blue-500 font-mono">12,000+</p>
+                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">{t('home.stats.transactions')}</p>
+                  </div>
+                  <div>
+                    <p className="text-4xl sm:text-5xl font-bold text-blue-500 font-mono">99.4%</p>
+                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">{t('home.stats.trust')}</p>
+                  </div>
+                  <div>
+                    <p className="text-4xl sm:text-5xl font-bold text-blue-500 font-mono">24/7</p>
+                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">{t('home.stats.care')}</p>
+                  </div>
+                </div>
+              </div>
 
               {/* Latest Listings */}
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
