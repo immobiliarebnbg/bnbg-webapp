@@ -222,7 +222,7 @@ export default function AdminDashboard({
 
   const handleFileUpload = (files: FileList) => {
     setUploadError("");
-    const maxFiles = 10;
+    const maxFiles = 30;
     if (images.length + files.length > maxFiles) {
       setUploadError(`You can upload a maximum of ${maxFiles} images.`);
       return;
@@ -1752,7 +1752,7 @@ export default function AdminDashboard({
                         <div className="space-y-1.5 text-xs text-gray-600 font-medium">
                           <p className="flex justify-between">
                             <span>Total images:</span>
-                            <span className="font-bold text-blue-600">{images.length}/10</span>
+                            <span className="font-bold text-blue-600">{images.length}/30</span>
                           </p>
                           <p className="flex justify-between">
                             <span>Uploaded:</span>
