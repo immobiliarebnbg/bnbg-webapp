@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Property, Inquiry, DashboardStats, PropertyType, PropertyStatus } from "../types";
-import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone } from "lucide-react";
+import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone } from "lucide-react";
 
 interface AdminDashboardProps {
   authToken: string;
