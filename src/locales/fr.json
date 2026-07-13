@@ -131,7 +131,39 @@
       "save": "Enregistrer",
       "cancel": "Annuler",
       "markContacted": "Marquer comme Contacté",
-      "markResolved": "Marquer comme Résolu"
+      "markResolved": "Marquer comme Résolu",
+      "contacted": "Contacté",
+      "resolved": "Résolu",
+      "add": "Ajouter"
+    },
+    "propertiesTab": {
+      "title": "Gestion des Annonces Actives",
+      "desc": "Modifiez les spécifications des propriétés ou supprimez les annonces obsolètes.",
+      "totalSaved": "{{count}} Propriétés Totales Enregistrées"
+    },
+    "inquiriesTab": {
+      "title": "Demandes des Clients",
+      "desc": "Suivez les messages des visiteurs, relancez ou archivez les demandes résolues.",
+      "messageFrom": "Message de",
+      "receivedOn": "Reçu le",
+      "listing": "Annonce:",
+      "updateStatus": "Statut",
+      "statusNew": "NOUVEAU"
+    },
+    "metadataTab": {
+      "title": "Gestionnaire des Hubs & Types",
+      "desc": "Gérez les villes géographiques et les catégories immobilières.",
+      "cityHubs": "Villes ({{count}})",
+      "cityDesc": "Lieux géographiques présentés sur les cartes et filtres.",
+      "cityPlaceholder": "ex. Paris, Lyon",
+      "propertyTypes": "Types ({{count}})",
+      "typeDesc": "Catégories personnalisées pour la classification.",
+      "typePlaceholder": "ex. chalet, penthouse"
+    },
+    "badges": {
+      "forSale": "À VENDRE",
+      "forRent": "À LOUER",
+      "available": "Disponible"
     }
   }
 }

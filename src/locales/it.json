@@ -131,7 +131,39 @@
       "save": "Salva Proprietà",
       "cancel": "Annulla",
       "markContacted": "Segna come Contattato",
-      "markResolved": "Segna come Risolto"
+      "markResolved": "Segna come Risolto",
+      "contacted": "Contattato",
+      "resolved": "Risolto",
+      "add": "Aggiungi"
+    },
+    "propertiesTab": {
+      "title": "Gestione Annunci Attivi",
+      "desc": "Modifica i dettagli delle proprietà o elimina gli annunci obsoleti.",
+      "totalSaved": "{{count}} Proprietà Totali Salvate"
+    },
+    "inquiriesTab": {
+      "title": "Richieste dei Clienti",
+      "desc": "Traccia i messaggi dei visitatori, segui i contatti o archivia le richieste risolte.",
+      "messageFrom": "Messaggio da",
+      "receivedOn": "Ricevuto il",
+      "listing": "Annuncio:",
+      "updateStatus": "Aggiorna Stato",
+      "statusNew": "NUOVO"
+    },
+    "metadataTab": {
+      "title": "Gestione Hub e Tipi di Proprietà",
+      "desc": "Gestisci le città geografiche modificabili e le categorie immobiliari.",
+      "cityHubs": "Hub Città ({{count}})",
+      "cityDesc": "Luoghi geografici presenti in mappe e filtri.",
+      "cityPlaceholder": "es. Roma, Milano",
+      "propertyTypes": "Tipi di Proprietà ({{count}})",
+      "typeDesc": "Categorie personalizzate per la classificazione.",
+      "typePlaceholder": "es. baita, attico"
+    },
+    "badges": {
+      "forSale": "IN VENDITA",
+      "forRent": "IN AFFITTO",
+      "available": "Disponibile"
     }
   }
 }

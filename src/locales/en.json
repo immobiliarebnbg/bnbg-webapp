@@ -125,13 +125,45 @@
       "status": "Status"
     },
     "actions": {
-      "addNew": "Add New Listing",
+      "addNew": "Add New Property",
       "edit": "Edit",
       "delete": "Delete",
       "save": "Save Property",
       "cancel": "Cancel",
       "markContacted": "Mark Contacted",
-      "markResolved": "Mark Resolved"
+      "markResolved": "Mark Resolved",
+      "contacted": "Contacted",
+      "resolved": "Resolved",
+      "add": "Add"
+    },
+    "propertiesTab": {
+      "title": "Active Listings Management",
+      "desc": "Edit detailed property specs or delete outdated listings.",
+      "totalSaved": "{{count}} Total Properties Saved"
+    },
+    "inquiriesTab": {
+      "title": "Customer Inquiries",
+      "desc": "Track visitor messages, follow up, or archive resolved inquiries.",
+      "messageFrom": "Message from",
+      "receivedOn": "Received on",
+      "listing": "Listing:",
+      "updateStatus": "Update Status",
+      "statusNew": "NEW"
+    },
+    "metadataTab": {
+      "title": "Hubs & Property Types Manager",
+      "desc": "Manage editable geographical cities and real estate category listings.",
+      "cityHubs": "City Hubs ({{count}})",
+      "cityDesc": "Geographic locations featured on maps and filters.",
+      "cityPlaceholder": "e.g. Los Angeles, Paris",
+      "propertyTypes": "Property Types ({{count}})",
+      "typeDesc": "Custom categories for architectural classification.",
+      "typePlaceholder": "e.g. cabin, penthouse, castle"
+    },
+    "badges": {
+      "forSale": "FOR SALE",
+      "forRent": "FOR RENT",
+      "available": "Available"
     }
   }
 }

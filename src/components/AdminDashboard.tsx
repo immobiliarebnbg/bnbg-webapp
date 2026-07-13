@@ -704,7 +704,7 @@ export default function AdminDashboard({
             className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl shadow-md cursor-pointer"
           >
             <Plus className="w-5 h-5" />
-            Add New Property
+            {t('admin.actions.addNew')}
           </button>
         </div>
       </div>
@@ -919,11 +919,11 @@ export default function AdminDashboard({
         <div id="properties-tab-panel" className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-xs animate-in fade-in duration-200">
           <div className="px-6 py-5 border-b border-gray-50 bg-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-              <h3 className="font-bold text-base text-gray-900">Active Listings Management</h3>
-              <p className="text-xs text-gray-400 mt-0.5">Edit detailed property specs or delete outdated listings.</p>
+              <h3 className="font-bold text-base text-gray-900">{t('admin.propertiesTab.title')}</h3>
+              <p className="text-xs text-gray-400 mt-0.5">{t('admin.propertiesTab.desc')}</p>
             </div>
             <span className="font-mono text-xs text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md font-bold">
-              {properties.length} Total Properties Saved
+              {t('admin.propertiesTab.totalSaved').replace('{{count}}', String(properties.length))}
             </span>
           </div>
 
@@ -969,7 +969,7 @@ export default function AdminDashboard({
                         {formatPrice(prop.price, prop.status)}
                       </p>
                       <span className={`inline-block text-[10px] font-bold uppercase ${prop.status === "sale" ? "text-blue-600" : "text-emerald-600"}`}>
-                        For {prop.status}
+                        {prop.status === "sale" ? t('admin.badges.forSale') : t('admin.badges.forRent')}
                       </span>
                     </td>
                     <td className="py-4 px-6">
@@ -977,7 +977,7 @@ export default function AdminDashboard({
                         prop.available ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
                       }`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${prop.available ? "bg-green-500" : "bg-red-500"}`} />
-                        {prop.available ? "Available" : "Archived"}
+                        {prop.available ? t('admin.badges.available') : "Archived"}
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right space-x-1 whitespace-nowrap">
@@ -1010,8 +1010,8 @@ export default function AdminDashboard({
       {!loading && activeTab === "inquiries" && (
         <div id="inquiries-tab-panel" className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-xs animate-in fade-in duration-200">
           <div className="px-6 py-5 border-b border-gray-50 bg-slate-50">
-            <h3 className="font-bold text-base text-gray-900">Customer Inquiries</h3>
-            <p className="text-xs text-gray-400 mt-0.5">Track visitor messages, follow up, or archive resolved inquiries.</p>
+            <h3 className="font-bold text-base text-gray-900">{t('admin.inquiriesTab.title')}</h3>
+            <p className="text-xs text-gray-400 mt-0.5">{t('admin.inquiriesTab.desc')}</p>
           </div>
 
           {inquiries.length > 0 ? (
@@ -1027,15 +1027,15 @@ export default function AdminDashboard({
                           ? "bg-amber-100 text-amber-700"
                           : "bg-green-100 text-green-700"
                       }`}>
-                        {inq.status}
+                        {inq.status === 'new' ? t('admin.inquiriesTab.statusNew') : inq.status === 'contacted' ? t('admin.actions.contacted') : t('admin.actions.resolved')}
                       </span>
                       <span className="text-xs text-gray-400 font-mono">
-                        Received on {new Date(inq.createdAt).toLocaleDateString()}
+                        {t('admin.inquiriesTab.receivedOn')} {new Date(inq.createdAt).toLocaleDateString()}
                       </span>
                     </div>
 
                     <h4 className="font-sans font-bold text-base text-gray-900">
-                      Message from <span className="text-blue-600">{inq.name}</span>
+                      {t('admin.inquiriesTab.messageFrom')} <span className="text-blue-600">{inq.name}</span>
                     </h4>
 
                     <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-gray-500 font-medium items-center">
@@ -1053,7 +1053,7 @@ export default function AdminDashboard({
                         onClick={() => onNavigate("details", { propertyId: inq.propertyId })}
                         className="text-blue-600 hover:underline cursor-pointer font-semibold"
                       >
-                        Listing: {inq.propertyTitle}
+                        {t('admin.inquiriesTab.listing')} {inq.propertyTitle}
                       </span>
                     </div>
 
@@ -1063,7 +1063,7 @@ export default function AdminDashboard({
                   </div>
 
                   <div className="shrink-0 flex flex-row md:flex-col gap-2 items-start md:items-end justify-start whitespace-nowrap">
-                    <span className="text-xs text-gray-400 font-mono mb-1 hidden md:block">Update Status</span>
+                    <span className="text-xs text-gray-400 font-mono mb-1 hidden md:block">{t('admin.inquiriesTab.updateStatus')}</span>
                     <div className="flex gap-1.5">
                       <button
                         onClick={() => handleUpdateInquiryStatus(inq.id, "contacted")}
@@ -1073,7 +1073,7 @@ export default function AdminDashboard({
                             : "bg-white hover:bg-gray-50 border-gray-200 text-gray-600"
                         }`}
                       >
-                        Contacted
+                        {t('admin.actions.contacted')}
                       </button>
                       <button
                         onClick={() => handleUpdateInquiryStatus(inq.id, "resolved")}
@@ -1083,7 +1083,7 @@ export default function AdminDashboard({
                             : "bg-white hover:bg-gray-50 border-gray-200 text-gray-600"
                         }`}
                       >
-                        Resolved
+                        {t('admin.actions.resolved')}
                       </button>
                       <button
                         onClick={() => handleDeleteInquiry(inq.id)}
@@ -1116,8 +1116,8 @@ export default function AdminDashboard({
           {/* Header & Feedback */}
           <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h3 className="font-bold text-lg text-gray-900">Hubs & Property Types Manager</h3>
-              <p className="text-sm text-gray-400 mt-1">Manage editable geographical cities and real estate category listings.</p>
+              <h3 className="font-bold text-lg text-gray-900">{t('admin.metadataTab.title')}</h3>
+              <p className="text-sm text-gray-400 mt-1">{t('admin.metadataTab.desc')}</p>
             </div>
             {metaActionLoading && (
               <span className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full animate-pulse">
@@ -1146,8 +1146,8 @@ export default function AdminDashboard({
             <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-xs">
               <div className="px-6 py-5 border-b border-gray-50 bg-slate-50 flex justify-between items-center">
                 <div>
-                  <h4 className="font-bold text-sm text-gray-900">City Hubs ({cities.length})</h4>
-                  <p className="text-xs text-gray-400 mt-0.5">Geographic locations featured on maps and filters.</p>
+                  <h4 className="font-bold text-sm text-gray-900">{t('admin.metadataTab.cityHubs').replace('{{count}}', String(cities.length))}</h4>
+                  <p className="text-xs text-gray-400 mt-0.5">{t('admin.metadataTab.cityDesc')}</p>
                 </div>
               </div>
 
@@ -1158,16 +1158,16 @@ export default function AdminDashboard({
                     type="text"
                     value={newCityInput}
                     onChange={(e) => setNewCityInput(e.target.value)}
-                    placeholder="e.g. Los Angeles, Paris"
-                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 focus:border-blue-500 outline-hidden"
+                    placeholder={t('admin.metadataTab.cityPlaceholder')}
+                    className="flex-1 bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium"
                     onKeyDown={(e) => e.key === "Enter" && handleAddCity()}
                   />
                   <button
                     onClick={handleAddCity}
-                    disabled={metaActionLoading}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1"
+                    className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
                   >
-                    <Plus className="w-4 h-4" /> Add
+                    <Plus className="w-4 h-4" />
+                    {t('admin.actions.add')}
                   </button>
                 </div>
 
@@ -1251,8 +1251,8 @@ export default function AdminDashboard({
             <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-xs">
               <div className="px-6 py-5 border-b border-gray-50 bg-slate-50 flex justify-between items-center">
                 <div>
-                  <h4 className="font-bold text-sm text-gray-900">Property Types ({propertyTypes.length})</h4>
-                  <p className="text-xs text-gray-400 mt-0.5">Custom categories for architectural classification.</p>
+                  <h4 className="font-bold text-sm text-gray-900">{t('admin.metadataTab.propertyTypes').replace('{{count}}', String(propertyTypes.length))}</h4>
+                  <p className="text-xs text-gray-400 mt-0.5">{t('admin.metadataTab.typeDesc')}</p>
                 </div>
               </div>
 
@@ -1263,16 +1263,16 @@ export default function AdminDashboard({
                     type="text"
                     value={newTypeInput}
                     onChange={(e) => setNewTypeInput(e.target.value)}
-                    placeholder="e.g. cabin, penthouse, castle"
-                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 focus:border-blue-500 outline-hidden"
+                    placeholder={t('admin.metadataTab.typePlaceholder')}
+                    className="flex-1 bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-hidden focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-medium"
                     onKeyDown={(e) => e.key === "Enter" && handleAddType()}
                   />
                   <button
                     onClick={handleAddType}
-                    disabled={metaActionLoading}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1"
+                    className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
                   >
-                    <Plus className="w-4 h-4" /> Add
+                    <Plus className="w-4 h-4" />
+                    {t('admin.actions.add')}
                   </button>
                 </div>
 
