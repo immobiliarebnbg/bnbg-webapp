@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { User } from "../types";
-import { Home, Search, List, User as UserIcon, LogOut, ShieldAlert, Heart, Menu, X, Globe } from "lucide-react";
+import { Home, Search, List, User as UserIcon, LogOut, ShieldAlert, Heart, Menu, X, Globe, CircleDollarSign } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useCurrency } from "../contexts/CurrencyContext";
 
 interface NavbarProps {
   currentUser: User | null;
@@ -14,7 +15,9 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
   const [isOpen, setIsOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const { t, i18n } = useTranslation();
+  const { currency, setCurrency } = useCurrency();
 
   const handleLinkClick = (page: string, params?: Record<string, any>) => {
     onNavigate(page, params);
@@ -85,10 +88,44 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
 
           {/* User Session & Language Section */}
           <div className="hidden md:flex items-center gap-4">
+            {/* Currency Switcher */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setShowCurrencyDropdown(!showCurrencyDropdown);
+                  setShowLangDropdown(false);
+                }}
+                className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 font-medium text-sm p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-hidden"
+              >
+                <CircleDollarSign className="w-4 h-4" />
+                <span>{currency}</span>
+              </button>
+              
+              {showCurrencyDropdown && (
+                <div className="absolute right-0 mt-2 w-24 rounded-xl bg-white border border-gray-100 shadow-xl py-2 z-50">
+                  {['USD', 'EUR'].map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => {
+                        setCurrency(c as 'USD' | 'EUR');
+                        setShowCurrencyDropdown(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${currency === c ? 'text-blue-600 font-bold' : 'text-gray-700'}`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Language Switcher */}
             <div className="relative">
               <button
-                onClick={() => setShowLangDropdown(!showLangDropdown)}
+                onClick={() => {
+                  setShowLangDropdown(!showLangDropdown);
+                  setShowCurrencyDropdown(false);
+                }}
                 className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 font-medium text-sm p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-hidden"
               >
                 <Globe className="w-4 h-4" />
@@ -259,6 +296,27 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
           >
             {t('nav.contact')}
           </button>
+
+          <hr className="border-gray-100 my-2" />
+
+          {/* Mobile Currency Switcher */}
+          <div className="px-3 py-2 flex items-center justify-between">
+            <span className="text-base font-medium text-gray-700 flex items-center gap-2">
+              <CircleDollarSign className="w-5 h-5 text-gray-400" />
+              Currency
+            </span>
+            <div className="flex bg-gray-100 rounded-lg p-1">
+              {['USD', 'EUR'].map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCurrency(c as 'USD' | 'EUR')}
+                  className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${currency === c ? 'bg-white shadow-xs text-blue-600' : 'text-gray-600'}`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <hr className="border-gray-100 my-2" />
 

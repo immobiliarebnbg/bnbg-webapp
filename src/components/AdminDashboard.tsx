@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Property, Inquiry, DashboardStats, PropertyType, PropertyStatus } from "../types";
 import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone } from "lucide-react";
+import { useCurrency } from "../contexts/CurrencyContext";
 
 interface AdminDashboardProps {
   authToken: string;
@@ -49,6 +50,7 @@ export default function AdminDashboard({
   propertyTypes = ["villa", "house", "apartment", "loft", "condo", "townhouse"],
   onRefreshMetadata
 }: AdminDashboardProps) {
+  const { formatPrice } = useCurrency();
   const [activeTab, setActiveTab] = useState<"stats" | "properties" | "inquiries" | "metadata">("stats");
 
   const [properties, setProperties] = useState<Property[]>([]);
@@ -943,7 +945,7 @@ export default function AdminDashboard({
                     </td>
                     <td className="py-4 px-6">
                       <p className="font-bold text-gray-900">
-                        {prop.status === "rent" ? `$${prop.price.toLocaleString()}/mo` : `$${prop.price.toLocaleString()}`}
+                        {formatPrice(prop.price, prop.status)}
                       </p>
                       <span className={`inline-block text-[10px] font-bold uppercase ${prop.status === "sale" ? "text-blue-600" : "text-emerald-600"}`}>
                         For {prop.status}

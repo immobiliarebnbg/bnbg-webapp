@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Property } from "../types";
 import { Heart, MapPin, ExternalLink, BedDouble, Bath, Square, ChevronRight, Star } from "lucide-react";
+import { useCurrency } from "../contexts/CurrencyContext";
 
 interface PropertyCardProps {
   key?: string;
@@ -13,12 +14,7 @@ interface PropertyCardProps {
 
 export default function PropertyCard({ property, isFavorited, onToggleFavorite, onClick }: PropertyCardProps) {
   const { t } = useTranslation();
-
-  const formatPrice = (price: number, status: string) => {
-    return status === "rent"
-      ? `$${price.toLocaleString()}/mo`
-      : `$${price.toLocaleString()}`;
-  };
+  const { formatPrice } = useCurrency();
 
   return (
     <div

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Property, User, SearchFilters, PropertyType, PropertyStatus } from "./types";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { useCurrency } from "./contexts/CurrencyContext";
 import PropertyCard from "./components/PropertyCard";
 import CustomMap from "./components/CustomMap";
 import UserProfile from "./components/UserProfile";
@@ -17,6 +18,7 @@ import {
 
 export default function App() {
   const { t, i18n } = useTranslation();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
@@ -955,7 +957,7 @@ export default function App() {
                   <div className="shrink-0 text-left md:text-right">
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Premium Valuation</p>
                     <p className="text-2xl sm:text-4xl font-bold text-gray-900 mt-1 font-sans">
-                      {property.status === "rent" ? `$${property.price.toLocaleString()}/mo` : `$${property.price.toLocaleString()}`}
+                      {formatPrice(property.price, property.status)}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">Estimates based on prime local indices</p>
                   </div>

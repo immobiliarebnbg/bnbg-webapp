@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Property } from "../types";
 import { ZoomIn, ZoomOut, Navigation, MapPin, X, ExternalLink } from "lucide-react";
+import { useCurrency } from "../contexts/CurrencyContext";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -14,6 +15,7 @@ interface CustomMapProps {
 export default function CustomMap(props: CustomMapProps) {
   const { properties, selectedProperty, onSelectProperty, height = "h-[450px]" } = props;
   const [activeTooltip, setActiveTooltip] = useState<Property | null>(null);
+  const { formatPrice, formatPriceCompact } = useCurrency();
   
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -226,9 +228,7 @@ export default function CustomMap(props: CustomMapProps) {
               </h4>
 
               <p className="font-mono text-xs font-bold text-blue-600 mt-0.5">
-                {activeTooltip.status === "rent"
-                  ? `$${activeTooltip.price.toLocaleString()}/mo`
-                  : `$${activeTooltip.price.toLocaleString()}`}
+                {formatPrice(activeTooltip.price, activeTooltip.status)}
               </p>
 
               <p className="font-sans text-[11px] text-gray-500 truncate mt-1 flex items-center gap-1">
@@ -267,13 +267,3 @@ export default function CustomMap(props: CustomMapProps) {
   );
 }
 
-// Compact price formatter helper
-const formatPriceCompact = (price: number, status: string) => {
-  if (status === "rent") {
-    return `$${Math.round(price / 100) / 10}K/mo`;
-  }
-  if (price >= 1000000) {
-    return `$${(price / 1000000).toFixed(1)}M`;
-  }
-  return `$${Math.round(price / 1000)}K`;
-};
