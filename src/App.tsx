@@ -1089,6 +1089,16 @@ export default function App() {
 
                   {/* Right Column: Broker Inquiry Booking (4 columns) */}
                   <div className="lg:col-span-4 sticky top-24">
+                    {/* Blueprint Button */}
+                    {property.blueprintUrl && (
+                      <button
+                        onClick={() => window.open(property.blueprintUrl, '_blank')}
+                        className="w-full mb-4 flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-base shadow-lg transition-all duration-200"
+                      >
+                        <Map className="w-5 h-5 shrink-0" />
+                        {t('property.viewBlueprint')}
+                      </button>
+                    )}
                     <div className="bg-white border border-gray-150 rounded-3xl p-6 sm:p-8 shadow-md">
                       <div className="flex gap-4 pb-5 border-b border-gray-100 mb-6 items-center">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-50 border border-gray-150 shrink-0">
