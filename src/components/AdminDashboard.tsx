@@ -35,12 +35,17 @@ const parseLatLngFromGoogleMapsUrl = (url: string): { lat: number; lng: number }
 
 const getCityDefaults = (cityName: string) => {
   switch (cityName) {
+    case "Bergamo": return { lat: 45.6983, lng: 9.6773 };
+    case "Milano": return { lat: 45.4642, lng: 9.1900 };
+    case "Roma": return { lat: 41.9028, lng: 12.4964 };
+    case "Torino": return { lat: 45.0703, lng: 7.6869 };
+    case "Venezia": return { lat: 45.4408, lng: 12.3155 };
     case "Miami": return { lat: 25.7617, lng: -80.1918 };
     case "New York": return { lat: 40.7128, lng: -74.0060 };
     case "San Francisco": return { lat: 37.7749, lng: -122.4194 };
     case "Austin": return { lat: 30.2672, lng: -97.7431 };
     case "Seattle": return { lat: 47.6062, lng: -122.3321 };
-    default: return { lat: 37.7749, lng: -122.4194 };
+    default: return { lat: 41.9028, lng: 12.4964 }; // Default to Rome
   }
 };
 
@@ -147,7 +152,7 @@ export default function AdminDashboard({
     setAddress("");
     setGoogleMapsUrl("");
     setBlueprintUrl("");
-    setCity("Miami");
+    setCity(cities.length > 0 ? cities[0] : "");
     setNeighborhood("");
     setBedrooms("4");
     setBathrooms("3.5");
