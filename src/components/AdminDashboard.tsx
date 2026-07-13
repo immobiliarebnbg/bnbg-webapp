@@ -1505,8 +1505,7 @@ export default function AdminDashboard({
             </div>
 
           </div>
-        </div>
-      )}
+        )}
 
       {/* FLOATING LISTING MODAL FORM (ADD/EDIT) */}
       {showForm && (
