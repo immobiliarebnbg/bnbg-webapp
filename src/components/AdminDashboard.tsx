@@ -48,9 +48,8 @@ export default function AdminDashboard({
   onNavigate,
   cities = ["Miami", "New York", "San Francisco", "Austin", "Seattle"],
   propertyTypes = ["villa", "house", "apartment", "loft", "condo", "townhouse"],
-  onRefreshMetadata
 }: AdminDashboardProps) {
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currency } = useCurrency();
   const [activeTab, setActiveTab] = useState<"stats" | "properties" | "inquiries" | "metadata">("stats");
 
   const [properties, setProperties] = useState<Property[]>([]);
@@ -63,9 +62,9 @@ export default function AdminDashboard({
   // Form State for Add/Edit Listing
   const [showForm, setShowForm] = useState(false);
   const [editingPropertyId, setEditingPropertyId] = useState<string | null>(null);
-
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
+  const [priceCurrency, setPriceCurrency] = useState<"USD"|"EUR">("USD");
   const [status, setStatus] = useState<PropertyStatus>("sale");
   const [propertyType, setPropertyType] = useState<PropertyType>(propertyTypes[0] || "villa");
   const [address, setAddress] = useState("");
@@ -140,6 +139,7 @@ export default function AdminDashboard({
     setEditingPropertyId(null);
     setTitle("");
     setPrice("1500000");
+    setPriceCurrency(currency as "USD"|"EUR");
     setStatus("sale");
     setPropertyType("villa");
     setAddress("");
@@ -165,7 +165,12 @@ export default function AdminDashboard({
   const handleOpenEditForm = (prop: Property) => {
     setEditingPropertyId(prop.id);
     setTitle(prop.title);
-    setPrice(String(prop.price));
+    
+    // Convert DB price (always USD) to the currently selected global currency for editing
+    const displayPrice = currency === "EUR" ? prop.price * 0.92 : prop.price;
+    setPrice(String(Math.round(displayPrice)));
+    setPriceCurrency(currency as "USD"|"EUR");
+    
     setStatus(prop.status);
     setPropertyType(prop.propertyType);
     setAddress(prop.address);
@@ -294,9 +299,13 @@ export default function AdminDashboard({
       lng = parsedCoords.lng;
     }
 
+    // Convert price back to USD for the database if they selected EUR
+    const numericPrice = Number(price);
+    const finalPriceInUsd = priceCurrency === "EUR" ? Math.round(numericPrice / 0.92) : numericPrice;
+
     const payload = {
       title,
-      price: Number(price),
+      price: finalPriceInUsd,
       status,
       propertyType,
       address,
@@ -1371,15 +1380,25 @@ export default function AdminDashboard({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Price (USD)</label>
-                  <input
-                    type="number"
-                    required
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-hidden font-medium text-sm text-gray-900"
-                    placeholder="e.g. 1250000"
-                  />
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Price</label>
+                  <div className="flex bg-white rounded-xl shadow-xs border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                    <select
+                      value={priceCurrency}
+                      onChange={(e) => setPriceCurrency(e.target.value as "USD"|"EUR")}
+                      className="bg-gray-50 border-r border-gray-200 px-3 py-2.5 text-sm font-semibold text-gray-700 outline-hidden"
+                    >
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                    </select>
+                    <input
+                      type="number"
+                      required
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      className="flex-1 w-full px-4 py-2.5 outline-hidden"
+                      placeholder="e.g. 1500000"
+                    />
+                  </div>
                 </div>
 
                 <div>
