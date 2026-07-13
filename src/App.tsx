@@ -719,7 +719,7 @@ export default function App() {
 
                   <div className="mt-12 lg:mt-0 relative aspect-video sm:aspect-4/3 rounded-3xl overflow-hidden shadow-xl border border-gray-100">
                     <img width="800" height="600" loading="lazy" decoding="async"
-                      src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80"
+                      src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80"
                       alt="Elegant Estate Design"
                       className="w-full h-full object-cover"
                     />
@@ -1044,7 +1044,7 @@ export default function App() {
                 {/* Gorgeous Sliding Image Gallery */}
                 <div className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-150 shadow-xl mb-10 group aspect-video sm:aspect-21/9 max-h-[500px]">
                   <img width="800" height="600" loading="lazy" decoding="async"
-                    src={property.images[activeImageIndex] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80"}
+                    src={property.images[activeImageIndex] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"}
                     alt={property.title}
                     className="w-full h-full object-cover transition-opacity duration-300"
                   />
@@ -1339,7 +1339,7 @@ export default function App() {
               <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
                 <div className="relative aspect-video sm:aspect-4/3 rounded-3xl overflow-hidden shadow-xl border border-gray-150">
                   <img width="800" height="600" loading="lazy" decoding="async"
-                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
+                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
                     alt="Corporate Workspace Design"
                     className="w-full h-full object-cover"
                   />
