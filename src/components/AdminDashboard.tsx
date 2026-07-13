@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Property, Inquiry, DashboardStats, PropertyType, PropertyStatus, BrokerInfo } from "../types";
-import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone } from "lucide-react";
+import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone, User as UserIcon } from "lucide-react";
 import { useCurrency } from "../contexts/CurrencyContext";
 import { useTranslation } from "react-i18next";
 
