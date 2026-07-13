@@ -14,7 +14,7 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
 const EXCHANGE_RATE_USD_TO_EUR = 0.92;
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [currency, setCurrency] = useState<Currency>('EUR');
 
   const convert = (priceInUsd: number) => {
     return currency === 'EUR' ? priceInUsd * EXCHANGE_RATE_USD_TO_EUR : priceInUsd;
