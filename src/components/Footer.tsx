@@ -115,15 +115,15 @@ export default function Footer({ onNavigate }: FooterProps) {
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-gray-500 shrink-0" />
-                <span>3896408184</span>
+                <a href="tel:+393896408184" className="hover:text-gray-300 transition-colors">389 6408184</a>
               </p>
               <p className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-gray-500 shrink-0" />
-                <span>WhatsApp: 3896408184</span>
+                <a href="https://wa.me/393896408184" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300 transition-colors">WhatsApp: 389 6408184</a>
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-gray-500 shrink-0" />
-                <span>immobiliare@bnbg.it</span>
+                <a href="mailto:immobiliare@bnbg.it" className="hover:text-gray-300 transition-colors">immobiliare@bnbg.it</a>
               </p>
             </div>
             <div className="pt-2 border-t border-gray-950">

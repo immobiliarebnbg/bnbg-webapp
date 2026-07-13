@@ -1456,15 +1456,15 @@ export default function App() {
                       </p>
                       <p className="flex items-center gap-3">
                         <Phone className="w-4 h-4 text-blue-400 shrink-0" />
-                        <span>389 6408184</span>
+                        <a href="tel:+393896408184" className="hover:text-blue-400 transition-colors">389 6408184</a>
                       </p>
                       <p className="flex items-center gap-3">
                         <MessageCircle className="w-4 h-4 text-blue-400 shrink-0" />
-                        <span>WhatsApp: 389 6408184</span>
+                        <a href="https://wa.me/393896408184" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">WhatsApp: 389 6408184</a>
                       </p>
                       <p className="flex items-center gap-3">
                         <Mail className="w-4 h-4 text-blue-400 shrink-0" />
-                        <span>immobiliare@bnbg.it</span>
+                        <a href="mailto:immobiliare@bnbg.it" className="hover:text-blue-400 transition-colors">immobiliare@bnbg.it</a>
                       </p>
                     </div>
 
