@@ -530,7 +530,7 @@ export default function App() {
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 animate-fade-in">
-                  {propertyTypes.map((type) => {
+                  {propertyTypes.filter(type => properties.some(p => p.propertyType === type)).map((type) => {
                     const count = properties.filter(p => p.propertyType === type).length;
                     const label = type.charAt(0).toUpperCase() + type.slice(1) + (type.toLowerCase().endsWith("s") || type.toLowerCase().endsWith("ch") || type.toLowerCase().endsWith("sh") ? "" : "s");
                     
@@ -788,7 +788,7 @@ export default function App() {
                     className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 bg-white outline-hidden"
                   >
                     <option value="All">All Cities</option>
-                    {cities.map((c) => (
+                    {cities.filter(c => properties.some(p => p.city === c)).map((c) => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
@@ -802,7 +802,7 @@ export default function App() {
                     className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 bg-white outline-hidden"
                   >
                     <option value="All">All Types</option>
-                    {propertyTypes.map((type) => (
+                    {propertyTypes.filter(type => properties.some(p => p.propertyType === type)).map((type) => (
                       <option key={type} value={type}>
                         {type.charAt(0).toUpperCase() + type.slice(1) + (type.toLowerCase().endsWith("s") || type.toLowerCase().endsWith("ch") || type.toLowerCase().endsWith("sh") ? "" : "s")}
                       </option>
