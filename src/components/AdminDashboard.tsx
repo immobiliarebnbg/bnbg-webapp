@@ -18,7 +18,8 @@ const parseLatLngFromGoogleMapsUrl = (url: string): { lat: number; lng: number }
     /@(-?\d+\.\d+),(-?\d+\.\d+)/,
     /q=(-?\d+\.\d+),(-?\d+\.\d+)/,
     /place\/.*?\/@?(-?\d+\.\d+),(-?\d+\.\d+)/,
-    /ll=(-?\d+\.\d+),(-?\d+\.\d+)/
+    /ll=(-?\d+\.\d+),(-?\d+\.\d+)/,
+    /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/
   ];
   for (const regex of regexes) {
     const match = url.match(regex);
@@ -300,12 +301,44 @@ export default function AdminDashboard({
       lng = defaults.lng;
     }
 
+    let coordsParsed = false;
+
     // Try to extract from custom google maps url if specified
-    const parsedCoords = parseLatLngFromGoogleMapsUrl(googleMapsUrl);
-    if (parsedCoords) {
-      lat = parsedCoords.lat;
-      lng = parsedCoords.lng;
-    } else {
+    if (googleMapsUrl && googleMapsUrl.trim().length > 0) {
+      let parsedCoords = parseLatLngFromGoogleMapsUrl(googleMapsUrl);
+      
+      // If local regex failed, it might be a short link or a complex place URL. Resolve it via backend.
+      if (!parsedCoords) {
+        try {
+          // Use the admin token for auth
+          const token = localStorage.getItem("adminToken");
+          const res = await fetch('/api/resolve-maps-url', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify({ url: googleMapsUrl })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.finalUrl) {
+              parsedCoords = parseLatLngFromGoogleMapsUrl(data.finalUrl);
+            }
+          }
+        } catch (e) {
+          console.warn("Failed to resolve Google Maps short URL", e);
+        }
+      }
+      
+      if (parsedCoords) {
+        lat = parsedCoords.lat;
+        lng = parsedCoords.lng;
+        coordsParsed = true;
+      }
+    }
+
+    if (!coordsParsed) {
       // Auto-geocode using OpenStreetMap Nominatim
       try {
         const query = `${address}, ${neighborhood ? neighborhood + ', ' : ''}${city}, Italy`;
