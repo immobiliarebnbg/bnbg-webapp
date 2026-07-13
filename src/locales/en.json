@@ -210,5 +210,23 @@
     "Swimming Pool": "Swimming Pool",
     "Garage": "Garage",
     "Furnished": "Furnished"
+  },
+  "contactPage": {
+    "successTitle": "Message Delivered Successfully",
+    "successDesc": "Thank you for your brief. A specialized Broker associated with your district will reach out within 1 business hour.",
+    "fullName": "My Full Name",
+    "fullNamePlaceholder": "e.g. John Doe",
+    "email": "My Email Address",
+    "emailPlaceholder": "e.g. john@example.com",
+    "subject": "Subject Vibe",
+    "subjectPlaceholder": "e.g. Land sale inquiry",
+    "message": "My Message Brief",
+    "messagePlaceholder": "Tell us about your relocation requirements...",
+    "submit": "Submit Contact Inquiry",
+    "hq": "Headquarters",
+    "officeHours": "Office Operating Hours",
+    "hoursMonFri": "Monday - Friday: 8:00 AM - 7:00 PM",
+    "hoursSat": "Saturday: 9:00 AM - 5:00 PM (Relocation tours)",
+    "hoursSun": "Sunday: Closed (Broker helpline online)"
   }
 }

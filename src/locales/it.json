@@ -210,5 +210,23 @@
     "Swimming Pool": "Piscina",
     "Garage": "Garage",
     "Furnished": "Arredato"
+  },
+  "contactPage": {
+    "successTitle": "Messaggio Consegnato con Successo",
+    "successDesc": "Grazie per il tuo messaggio. Un Broker specializzato associato al tuo distretto ti contatterà entro 1 ora lavorativa.",
+    "fullName": "Nome Completo",
+    "fullNamePlaceholder": "es. Mario Rossi",
+    "email": "Il mio Indirizzo Email",
+    "emailPlaceholder": "es. mario@example.com",
+    "subject": "Oggetto",
+    "subjectPlaceholder": "es. Richiesta di vendita terreno",
+    "message": "Il mio Messaggio",
+    "messagePlaceholder": "Raccontaci delle tue esigenze...",
+    "submit": "Invia Richiesta di Contatto",
+    "hq": "Sede Centrale",
+    "officeHours": "Orari di Ufficio",
+    "hoursMonFri": "Lunedì - Venerdì: 08:00 - 19:00",
+    "hoursSat": "Sabato: 09:00 - 17:00 (Tour ricollocazione)",
+    "hoursSun": "Domenica: Chiuso (Helpline broker online)"
   }
 }

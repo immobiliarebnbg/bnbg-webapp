@@ -210,5 +210,23 @@
     "Swimming Pool": "Piscine",
     "Garage": "Garage",
     "Furnished": "Meublé"
+  },
+  "contactPage": {
+    "successTitle": "Message Livré avec Succès",
+    "successDesc": "Merci pour votre message. Un courtier spécialisé associé à votre district vous contactera dans un délai d'une heure ouvrable.",
+    "fullName": "Mon Nom Complet",
+    "fullNamePlaceholder": "ex. Jean Dupont",
+    "email": "Mon Adresse Email",
+    "emailPlaceholder": "ex. jean@example.com",
+    "subject": "Sujet",
+    "subjectPlaceholder": "ex. Demande de vente de terrain",
+    "message": "Mon Message",
+    "messagePlaceholder": "Parlez-nous de vos besoins de relocalisation...",
+    "submit": "Soumettre la Demande de Contact",
+    "hq": "Siège Social",
+    "officeHours": "Heures de Bureau",
+    "hoursMonFri": "Lundi - Vendredi : 08h00 - 19h00",
+    "hoursSat": "Samedi : 09h00 - 17h00 (Visites de relocalisation)",
+    "hoursSun": "Dimanche : Fermé (Ligne d'assistance broker en ligne)"
   }
 }

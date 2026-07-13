@@ -1409,58 +1409,58 @@ export default function App() {
                       <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center mx-auto shadow-md">
                         <CheckCircle2 className="w-6 h-6" />
                       </div>
-                      <h4 className="font-bold text-green-950 text-lg">Message Delivered Successfully</h4>
+                      <h4 className="font-bold text-green-950 text-lg">{t('contactPage.successTitle')}</h4>
                       <p className="text-sm text-green-700 max-w-sm mx-auto">
-                        Thank you for your brief. A specialized Broker associated with your district will reach out within 1 business hour.
+                        {t('contactPage.successDesc')}
                       </p>
                     </div>
                   ) : (
                     <form onSubmit={handleContactSubmit} className="space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">My Full Name</label>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{t('contactPage.fullName')}</label>
                           <input
                             type="text"
                             required
                             value={contactName}
                             onChange={(e) => setContactName(e.target.value)}
                             className="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-hidden focus:border-blue-500 text-sm text-gray-900"
-                            placeholder="e.g. John Doe"
+                            placeholder={t('contactPage.fullNamePlaceholder')}
                           />
                         </div>
                         <div>
-                          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">My Email Address</label>
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{t('contactPage.email')}</label>
                           <input
                             type="email"
                             required
                             value={contactEmail}
                             onChange={(e) => setContactEmail(e.target.value)}
                             className="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-hidden focus:border-blue-500 text-sm text-gray-900"
-                            placeholder="e.g. john@example.com"
+                            placeholder={t('contactPage.emailPlaceholder')}
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Subject Vibe</label>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{t('contactPage.subject')}</label>
                         <input
                           type="text"
                           value={contactSubject}
                           onChange={(e) => setContactSubject(e.target.value)}
                           className="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-hidden focus:border-blue-500 text-sm text-gray-900"
-                          placeholder="e.g. Land sale inquiry"
+                          placeholder={t('contactPage.subjectPlaceholder')}
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">My Message Brief</label>
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{t('contactPage.message')}</label>
                         <textarea
                           rows={4}
                           required
                           value={contactMessage}
                           onChange={(e) => setContactMessage(e.target.value)}
                           className="w-full px-4 py-2.5 rounded-xl border border-gray-200 outline-hidden focus:border-blue-500 text-sm text-gray-900 leading-relaxed"
-                          placeholder="Tell us about your relocation requirements..."
+                          placeholder={t('contactPage.messagePlaceholder')}
                         />
                       </div>
 
@@ -1468,7 +1468,7 @@ export default function App() {
                         type="submit"
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-3 rounded-xl shadow-md cursor-pointer transition-colors"
                       >
-                        Submit Contact Inquiry
+                        {t('contactPage.submit')}
                       </button>
                     </form>
                   )}
@@ -1477,7 +1477,7 @@ export default function App() {
                 <div className="lg:col-span-5 space-y-6">
                   {/* Office Hours / Coordinates info card */}
                   <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-lg border border-slate-800">
-                    <h3 className="font-bold text-lg mb-4">Sede Centrale</h3>
+                    <h3 className="font-bold text-lg mb-4">{t('contactPage.hq')}</h3>
                     <div className="space-y-4 text-sm text-slate-300">
                       <p className="flex items-center gap-3">
                         <MapPin className="w-4 h-4 text-blue-400 shrink-0" />
@@ -1499,11 +1499,11 @@ export default function App() {
 
                     <hr className="border-slate-800 my-6" />
 
-                    <h4 className="font-bold text-sm mb-2 text-white">Office Operating Hours</h4>
+                    <h4 className="font-bold text-sm mb-2 text-white">{t('contactPage.officeHours')}</h4>
                     <ul className="text-xs space-y-1.5 text-slate-400">
-                      <li>Monday - Friday: 8:00 AM - 7:00 PM</li>
-                      <li>Saturday: 9:00 AM - 5:00 PM (Relocation tours)</li>
-                      <li>Sunday: Closed (Broker helpline online)</li>
+                      <li>{t('contactPage.hoursMonFri')}</li>
+                      <li>{t('contactPage.hoursSat')}</li>
+                      <li>{t('contactPage.hoursSun')}</li>
                     </ul>
                   </div>
 
