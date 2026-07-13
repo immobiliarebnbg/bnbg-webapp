@@ -1429,14 +1429,69 @@ export default function AdminDashboard({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Blueprint URL (Optional)</label>
-                  <input
-                    type="url"
-                    value={blueprintUrl}
-                    onChange={(e) => setBlueprintUrl(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-hidden font-medium text-sm text-gray-900"
-                    placeholder="e.g. https://images.unsplash.com/photo-..."
-                  />
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Blueprint (URL or Upload)</label>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="text"
+                      value={blueprintUrl}
+                      onChange={(e) => setBlueprintUrl(e.target.value)}
+                      className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-hidden font-medium text-sm text-gray-900"
+                      placeholder="e.g. https://... or click Upload"
+                    />
+                    <label className="cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-3 rounded-xl border border-blue-200 text-sm font-bold transition-colors whitespace-nowrap">
+                      Upload
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        className="hidden" 
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            if (!file.type.startsWith("image/")) {
+                              setUploadError("Blueprint must be an image.");
+                              return;
+                            }
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              const img = new window.Image();
+                              img.onload = () => {
+                                const canvas = document.createElement("canvas");
+                                const maxDim = 1200;
+                                let width = img.width;
+                                let height = img.height;
+                                if (width > maxDim || height > maxDim) {
+                                  if (width > height) {
+                                    height = Math.round((height * maxDim) / width);
+                                    width = maxDim;
+                                  } else {
+                                    width = Math.round((width * maxDim) / height);
+                                    height = maxDim;
+                                  }
+                                }
+                                canvas.width = width;
+                                canvas.height = height;
+                                const ctx = canvas.getContext("2d");
+                                if (ctx) {
+                                  ctx.drawImage(img, 0, 0, width, height);
+                                  setBlueprintUrl(canvas.toDataURL("image/jpeg", 0.7));
+                                }
+                              };
+                              if (event.target?.result) {
+                                img.src = event.target.result as string;
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                  {blueprintUrl && blueprintUrl.startsWith('data:image') && (
+                    <div className="mt-2 text-xs text-green-600 font-semibold flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Blueprint image uploaded.
+                    </div>
+                  )}
                 </div>
 
                 <div>
