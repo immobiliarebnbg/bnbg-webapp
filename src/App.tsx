@@ -1549,38 +1549,6 @@ export default function App() {
                     {isLoginView ? "Sign In" : "Sign Up"}
                   </button>
                 </form>
-
-                {/* Pre-filled Developer Accounts Helpers */}
-                <div className="mt-8 pt-6 border-t border-gray-100 text-center space-y-2">
-                  <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Demo / Sandbox profiles</span>
-                  <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    <div 
-                      onClick={() => {
-                        setAuthEmail("admin@estate.com");
-                        setAuthPassword("admin123");
-                        setIsLoginView(true);
-                      }}
-                      className="p-2 border border-dashed border-red-200 bg-red-50/40 rounded-xl cursor-pointer hover:bg-red-50 transition-colors"
-                    >
-                      <p className="font-bold text-red-700">Admin Account</p>
-                      <p className="text-gray-500 mt-0.5">admin@estate.com</p>
-                      <p className="text-gray-400 font-mono">admin123</p>
-                    </div>
-
-                    <div 
-                      onClick={() => {
-                        setAuthEmail("user@estate.com");
-                        setAuthPassword("user123");
-                        setIsLoginView(true);
-                      }}
-                      className="p-2 border border-dashed border-blue-200 bg-blue-50/40 rounded-xl cursor-pointer hover:bg-blue-50 transition-colors"
-                    >
-                      <p className="font-bold text-blue-700">User Account</p>
-                      <p className="text-gray-500 mt-0.5">user@estate.com</p>
-                      <p className="text-gray-400 font-mono">user123</p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </motion.div>
           )}

@@ -223,10 +223,10 @@ const SEED_PROPERTIES: Property[] = [
 const SEED_USERS: User[] = [
   {
     id: "user-admin",
-    email: "admin@estate.com",
+    email: "admin@bnbg.it",
     username: "Admin Agent",
     role: "admin",
-    password: "admin123", // secure enough for demonstration in sandboxed workspace
+    password: "BnbgSecureAdmin2026!",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
     createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
   },
