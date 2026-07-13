@@ -23,7 +23,7 @@ if (process.env.GEMINI_API_KEY) {
 const app = express();
 const PORT = 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: "20mb" }));
 
 // Helper middleware for auth
 const getUserFromReq = (req: express.Request) => {
