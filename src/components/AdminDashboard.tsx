@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Property, Inquiry, DashboardStats, PropertyType, PropertyStatus } from "../types";
+import { Property, Inquiry, DashboardStats, PropertyType, PropertyStatus, BrokerInfo } from "../types";
 import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone } from "lucide-react";
 import { useCurrency } from "../contexts/CurrencyContext";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ interface AdminDashboardProps {
   onNavigate: (page: string, params?: Record<string, any>) => void;
   cities?: string[];
   propertyTypes?: string[];
+  brokerInfo?: BrokerInfo | null;
   onRefreshMetadata?: () => void;
 }
 
@@ -55,6 +56,7 @@ export default function AdminDashboard({
   onNavigate,
   cities = ["Miami", "New York", "San Francisco", "Austin", "Seattle"],
   propertyTypes = ["villa", "house", "apartment", "loft", "condo", "townhouse"],
+  brokerInfo,
   onRefreshMetadata,
 }: AdminDashboardProps) {
   const { formatPrice, currency } = useCurrency();
@@ -110,6 +112,11 @@ export default function AdminDashboard({
   const [metaActionLoading, setMetaActionLoading] = useState(false);
   const [metaError, setMetaError] = useState("");
   const [metaSuccess, setMetaSuccess] = useState("");
+
+  const [brokerName, setBrokerName] = useState(brokerInfo?.name || "Vanessa Sterling");
+  const [brokerRole, setBrokerRole] = useState(brokerInfo?.role || "Senior Relocation Specialist");
+  const [brokerImage, setBrokerImage] = useState(brokerInfo?.image || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80");
+  const [savingBroker, setSavingBroker] = useState(false);
 
   const CITIES = cities;
   const TYPES = propertyTypes;
@@ -735,6 +742,39 @@ export default function AdminDashboard({
       setAiError("An error occurred during AI content generation.");
     } finally {
       setGeneratingDescription(false);
+    }
+  };
+
+  const handleSaveBrokerInfo = async () => {
+    const valName = brokerName.trim();
+    const valRole = brokerRole.trim();
+    const valImage = brokerImage.trim();
+
+    if (!valName || !valRole || !valImage) {
+      showMetaError("All broker identity fields are required.");
+      return;
+    }
+
+    setSavingBroker(true);
+    try {
+      const res = await fetch("/api/meta/broker", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ brokerInfo: { name: valName, role: valRole, image: valImage } })
+      });
+      if (res.ok) {
+        onRefreshMetadata?.();
+        showMetaSuccess("Broker identity updated successfully!");
+      } else {
+        showMetaError("Failed to update broker identity.");
+      }
+    } catch (e: any) {
+      showMetaError(e.message || "An error occurred");
+    } finally {
+      setSavingBroker(false);
     }
   };
 
@@ -1406,9 +1446,60 @@ export default function AdminDashboard({
                     );
                   })}
 
-                  {propertyTypes.length === 0 && (
-                    <div className="text-center py-8 text-gray-400 text-sm">No property types in list. Add a type above.</div>
-                  )}
+                    {propertyTypes.length === 0 && (
+                      <div className="text-center py-8 text-gray-400 text-sm">No property types in list. Add a type above.</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* BROKER IDENTITY SECTION */}
+            <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-xs mt-6">
+              <div className="px-6 py-5 border-b border-gray-50 bg-slate-50 flex items-center gap-3">
+                <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                  <UserIcon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-gray-900">Broker Identity</h4>
+                  <p className="text-xs text-gray-400 mt-0.5">Customize the broker profile displayed on property details.</p>
+                </div>
+              </div>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Name</label>
+                    <input type="text" value={brokerName} onChange={(e) => setBrokerName(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none" placeholder="e.g. Vanessa Sterling" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Role</label>
+                    <input type="text" value={brokerRole} onChange={(e) => setBrokerRole(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none" placeholder="e.g. Senior Relocation Specialist" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Profile Image URL</label>
+                    <input type="text" value={brokerImage} onChange={(e) => setBrokerImage(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none" placeholder="https://..." />
+                  </div>
+                  <div className="pt-2">
+                    <button onClick={handleSaveBrokerInfo} disabled={savingBroker} className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm cursor-pointer">
+                      {savingBroker ? "Saving..." : "Save Broker Identity"}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-100 rounded-2xl bg-slate-50">
+                  <p className="text-xs text-gray-400 uppercase font-semibold mb-4 text-center">Live Preview</p>
+                  <div className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100 w-full max-w-sm">
+                    <div className="w-14 h-14 rounded-full overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                      {brokerImage ? (
+                        <img src={brokerImage} alt={brokerName} className="w-full h-full object-cover" />
+                      ) : (
+                        <UserIcon className="w-6 h-6 text-gray-400 m-4" />
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-base text-gray-900">{brokerName || "Vanessa Sterling"}</h4>
+                      <p className="text-xs text-gray-500">{brokerRole || "Senior Relocation Specialist"}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

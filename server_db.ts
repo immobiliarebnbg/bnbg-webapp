@@ -313,4 +313,30 @@ export class Db {
       .upsert({ key: "propertyTypes", value: JSON.stringify(clean) }, { onConflict: "key" });
     return clean;
   }
+
+  static async getBrokerInfo() {
+    const defaultBroker = {
+      name: "Vanessa Sterling",
+      role: "Senior Relocation Specialist",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80"
+    };
+    try {
+      const { data, error } = await supabase
+        .from("metadata")
+        .select("value")
+        .eq("key", "brokerInfo")
+        .single();
+      if (error || !data) return defaultBroker;
+      return JSON.parse(data.value);
+    } catch {
+      return defaultBroker;
+    }
+  }
+
+  static async updateBrokerInfo(brokerInfo: any) {
+    await supabase
+      .from("metadata")
+      .upsert({ key: "brokerInfo", value: JSON.stringify(brokerInfo) }, { onConflict: "key" });
+    return brokerInfo;
+  }
 }

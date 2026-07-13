@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { Property, User, SearchFilters, PropertyType, PropertyStatus } from "./types";
+import { Property, User, SearchFilters, PropertyType, PropertyStatus, BrokerInfo } from "./types";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { useCurrency } from "./contexts/CurrencyContext";
@@ -30,6 +30,7 @@ export default function App() {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
   const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
+  const [brokerInfo, setBrokerInfo] = useState<BrokerInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Auth State
@@ -101,6 +102,7 @@ export default function App() {
       if (res.ok) {
         setCities(data.cities || []);
         setPropertyTypes(data.propertyTypes || []);
+        setBrokerInfo(data.brokerInfo || null);
       }
     } catch (e) {
       console.error("Error fetching metadata", e);
@@ -1202,15 +1204,15 @@ export default function App() {
                       <div className="flex gap-4 pb-5 border-b border-gray-100 mb-6 items-center">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-50 border border-gray-150 shrink-0">
                           <img width="800" height="600" loading="lazy" decoding="async"
-                            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80"
+                            src={brokerInfo?.image || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80"}
                             alt="Broker Agent"
                             className="w-full h-full object-cover"
                           />
                         </div>
                         <div>
                           <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">{t('propertyDetail.brokerTitle')}</p>
-                          <h4 className="font-bold text-base text-gray-900">Vanessa Sterling</h4>
-                          <p className="text-xs text-gray-400">{t('propertyDetail.brokerRole')}</p>
+                          <h4 className="font-bold text-base text-gray-900">{brokerInfo?.name || "Vanessa Sterling"}</h4>
+                          <p className="text-xs text-gray-400">{brokerInfo?.role || t('propertyDetail.brokerRole')}</p>
                         </div>
                       </div>
 
@@ -1690,9 +1692,10 @@ export default function App() {
             >
               <AdminDashboard 
                 authToken={authToken} 
-                onNavigate={handleNavigate} 
+                onNavigate={handleNavigate}
                 cities={cities}
                 propertyTypes={propertyTypes}
+                brokerInfo={brokerInfo}
                 onRefreshMetadata={loadMetadata}
               />
             </motion.div>

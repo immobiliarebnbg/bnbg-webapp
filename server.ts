@@ -135,11 +135,12 @@ app.put("/api/auth/password", requireAuth as any, async (req, res) => {
 
 app.get("/api/meta", async (req, res) => {
   try {
-    const [cities, propertyTypes] = await Promise.all([
+    const [cities, propertyTypes, brokerInfo] = await Promise.all([
       Db.getCities(),
       Db.getPropertyTypes(),
+      Db.getBrokerInfo(),
     ]);
-    res.json({ cities, propertyTypes });
+    res.json({ cities, propertyTypes, brokerInfo });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -164,6 +165,19 @@ app.post("/api/meta/property-types", requireAdmin as any, async (req, res) => {
       return res.status(400).json({ error: "propertyTypes must be an array of strings" });
     const updated = await Db.updatePropertyTypes(propertyTypes);
     res.json({ success: true, propertyTypes: updated });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/meta/broker", requireAdmin as any, async (req, res) => {
+  try {
+    const { brokerInfo } = req.body;
+    if (!brokerInfo || typeof brokerInfo !== 'object') {
+      return res.status(400).json({ error: "brokerInfo object is required" });
+    }
+    const updated = await Db.updateBrokerInfo(brokerInfo);
+    res.json({ success: true, brokerInfo: updated });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

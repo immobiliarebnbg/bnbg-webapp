@@ -82,3 +82,10 @@ export interface DashboardStats {
   byCity: Record<string, number>;
   monthlyInquiries: { month: string; count: number }[];
 }
+
+export interface BrokerInfo {
+  name: string;
+  role: string;
+  image: string;
+}
+
