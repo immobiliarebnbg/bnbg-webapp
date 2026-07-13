@@ -73,9 +73,24 @@ export default function CustomMap(props: CustomMapProps) {
 
     const bounds = L.latLngBounds([]);
 
+    const coordCounts: Record<string, number> = {};
+
     properties.forEach((prop) => {
       const isSelected = selectedProperty?.id === prop.id;
       const priceText = formatPriceCompact(prop.price, prop.status);
+      
+      // Handle overlapping markers by adding a slight offset
+      const coordKey = `${prop.latitude},${prop.longitude}`;
+      let lat = prop.latitude;
+      let lng = prop.longitude;
+      
+      if (coordCounts[coordKey]) {
+        lat += coordCounts[coordKey] * 0.0003;
+        lng += coordCounts[coordKey] * 0.0003;
+        coordCounts[coordKey]++;
+      } else {
+        coordCounts[coordKey] = 1;
+      }
       
       // Highly-styled, custom HTML price tag marker
       const customIcon = L.divIcon({
@@ -98,7 +113,7 @@ export default function CustomMap(props: CustomMapProps) {
         iconAnchor: [0, 0]
       });
 
-      const marker = L.marker([prop.latitude, prop.longitude], { icon: customIcon })
+      const marker = L.marker([lat, lng], { icon: customIcon })
         .addTo(map)
         .on("click", (e) => {
           L.DomEvent.stopPropagation(e);
