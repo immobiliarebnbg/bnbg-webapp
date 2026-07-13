@@ -54,6 +54,7 @@ export default function AdminDashboard({
   onNavigate,
   cities = ["Miami", "New York", "San Francisco", "Austin", "Seattle"],
   propertyTypes = ["villa", "house", "apartment", "loft", "condo", "townhouse"],
+  onRefreshMetadata,
 }: AdminDashboardProps) {
   const { formatPrice, currency } = useCurrency();
   const { t } = useTranslation();

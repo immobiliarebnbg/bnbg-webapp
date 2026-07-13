@@ -1,266 +1,253 @@
-import fs from "fs";
-import path from "path";
-import { Property, User, Inquiry, SearchFilters, DashboardStats } from "./src/types";
+import { createClient } from "@supabase/supabase-js";
+import { Property, User, Inquiry, DashboardStats } from "./src/types";
 
-const DB_FILE = path.join(process.cwd(), "db.json");
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 const DEFAULT_CITIES = ["Bergamo", "Milano", "Roma", "Torino", "Venezia"];
 const DEFAULT_PROPERTY_TYPES = ["villa", "house", "apartment", "loft", "condo", "townhouse"];
 
-interface DatabaseSchema {
-  properties: Property[];
-  users: User[];
-  inquiries: Inquiry[];
-  favorites: Record<string, string[]>; // userEmail -> propertyId[]
-  cities?: string[];
-  propertyTypes?: string[];
-}
-
-const SEED_USERS: User[] = [
-  {
-    id: "user-admin",
-    email: "admin@bnbg.it",
-    username: "Admin BNBG",
-    role: "admin",
-    password: "BnbgSecureAdmin2026!",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-  }
-];
-
 export class Db {
-  private static loadData(): DatabaseSchema {
-    try {
-      if (fs.existsSync(DB_FILE)) {
-        const fileContent = fs.readFileSync(DB_FILE, "utf-8");
-        const data = JSON.parse(fileContent);
-        if (!data.cities) data.cities = DEFAULT_CITIES;
-        if (!data.propertyTypes) data.propertyTypes = DEFAULT_PROPERTY_TYPES;
-        return data;
-      }
-    } catch (e) {
-      console.error("Error reading db.json, recreating", e);
-    }
+  // ─── Properties ────────────────────────────────────────────────────────────
 
-    const initialData: DatabaseSchema = {
-      properties: [],
-      users: SEED_USERS,
-      inquiries: [],
-      favorites: {},
-      cities: DEFAULT_CITIES,
-      propertyTypes: DEFAULT_PROPERTY_TYPES
-    };
-    Db.saveData(initialData);
-    return initialData;
+  static async getProperties(): Promise<Property[]> {
+    const { data, error } = await supabase
+      .from("properties")
+      .select("*")
+      .order("createdAt", { ascending: false });
+    if (error) { console.error("getProperties:", error.message); return []; }
+    return (data || []) as Property[];
   }
 
-  private static saveData(data: DatabaseSchema) {
-    try {
-      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
-    } catch (e) {
-      console.error("Error writing to db.json", e);
-    }
+  static async getPropertyById(id: string): Promise<Property | undefined> {
+    const { data, error } = await supabase
+      .from("properties")
+      .select("*")
+      .eq("id", id)
+      .single();
+    if (error) return undefined;
+    return data as Property;
   }
 
-  // Properties CRUD
-  static getProperties(): Property[] {
-    return Db.loadData().properties;
-  }
-
-  static getPropertyById(id: string): Property | undefined {
-    return Db.getProperties().find((p) => p.id === id);
-  }
-
-  static addProperty(property: Omit<Property, "id" | "createdAt" | "updatedAt">): Property {
-    const data = Db.loadData();
-    const newProperty: Property = {
+  static async addProperty(property: Omit<Property, "id" | "createdAt" | "updatedAt">): Promise<Property> {
+    const now = new Date().toISOString();
+    const newProperty = {
       ...property,
       id: "prop-" + Date.now(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      createdAt: now,
+      updatedAt: now,
     };
-    data.properties.unshift(newProperty);
-    Db.saveData(data);
-    return newProperty;
+    const { data, error } = await supabase
+      .from("properties")
+      .insert(newProperty)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data as Property;
   }
 
-  static updateProperty(id: string, propertyUpdates: Partial<Omit<Property, "id" | "createdAt" | "updatedAt">>): Property | undefined {
-    const data = Db.loadData();
-    const index = data.properties.findIndex((p) => p.id === id);
-    if (index === -1) return undefined;
-
-    const updatedProperty: Property = {
-      ...data.properties[index],
-      ...propertyUpdates,
-      updatedAt: new Date().toISOString()
-    };
-    data.properties[index] = updatedProperty;
-    Db.saveData(data);
-    return updatedProperty;
+  static async updateProperty(
+    id: string,
+    updates: Partial<Omit<Property, "id" | "createdAt" | "updatedAt">>
+  ): Promise<Property | undefined> {
+    const { data, error } = await supabase
+      .from("properties")
+      .update({ ...updates, updatedAt: new Date().toISOString() })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) return undefined;
+    return data as Property;
   }
 
-  static deleteProperty(id: string): boolean {
-    const data = Db.loadData();
-    const initialLen = data.properties.length;
-    data.properties = data.properties.filter((p) => p.id !== id);
-    if (data.properties.length === initialLen) return false;
-    Db.saveData(data);
-    return true;
+  static async deleteProperty(id: string): Promise<boolean> {
+    const { error } = await supabase.from("properties").delete().eq("id", id);
+    return !error;
   }
 
-  // Users CRUD
-  static getUsers(): User[] {
-    return Db.loadData().users;
+  // ─── Users ─────────────────────────────────────────────────────────────────
+
+  static async findUserByEmail(email: string): Promise<User | undefined> {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .ilike("email", email)
+      .single();
+    if (error) return undefined;
+    return data as User;
   }
 
-  static findUserByEmail(email: string): User | undefined {
-    return Db.getUsers().find((u) => u.email.toLowerCase() === email.toLowerCase());
-  }
-
-  static addUser(user: Omit<User, "id" | "createdAt"> & { password?: string }): User {
-    const data = Db.loadData();
-    const newUser: User = {
+  static async addUser(
+    user: Omit<User, "id" | "createdAt"> & { password?: string }
+  ): Promise<User> {
+    const newUser = {
       id: "user-" + Date.now(),
       email: user.email.toLowerCase(),
       username: user.username,
       role: user.role || "user",
       password: user.password || "",
-      avatar: user.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.username)}`,
-      createdAt: new Date().toISOString()
+      avatar:
+        user.avatar ||
+        `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.username)}`,
+      createdAt: new Date().toISOString(),
     };
-    data.users.push(newUser);
-    Db.saveData(data);
-    return newUser;
+    const { data, error } = await supabase
+      .from("users")
+      .insert(newUser)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data as User;
   }
 
-  static updateUserProfile(email: string, updates: { username?: string; avatar?: string; password?: string }): User | undefined {
-    const data = Db.loadData();
-    const index = data.users.findIndex((u) => u.email.toLowerCase() === email.toLowerCase());
-    if (index === -1) return undefined;
+  static async updateUserProfile(
+    email: string,
+    updates: { username?: string; avatar?: string; password?: string }
+  ): Promise<User | undefined> {
+    const updateData: Record<string, string> = {};
+    if (updates.username) updateData.username = updates.username;
+    if (updates.avatar) updateData.avatar = updates.avatar;
+    if (updates.password) updateData.password = updates.password;
 
-    const user = data.users[index];
-    if (updates.username) user.username = updates.username;
-    if (updates.avatar) user.avatar = updates.avatar;
-    if (updates.password) user.password = updates.password;
-
-    data.users[index] = user;
-    Db.saveData(data);
-
-    // Return without password
-    const { password, ...safeUser } = user;
+    const { data, error } = await supabase
+      .from("users")
+      .update(updateData)
+      .ilike("email", email)
+      .select()
+      .single();
+    if (error) return undefined;
+    const { password: _, ...safeUser } = data;
     return safeUser as User;
   }
 
-  // Inquiries CRUD
-  static getInquiries(): Inquiry[] {
-    return Db.loadData().inquiries;
+  // ─── Inquiries ──────────────────────────────────────────────────────────────
+
+  static async getInquiries(): Promise<Inquiry[]> {
+    const { data, error } = await supabase
+      .from("inquiries")
+      .select("*")
+      .order("createdAt", { ascending: false });
+    if (error) { console.error("getInquiries:", error.message); return []; }
+    return (data || []) as Inquiry[];
   }
 
-  static addInquiry(inquiry: Omit<Inquiry, "id" | "createdAt" | "status">): Inquiry {
-    const data = Db.loadData();
-    const newInquiry: Inquiry = {
+  static async addInquiry(
+    inquiry: Omit<Inquiry, "id" | "createdAt" | "status">
+  ): Promise<Inquiry> {
+    const newInquiry = {
       ...inquiry,
       id: "inq-" + Date.now(),
       createdAt: new Date().toISOString(),
-      status: "new"
+      status: "new",
     };
-    data.inquiries.unshift(newInquiry);
-    Db.saveData(data);
-    return newInquiry;
+    const { data, error } = await supabase
+      .from("inquiries")
+      .insert(newInquiry)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data as Inquiry;
   }
 
-  static updateInquiryStatus(id: string, status: "new" | "contacted" | "resolved"): Inquiry | undefined {
-    const data = Db.loadData();
-    const index = data.inquiries.findIndex((i) => i.id === id);
-    if (index === -1) return undefined;
-
-    data.inquiries[index].status = status;
-    Db.saveData(data);
-    return data.inquiries[index];
+  static async updateInquiryStatus(
+    id: string,
+    status: "new" | "contacted" | "resolved"
+  ): Promise<Inquiry | undefined> {
+    const { data, error } = await supabase
+      .from("inquiries")
+      .update({ status })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) return undefined;
+    return data as Inquiry;
   }
 
-  static deleteInquiry(id: string): boolean {
-    const data = Db.loadData();
-    const initialLen = data.inquiries.length;
-    data.inquiries = data.inquiries.filter((i) => i.id !== id);
-    if (data.inquiries.length === initialLen) return false;
-    Db.saveData(data);
-    return true;
+  static async deleteInquiry(id: string): Promise<boolean> {
+    const { error } = await supabase.from("inquiries").delete().eq("id", id);
+    return !error;
   }
 
-  // Favorites CRUD
-  static getFavorites(email: string): string[] {
-    const data = Db.loadData();
-    return data.favorites[email.toLowerCase()] || [];
+  // ─── Favorites ──────────────────────────────────────────────────────────────
+
+  static async getFavorites(email: string): Promise<string[]> {
+    const { data, error } = await supabase
+      .from("favorites")
+      .select("propertyId")
+      .eq("userEmail", email.toLowerCase());
+    if (error) return [];
+    return (data || []).map((f: any) => f.propertyId);
   }
 
-  static toggleFavorite(email: string, propertyId: string): string[] {
-    const data = Db.loadData();
+  static async toggleFavorite(email: string, propertyId: string): Promise<string[]> {
     const userEmail = email.toLowerCase();
-    let favs = data.favorites[userEmail] || [];
+    const { data: existing } = await supabase
+      .from("favorites")
+      .select("id")
+      .eq("userEmail", userEmail)
+      .eq("propertyId", propertyId)
+      .single();
 
-    if (favs.includes(propertyId)) {
-      favs = favs.filter((id) => id !== propertyId);
+    if (existing) {
+      await supabase
+        .from("favorites")
+        .delete()
+        .eq("userEmail", userEmail)
+        .eq("propertyId", propertyId);
     } else {
-      favs.push(propertyId);
+      await supabase
+        .from("favorites")
+        .insert({ id: "fav-" + Date.now(), userEmail, propertyId });
     }
 
-    data.favorites[userEmail] = favs;
-    Db.saveData(data);
-    return favs;
+    return Db.getFavorites(userEmail);
   }
 
-  // Stats for Admin Dashboard
-  static getStats(): DashboardStats {
-    const properties = Db.getProperties();
-    const inquiries = Db.getInquiries();
+  // ─── Stats ──────────────────────────────────────────────────────────────────
+
+  static async getStats(): Promise<DashboardStats> {
+    const [properties, inquiries] = await Promise.all([
+      Db.getProperties(),
+      Db.getInquiries(),
+    ]);
 
     const activeRentals = properties.filter((p) => p.status === "rent" && p.available).length;
     const activeSales = properties.filter((p) => p.status === "sale" && p.available).length;
-
     const newInquiries = inquiries.filter((i) => i.status === "new").length;
 
-    const saleProperties = properties.filter((p) => p.status === "sale");
-    const rentProperties = properties.filter((p) => p.status === "rent");
+    const saleProps = properties.filter((p) => p.status === "sale");
+    const rentProps = properties.filter((p) => p.status === "rent");
 
-    const averagePriceSale = saleProperties.length > 0
-      ? Math.round(saleProperties.reduce((sum, p) => sum + p.price, 0) / saleProperties.length)
-      : 0;
-
-    const averagePriceRent = rentProperties.length > 0
-      ? Math.round(rentProperties.reduce((sum, p) => sum + p.price, 0) / rentProperties.length)
-      : 0;
+    const averagePriceSale =
+      saleProps.length > 0
+        ? Math.round(saleProps.reduce((s, p) => s + p.price, 0) / saleProps.length)
+        : 0;
+    const averagePriceRent =
+      rentProps.length > 0
+        ? Math.round(rentProps.reduce((s, p) => s + p.price, 0) / rentProps.length)
+        : 0;
 
     const byType: Record<string, number> = {};
     const byCity: Record<string, number> = {};
-
     properties.forEach((p) => {
       byType[p.propertyType] = (byType[p.propertyType] || 0) + 1;
       byCity[p.city] = (byCity[p.city] || 0) + 1;
     });
 
-    // Generate monthly stats for the last 6 months
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const now = new Date();
-    const last6Months = Array.from({ length: 6 }).map((_, i) => {
+    const last6 = Array.from({ length: 6 }).map((_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      return {
-        month: months[d.getMonth()] + " " + String(d.getFullYear()).slice(-2),
-        count: 0,
-        mIndex: d.getMonth(),
-        yVal: d.getFullYear()
-      };
+      return { month: months[d.getMonth()] + " " + String(d.getFullYear()).slice(-2), count: 0, mIndex: d.getMonth(), yVal: d.getFullYear() };
     }).reverse();
 
     inquiries.forEach((inq) => {
-      const inqDate = new Date(inq.createdAt);
-      const matched = last6Months.find(m => m.mIndex === inqDate.getMonth() && m.yVal === inqDate.getFullYear());
-      if (matched) {
-        matched.count += 1;
-      }
+      const d = new Date(inq.createdAt);
+      const m = last6.find((x) => x.mIndex === d.getMonth() && x.yVal === d.getFullYear());
+      if (m) m.count++;
     });
-
-    const monthlyInquiries = last6Months.map(m => ({ month: m.month, count: m.count }));
 
     return {
       totalProperties: properties.length,
@@ -272,33 +259,53 @@ export class Db {
       averagePriceRent,
       byType,
       byCity,
-      monthlyInquiries
+      monthlyInquiries: last6.map((m) => ({ month: m.month, count: m.count })),
     };
   }
 
-  // Meta CRUD (Cities)
-  static getCities(): string[] {
-    const data = Db.loadData();
-    return data.cities || DEFAULT_CITIES;
+  // ─── Metadata (Cities & Property Types) ────────────────────────────────────
+
+  static async getCities(): Promise<string[]> {
+    try {
+      const { data, error } = await supabase
+        .from("metadata")
+        .select("value")
+        .eq("key", "cities")
+        .single();
+      if (error || !data) return DEFAULT_CITIES;
+      return JSON.parse(data.value);
+    } catch {
+      return DEFAULT_CITIES;
+    }
   }
 
-  static updateCities(cities: string[]): string[] {
-    const data = Db.loadData();
-    data.cities = cities.map(c => c.trim()).filter(Boolean);
-    Db.saveData(data);
-    return data.cities;
+  static async updateCities(cities: string[]): Promise<string[]> {
+    const clean = cities.map((c) => c.trim()).filter(Boolean);
+    await supabase
+      .from("metadata")
+      .upsert({ key: "cities", value: JSON.stringify(clean) }, { onConflict: "key" });
+    return clean;
   }
 
-  // Meta CRUD (Property Types)
-  static getPropertyTypes(): string[] {
-    const data = Db.loadData();
-    return data.propertyTypes || DEFAULT_PROPERTY_TYPES;
+  static async getPropertyTypes(): Promise<string[]> {
+    try {
+      const { data, error } = await supabase
+        .from("metadata")
+        .select("value")
+        .eq("key", "propertyTypes")
+        .single();
+      if (error || !data) return DEFAULT_PROPERTY_TYPES;
+      return JSON.parse(data.value);
+    } catch {
+      return DEFAULT_PROPERTY_TYPES;
+    }
   }
 
-  static updatePropertyTypes(types: string[]): string[] {
-    const data = Db.loadData();
-    data.propertyTypes = types.map(t => t.trim()).filter(Boolean);
-    Db.saveData(data);
-    return data.propertyTypes;
+  static async updatePropertyTypes(types: string[]): Promise<string[]> {
+    const clean = types.map((t) => t.trim()).filter(Boolean);
+    await supabase
+      .from("metadata")
+      .upsert({ key: "propertyTypes", value: JSON.stringify(clean) }, { onConflict: "key" });
+    return clean;
   }
 }
