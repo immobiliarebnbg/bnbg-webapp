@@ -96,6 +96,42 @@
     "eco": "مواد صديقة للبيئة",
     "escrow": "ضمان آمن",
     "teamTitle": "تعرف على المتخصصين العقاريين لدينا",
-    "teamDesc": "نحن نقدم عقودًا من الخبرة المحلية عبر المراكز الحضرية الرئيسية."
+    "teamDesc": "نحن نقدم عقودًا من الخبرة المحلية في المراكز الحضرية الرئيسية."
+  },
+  "admin": {
+    "dashboard": "لوحة الإدارة",
+    "overview": "نظرة عامة",
+    "properties": "العقارات",
+    "inquiries": "الاستفسارات",
+    "metadata": "البيانات الوصفية",
+    "stats": {
+      "totalProperties": "إجمالي العقارات",
+      "activeRentals": "إيجارات نشطة",
+      "activeSales": "مبيعات نشطة",
+      "totalInquiries": "إجمالي الاستفسارات",
+      "newInquiries": "استفسارات جديدة",
+      "avgSalePrice": "متوسط سعر البيع",
+      "avgRentPrice": "متوسط الإيجار/شهر"
+    },
+    "table": {
+      "property": "العقار",
+      "location": "الموقع",
+      "type": "النوع",
+      "statusPrice": "الحالة / السعر",
+      "actions": "إجراءات",
+      "date": "التاريخ",
+      "client": "العميل",
+      "message": "الرسالة",
+      "status": "الحالة"
+    },
+    "actions": {
+      "addNew": "إضافة عقار",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "markContacted": "تم الاتصال",
+      "markResolved": "تم الحل"
+    }
   }
 }

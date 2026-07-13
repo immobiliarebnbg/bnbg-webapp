@@ -97,5 +97,41 @@
     "escrow": "Secure Escrow",
     "teamTitle": "Meet Our Real Estate Specialists",
     "teamDesc": "We provide decades of local expertise across primary metropolitan hubs."
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "overview": "Overview",
+    "properties": "Properties",
+    "inquiries": "Inquiries",
+    "metadata": "Metadata",
+    "stats": {
+      "totalProperties": "Total Properties",
+      "activeRentals": "Active Rentals",
+      "activeSales": "Active Sales",
+      "totalInquiries": "Total Inquiries",
+      "newInquiries": "New Inquiries",
+      "avgSalePrice": "Avg Sale Price",
+      "avgRentPrice": "Avg Rent Price/mo"
+    },
+    "table": {
+      "property": "Property",
+      "location": "Location",
+      "type": "Type",
+      "statusPrice": "Status / Price",
+      "actions": "Actions",
+      "date": "Date",
+      "client": "Client",
+      "message": "Message",
+      "status": "Status"
+    },
+    "actions": {
+      "addNew": "Add New Listing",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save Property",
+      "cancel": "Cancel",
+      "markContacted": "Mark Contacted",
+      "markResolved": "Mark Resolved"
+    }
   }
 }

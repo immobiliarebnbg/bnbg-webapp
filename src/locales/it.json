@@ -96,6 +96,42 @@
     "eco": "Materiali Eco",
     "escrow": "Deposito Sicuro",
     "teamTitle": "Incontra i Nostri Specialisti Immobiliari",
-    "teamDesc": "Offriamo decenni di esperienza locale nei principali snodi metropolitani."
+    "teamDesc": "Forniamo decenni di competenza locale nei principali hub metropolitani."
+  },
+  "admin": {
+    "dashboard": "Pannello di Controllo",
+    "overview": "Panoramica",
+    "properties": "Proprietà",
+    "inquiries": "Richieste",
+    "metadata": "Metadati",
+    "stats": {
+      "totalProperties": "Proprietà Totali",
+      "activeRentals": "Affitti Attivi",
+      "activeSales": "Vendite Attive",
+      "totalInquiries": "Richieste Totali",
+      "newInquiries": "Nuove Richieste",
+      "avgSalePrice": "Prezzo Medio Vendita",
+      "avgRentPrice": "Prezzo Medio Affitto/Mese"
+    },
+    "table": {
+      "property": "Proprietà",
+      "location": "Luogo",
+      "type": "Tipo",
+      "statusPrice": "Stato / Prezzo",
+      "actions": "Azioni",
+      "date": "Data",
+      "client": "Cliente",
+      "message": "Messaggio",
+      "status": "Stato"
+    },
+    "actions": {
+      "addNew": "Aggiungi Proprietà",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "save": "Salva Proprietà",
+      "cancel": "Annulla",
+      "markContacted": "Segna come Contattato",
+      "markResolved": "Segna come Risolto"
+    }
   }
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Property, Inquiry, DashboardStats, PropertyType, PropertyStatus } from "../types";
 import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone } from "lucide-react";
 import { useCurrency } from "../contexts/CurrencyContext";
+import { useTranslation } from "react-i18next";
 
 interface AdminDashboardProps {
   authToken: string;
@@ -50,6 +51,7 @@ export default function AdminDashboard({
   propertyTypes = ["villa", "house", "apartment", "loft", "condo", "townhouse"],
 }: AdminDashboardProps) {
   const { formatPrice, currency } = useCurrency();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"stats" | "properties" | "inquiries" | "metadata">("stats");
 
   const [properties, setProperties] = useState<Property[]>([]);
@@ -680,8 +682,13 @@ export default function AdminDashboard({
       {/* Header and Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-150 pb-6 mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Agent Command Center</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage luxury properties, follow up on client inquiries, and view analytics.</p>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+            <Clipboard className="h-7 w-7 text-blue-600" />
+            {t('admin.dashboard')}
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Manage your real estate platform data and settings.
+          </p>
         </div>
 
         <div className="flex gap-2 shrink-0">
@@ -703,50 +710,55 @@ export default function AdminDashboard({
       </div>
 
       {/* Tab Selectors */}
-      <div className="flex border-b border-gray-100 mb-8 overflow-x-auto">
+      <div className="flex border-b border-gray-100 mb-8 overflow-x-auto gap-8">
         <button
           onClick={() => setActiveTab("stats")}
-          className={`px-5 py-3 border-b-2 font-medium text-sm transition-colors whitespace-nowrap flex items-center gap-2.5 ${
+          className={`py-4 px-1 flex items-center gap-2 border-b-2 text-sm font-medium transition-colors ${
             activeTab === "stats"
-              ? "border-blue-600 text-blue-600 font-semibold"
-              : "border-transparent text-gray-500 hover:text-gray-900"
+              ? "border-blue-600 text-blue-600"
+              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
           }`}
         >
-          <BarChart3 className="w-4 h-4" />
-          Market Analytics
+          <BarChart3 className="h-4 w-4" />
+          {t('admin.overview')}
         </button>
         <button
           onClick={() => setActiveTab("properties")}
-          className={`px-5 py-3 border-b-2 font-medium text-sm transition-colors whitespace-nowrap flex items-center gap-2.5 ${
+          className={`py-4 px-1 flex items-center gap-2 border-b-2 text-sm font-medium transition-colors ${
             activeTab === "properties"
-              ? "border-blue-600 text-blue-600 font-semibold"
-              : "border-transparent text-gray-500 hover:text-gray-900"
+              ? "border-blue-600 text-blue-600"
+              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
           }`}
         >
-          <Building className="w-4 h-4" />
-          Active Listings ({properties.length})
+          <Building className="h-4 w-4" />
+          {t('admin.properties')}
         </button>
         <button
           onClick={() => setActiveTab("inquiries")}
-          className={`px-5 py-3 border-b-2 font-medium text-sm transition-colors whitespace-nowrap flex items-center gap-2.5 ${
+          className={`py-4 px-1 flex items-center gap-2 border-b-2 text-sm font-medium transition-colors ${
             activeTab === "inquiries"
-              ? "border-blue-600 text-blue-600 font-semibold"
-              : "border-transparent text-gray-500 hover:text-gray-900"
+              ? "border-blue-600 text-blue-600"
+              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
           }`}
         >
-          <MessageSquare className="w-4 h-4" />
-          Inquiries ({inquiries.length})
+          <MessageSquare className="h-4 w-4" />
+          {t('admin.inquiries')}
+          {inquiries.filter(i => i.status === "new").length > 0 && (
+            <span className="bg-red-100 text-red-600 py-0.5 px-2 rounded-full text-xs font-bold">
+              {inquiries.filter(i => i.status === "new").length}
+            </span>
+          )}
         </button>
         <button
           onClick={() => setActiveTab("metadata")}
-          className={`px-5 py-3 border-b-2 font-medium text-sm transition-colors whitespace-nowrap flex items-center gap-2.5 ${
+          className={`py-4 px-1 flex items-center gap-2 border-b-2 text-sm font-medium transition-colors ${
             activeTab === "metadata"
-              ? "border-blue-600 text-blue-600 font-semibold"
-              : "border-transparent text-gray-500 hover:text-gray-900"
+              ? "border-blue-600 text-blue-600"
+              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
           }`}
         >
-          <Clipboard className="w-4 h-4" />
-          Hubs & Types Manager
+          <Sparkles className="h-4 w-4" />
+          {t('admin.metadata')}
         </button>
       </div>
 
@@ -764,32 +776,32 @@ export default function AdminDashboard({
           {/* Bento Cards Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-xs">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Listings</span>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t('admin.stats.totalProperties')}</span>
               <p className="text-3xl font-bold text-gray-900 mt-1">{stats.totalProperties}</p>
               <div className="flex gap-4 mt-3 text-xs font-mono text-gray-500">
-                <span className="text-blue-600 font-bold">{stats.activeSales} Sales</span>
-                <span className="text-emerald-600 font-bold">{stats.activeRentals} Rentals</span>
+                <span className="text-blue-600 font-bold">{stats.activeSales} {t('admin.stats.activeSales')}</span>
+                <span className="text-emerald-600 font-bold">{stats.activeRentals} {t('admin.stats.activeRentals')}</span>
               </div>
             </div>
 
             <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-xs">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Avg House Value</span>
-              <p className="text-3xl font-bold text-gray-900 mt-1">${stats.averagePriceSale.toLocaleString()}</p>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t('admin.stats.avgSalePrice')}</span>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{formatPrice(stats.averagePriceSale, 'sale')}</p>
               <span className="inline-block text-[10px] text-gray-400 font-mono mt-3">From all active sale listings</span>
             </div>
 
             <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-xs">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Avg Monthly Rent</span>
-              <p className="text-3xl font-bold text-gray-900 mt-1">${stats.averagePriceRent.toLocaleString()}/mo</p>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t('admin.stats.avgRentPrice')}</span>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{formatPrice(stats.averagePriceRent, 'rent')}</p>
               <span className="inline-block text-[10px] text-gray-400 font-mono mt-3">From all active lease properties</span>
             </div>
 
             <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-xs">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Client Inquiries</span>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t('admin.stats.totalInquiries')}</span>
               <p className="text-3xl font-bold text-gray-900 mt-1">{stats.totalInquiries}</p>
               <div className="flex items-center gap-1.5 mt-3 text-xs font-mono">
                 <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-red-600 font-bold">{stats.newInquiries} New Messages</span>
+                <span className="text-red-600 font-bold">{stats.newInquiries} {t('admin.stats.newInquiries')}</span>
               </div>
             </div>
           </div>
@@ -919,12 +931,12 @@ export default function AdminDashboard({
             <table className="w-full text-left border-collapse font-sans">
               <thead>
                 <tr className="border-b border-gray-100 text-xs text-gray-400 font-bold uppercase tracking-wider bg-slate-50/50">
-                  <th className="py-4 px-6">Property Name</th>
-                  <th className="py-4 px-6">Location</th>
-                  <th className="py-4 px-6">Type</th>
-                  <th className="py-4 px-6">Status / Price</th>
-                  <th className="py-4 px-6">Availability</th>
-                  <th className="py-4 px-6 text-right">Actions</th>
+                  <th className="py-4 px-6 text-left">{t('admin.table.property')}</th>
+                  <th className="py-4 px-6 text-left">{t('admin.table.location')}</th>
+                  <th className="py-4 px-6 text-left">{t('admin.table.type')}</th>
+                  <th className="py-4 px-6 text-left">{t('admin.table.statusPrice')}</th>
+                  <th className="py-4 px-6 text-left">Availability</th>
+                  <th className="py-4 px-6 text-right">{t('admin.table.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50 text-sm text-gray-700">

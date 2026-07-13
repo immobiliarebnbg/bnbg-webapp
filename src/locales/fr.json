@@ -96,6 +96,42 @@
     "eco": "Matériaux Éco",
     "escrow": "Dépôt Sécurisé",
     "teamTitle": "Rencontrez Nos Spécialistes",
-    "teamDesc": "Nous offrons des décennies d'expertise locale dans les principaux centres métropolitains."
+    "teamDesc": "Nous fournissons des décennies d'expertise locale dans les principaux centres métropolitains."
+  },
+  "admin": {
+    "dashboard": "Tableau de Bord",
+    "overview": "Aperçu",
+    "properties": "Propriétés",
+    "inquiries": "Demandes",
+    "metadata": "Métadonnées",
+    "stats": {
+      "totalProperties": "Propriétés Totales",
+      "activeRentals": "Locations Actives",
+      "activeSales": "Ventes Actives",
+      "totalInquiries": "Demandes Totales",
+      "newInquiries": "Nouvelles Demandes",
+      "avgSalePrice": "Prix Moyen de Vente",
+      "avgRentPrice": "Loyer Moyen/Mois"
+    },
+    "table": {
+      "property": "Propriété",
+      "location": "Emplacement",
+      "type": "Type",
+      "statusPrice": "Statut / Prix",
+      "actions": "Actions",
+      "date": "Date",
+      "client": "Client",
+      "message": "Message",
+      "status": "Statut"
+    },
+    "actions": {
+      "addNew": "Ajouter Propriété",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "markContacted": "Marquer comme Contacté",
+      "markResolved": "Marquer comme Résolu"
+    }
   }
 }
