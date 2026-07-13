@@ -1351,30 +1351,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Leadership team Grid */}
-              <div className="space-y-12">
-                <div className="text-center max-w-3xl mx-auto space-y-2">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('aboutPage.teamTitle')}</h2>
-                  <p className="text-gray-500 text-sm">{t('aboutPage.teamDesc')}</p>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {[
-                    { name: "Vanessa Sterling", role: "Miami Relocations Specialty", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&h=300&q=80" },
-                    { name: "Marcus Vance", role: "New York Commercial Lofts", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&h=300&q=80" },
-                    { name: "Sophia Martinez", role: "San Francisco High-Rise Specialty", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&h=300&q=80" },
-                    { name: "Arthur Pendelton", role: "Austin Eco Townhomes Specialist", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&h=300&q=80" }
-                  ].map((lead) => (
-                    <div key={lead.name} className="bg-white border border-gray-100 rounded-3xl p-5 shadow-xs text-center">
-                      <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border border-gray-100">
-                        <img src={lead.img} alt={lead.name} className="w-full h-full object-cover" />
-                      </div>
-                      <h4 className="font-bold text-base text-gray-900">{lead.name}</h4>
-                      <p className="text-xs text-gray-400 mt-0.5">{lead.role}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </motion.div>
           )}
 
