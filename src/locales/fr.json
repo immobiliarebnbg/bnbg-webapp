@@ -24,7 +24,12 @@
     "quickLinks": "Liens Rapides",
     "contactInfo": "Info Contact",
     "address": "Bergame, via san bernardino 7/B",
-    "rights": "Tous droits réservés."
+    "rights": "Tous droits réservés.",
+    "featuredProperties": "Propriétés en Vedette",
+    "propertiesForSale": "Propriétés à Vendre",
+    "propertiesForRent": "Propriétés à Louer",
+    "ourVision": "Notre Vision et Histoire",
+    "googleMaps": "Trouvez-nous sur Google Maps ↗"
   },
   "home": {
     "architecturalCollections": "Collections Architecturales",

@@ -24,7 +24,12 @@
     "quickLinks": "Quick Links",
     "contactInfo": "Contact Info",
     "address": "Bergamo, via san bernardino 7/B",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "featuredProperties": "Featured Properties",
+    "propertiesForSale": "Properties for Sale",
+    "propertiesForRent": "Properties for Rent",
+    "ourVision": "Our Vision & Story",
+    "googleMaps": "Find Us on Google Maps ↗"
   },
   "home": {
     "architecturalCollections": "Architectural Collections",

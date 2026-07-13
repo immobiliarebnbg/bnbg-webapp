@@ -24,7 +24,12 @@
     "quickLinks": "Link Rapidi",
     "contactInfo": "Info Contatti",
     "address": "Bergamo, via san bernardino 7/B",
-    "rights": "Tutti i diritti riservati."
+    "rights": "Tutti i diritti riservati.",
+    "featuredProperties": "Proprietà in Evidenza",
+    "propertiesForSale": "Proprietà in Vendita",
+    "propertiesForRent": "Proprietà in Affitto",
+    "ourVision": "La Nostra Visione e Storia",
+    "googleMaps": "Trovaci su Google Maps ↗"
   },
   "home": {
     "architecturalCollections": "Collezioni Architettoniche",

@@ -12,7 +12,7 @@ export default function Footer({ onNavigate }: FooterProps) {
   return (
     <footer id="footer-section" className="bg-gray-950 text-gray-400 font-sans border-t border-gray-900 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Logo & Description */}
           <div className="md:col-span-1 space-y-4">
             <div className="flex items-center cursor-pointer mb-2" onClick={() => onNavigate("home")}>
@@ -36,7 +36,7 @@ export default function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate("home")}
                   className="hover:text-white transition-colors"
                 >
-                  Featured Properties
+                  {t('footer.featuredProperties')}
                 </button>
               </li>
               <li>
@@ -44,7 +44,7 @@ export default function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate("buy")}
                   className="hover:text-white transition-colors"
                 >
-                  Properties for Sale
+                  {t('footer.propertiesForSale')}
                 </button>
               </li>
               <li>
@@ -52,7 +52,7 @@ export default function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate("rent")}
                   className="hover:text-white transition-colors"
                 >
-                  Properties for Rent
+                  {t('footer.propertiesForRent')}
                 </button>
               </li>
               <li>
@@ -60,46 +60,7 @@ export default function Footer({ onNavigate }: FooterProps) {
                   onClick={() => onNavigate("about")}
                   className="hover:text-white transition-colors"
                 >
-                  Our Vision & Story
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Locations */}
-          <div>
-            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-4">Premium Cities</h3>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <button 
-                  onClick={() => onNavigate("buy", { filterCity: "Miami" })}
-                  className="hover:text-white transition-colors"
-                >
-                  Miami Coastal Villas
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate("buy", { filterCity: "New York" })}
-                  className="hover:text-white transition-colors"
-                >
-                  New York Lofts
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate("buy", { filterCity: "San Francisco" })}
-                  className="hover:text-white transition-colors"
-                >
-                  San Francisco High-Rises
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate("buy", { filterCity: "Austin" })}
-                  className="hover:text-white transition-colors"
-                >
-                  Austin Luxury Homes
+                  {t('footer.ourVision')}
                 </button>
               </li>
             </ul>
@@ -134,7 +95,7 @@ export default function Footer({ onNavigate }: FooterProps) {
                 className="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 font-mono transition-colors"
               >
                 <Map className="w-3.5 h-3.5" />
-                Find Us on Google Maps ↗
+                {t('footer.googleMaps')}
               </a>
             </div>
           </div>

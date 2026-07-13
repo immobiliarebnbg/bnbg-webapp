@@ -24,7 +24,12 @@
     "quickLinks": "روابط سريعة",
     "contactInfo": "معلومات الاتصال",
     "address": "بيرغامو، شارع سان برناردينو 7/B",
-    "rights": "جميع الحقوق محفوظة."
+    "rights": "جميع الحقوق محفوظة.",
+    "featuredProperties": "عقارات مميزة",
+    "propertiesForSale": "عقارات للبيع",
+    "propertiesForRent": "عقارات للإيجار",
+    "ourVision": "رؤيتنا وقصتنا",
+    "googleMaps": "اعثر علينا على خرائط جوجل ↗"
   },
   "home": {
     "architecturalCollections": "مجموعات معمارية",
