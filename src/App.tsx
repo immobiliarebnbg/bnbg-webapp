@@ -529,7 +529,7 @@ export default function App() {
                   <p className="text-gray-500 mt-2">{t('home.architecturalDesc')}</p>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 animate-fade-in">
+                <div className="flex flex-wrap justify-center gap-4 animate-fade-in">
                   {propertyTypes.filter(type => properties.some(p => p.propertyType === type)).map((type) => {
                     const count = properties.filter(p => p.propertyType === type).length;
                     const label = type.charAt(0).toUpperCase() + type.slice(1) + (type.toLowerCase().endsWith("s") || type.toLowerCase().endsWith("ch") || type.toLowerCase().endsWith("sh") ? "" : "s");
@@ -550,7 +550,7 @@ export default function App() {
                       <div
                         key={type}
                         onClick={() => handleCategoryClick(type as PropertyType)}
-                        className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col items-center justify-center text-center shadow-xs hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer group"
+                        className="w-[160px] sm:w-[180px] bg-white border border-gray-100 rounded-2xl p-5 flex flex-col items-center justify-center text-center shadow-xs hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer group"
                       >
                         <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-colors">
                           {getIconForType(type)}
