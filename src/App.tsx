@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslation } from "react-i18next";
 import { Property, User, SearchFilters, PropertyType, PropertyStatus } from "./types";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -15,6 +16,12 @@ import {
 } from "lucide-react";
 
 export default function App() {
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+  }, [i18n.language]);
+
   const [currentPage, setCurrentPage] = useState<string>("home");
   const [navigationParams, setNavigationParams] = useState<Record<string, any>>({});
   const [properties, setProperties] = useState<Property[]>([]);
@@ -402,7 +409,7 @@ export default function App() {
                       transition={{ delay: 0.3 }}
                       className="text-4xl sm:text-6xl font-bold tracking-tight text-white leading-[1.1]"
                     >
-                      Discover Your Absolute <span className="text-blue-500">Perfect Home</span>
+                      {t('hero.title1')} <span className="text-blue-500">{t('hero.title2')}</span>
                     </motion.h1>
 
                     <motion.p
@@ -411,7 +418,7 @@ export default function App() {
                       transition={{ delay: 0.45 }}
                       className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl"
                     >
-                      Explore an architectural gallery of premium, meticulously vetted estates for purchase and luxury lease across the nation's premier districts.
+                      {t('hero.subtitle')}
                     </motion.p>
 
                     {/* Integrated Search Console */}
@@ -428,13 +435,13 @@ export default function App() {
                             onClick={() => handleNavigate("buy")}
                             className="px-4 py-2 rounded-lg text-xs font-bold text-gray-800 bg-white shadow-xs transition-all"
                           >
-                            Buy
+                            {t('nav.buy')}
                           </button>
                           <button
                             onClick={() => handleNavigate("rent")}
                             className="px-4 py-2 rounded-lg text-xs font-bold text-gray-500 hover:text-gray-800 transition-all"
                           >
-                            Rent
+                            {t('nav.rent')}
                           </button>
                         </div>
 
@@ -443,7 +450,7 @@ export default function App() {
                           <Search className="w-5 h-5 text-gray-400 shrink-0 mr-2.5" />
                           <input
                             type="text"
-                            placeholder="Enter city, neighborhood, or keywords..."
+                            placeholder={t('hero.searchPlaceholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && handleNavigate("buy")}
@@ -455,7 +462,7 @@ export default function App() {
                           onClick={() => handleNavigate("buy")}
                           className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-3 rounded-xl shadow-xs transition-colors cursor-pointer whitespace-nowrap"
                         >
-                          Explore Listings
+                          {t('hero.searchButton')}
                         </button>
                       </div>
                     </motion.div>
@@ -466,8 +473,8 @@ export default function App() {
               {/* Property Categories Grid */}
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center max-w-3xl mx-auto mb-12">
-                  <h2 className="text-3xl font-bold tracking-tight text-gray-900">Architectural Collections</h2>
-                  <p className="text-gray-500 mt-2">Filter listings instantly by your preferred building style and form.</p>
+                  <h2 className="text-3xl font-bold tracking-tight text-gray-900">{t('home.architecturalCollections')}</h2>
+                  <p className="text-gray-500 mt-2">{t('home.architecturalDesc')}</p>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 animate-fade-in">
@@ -497,7 +504,7 @@ export default function App() {
                           {getIconForType(type)}
                         </div>
                         <h4 className="font-bold text-sm text-gray-900 group-hover:text-blue-600 transition-colors">{label}</h4>
-                        <span className="text-[11px] font-mono text-gray-400 mt-1 block">{count} listings</span>
+                        <span className="text-[11px] font-mono text-gray-400 mt-1 block">{count} {t('home.listingsCount')}</span>
                       </div>
                     );
                   })}
@@ -508,14 +515,14 @@ export default function App() {
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-end mb-10">
                   <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-gray-900">Curated Showcases</h2>
-                    <p className="text-gray-500 mt-2">Meticulously selected signature listings representing high-end design craftsmanship.</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-gray-900">{t('home.curatedShowcases')}</h2>
+                    <p className="text-gray-500 mt-2">{t('home.curatedDesc')}</p>
                   </div>
                   <button
                     onClick={() => handleNavigate("buy")}
                     className="hidden sm:inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
                   >
-                    View All Showcases
+                    {t('home.viewAll')}
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -540,7 +547,7 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
-                    <p className="text-gray-400">No showcases flagged featured currently.</p>
+                    <p className="text-gray-400">{t('home.noShowcases')}</p>
                   </div>
                 )}
               </div>
@@ -550,19 +557,19 @@ export default function App() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
                   <div>
                     <p className="text-4xl sm:text-5xl font-bold text-blue-500 font-mono">$1.4B+</p>
-                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">Total Sales Volume</p>
+                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">{t('home.stats.sales')}</p>
                   </div>
                   <div>
                     <p className="text-4xl sm:text-5xl font-bold text-blue-500 font-mono">12,000+</p>
-                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">Premium Transactions</p>
+                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">{t('home.stats.transactions')}</p>
                   </div>
                   <div>
                     <p className="text-4xl sm:text-5xl font-bold text-blue-500 font-mono">99.4%</p>
-                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">Client Trust Score</p>
+                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">{t('home.stats.trust')}</p>
                   </div>
                   <div>
                     <p className="text-4xl sm:text-5xl font-bold text-blue-500 font-mono">24/7</p>
-                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">Dedicated Brokerage Care</p>
+                    <p className="text-xs sm:text-sm text-slate-400 uppercase font-semibold tracking-wider mt-2">{t('home.stats.care')}</p>
                   </div>
                 </div>
               </div>
@@ -570,8 +577,8 @@ export default function App() {
               {/* Latest Listings */}
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center max-w-3xl mx-auto mb-12">
-                  <h2 className="text-3xl font-bold tracking-tight text-gray-900">Latest Additions</h2>
-                  <p className="text-gray-500 mt-2">Fresh properties introduced onto the prime markets this week.</p>
+                  <h2 className="text-3xl font-bold tracking-tight text-gray-900">{t('home.latestAdditions')}</h2>
+                  <p className="text-gray-500 mt-2">{t('home.latestDesc')}</p>
                 </div>
 
                 {loading ? (
@@ -601,10 +608,10 @@ export default function App() {
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
                   <div className="space-y-6">
-                    <span className="text-xs font-bold text-blue-600 uppercase tracking-widest block">Core Strengths</span>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">Elevating Real Estate Transactions Into Art Forms</h2>
+                    <span className="text-xs font-bold text-blue-600 uppercase tracking-widest block">{t('about.coreStrengths')}</span>
+                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">{t('about.title')}</h2>
                     <p className="text-gray-500 text-sm leading-relaxed">
-                      We understand that searching for real estate is about securing a long-term canvas for life. We align luxury materials, location data, and direct agent support to protect your interests.
+                      {t('about.desc')}
                     </p>
 
                     <div className="space-y-4 pt-2">
@@ -613,8 +620,8 @@ export default function App() {
                           <Shield className="w-5 h-5" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-sm text-gray-900">Vetted Guarantee</h4>
-                          <p className="text-xs text-gray-500 mt-1">Every listing is cross-referenced for layout accuracy, structural standards, and clean deeds.</p>
+                          <h4 className="font-bold text-sm text-gray-900">{t('about.vetted')}</h4>
+                          <p className="text-xs text-gray-500 mt-1">{t('about.vettedDesc')}</p>
                         </div>
                       </div>
                       <div className="flex gap-4 items-start">
@@ -622,8 +629,8 @@ export default function App() {
                           <Compass className="w-5 h-5" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-sm text-gray-900">District Depth</h4>
-                          <p className="text-xs text-gray-500 mt-1">Direct access to private sales, off-market opportunities, and school reports.</p>
+                          <h4 className="font-bold text-sm text-gray-900">{t('about.district')}</h4>
+                          <p className="text-xs text-gray-500 mt-1">{t('about.districtDesc')}</p>
                         </div>
                       </div>
                     </div>
@@ -647,22 +654,22 @@ export default function App() {
                   <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-blue-700/30 blur-3xl" />
 
                   <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-                    <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Looking to list your luxury estate?</h2>
+                    <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">{t('cta.title')}</h2>
                     <p className="text-blue-100 text-sm sm:text-base leading-relaxed">
-                      Connect directly with our luxury brokers to showcase your property under premium catalogs.
+                      {t('cta.desc')}
                     </p>
                     <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
                       <button
                         onClick={() => handleNavigate("contact")}
                         className="bg-white hover:bg-slate-50 text-blue-600 font-bold text-sm px-6 py-3.5 rounded-xl shadow-md transition-colors cursor-pointer"
                       >
-                        Contact An Agent
+                        {t('cta.contactBtn')}
                       </button>
                       <button
                         onClick={() => handleNavigate("about")}
                         className="bg-blue-700 hover:bg-blue-800 text-white font-bold text-sm px-6 py-3.5 rounded-xl border border-blue-500/20 transition-colors cursor-pointer"
                       >
-                        Learn More
+                        {t('cta.learnMoreBtn')}
                       </button>
                     </div>
                   </div>
@@ -686,7 +693,7 @@ export default function App() {
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                    Properties for {currentPage === "buy" ? "Sale" : "Rent"}
+                    {currentPage === "buy" ? t('search.titleSale') : t('search.titleRent')}
                   </h1>
                   <p className="text-sm text-gray-400 mt-0.5">
                     Currently showing {filteredProperties.length} active matching listings.
@@ -700,10 +707,10 @@ export default function App() {
                     onChange={(e) => setSortBy(e.target.value)}
                     className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-700 outline-hidden focus:border-blue-500"
                   >
-                    <option value="newest">Sort: Newest First</option>
-                    <option value="oldest">Sort: Oldest First</option>
-                    <option value="price_asc">Sort: Price (Low to High)</option>
-                    <option value="price_desc">Sort: Price (High to Low)</option>
+                    <option value="newest">{t('search.sortNewest')}</option>
+                    <option value="oldest">{t('search.sortOldest')}</option>
+                    <option value="price_asc">{t('search.sortPriceAsc')}</option>
+                    <option value="price_desc">{t('search.sortPriceDesc')}</option>
                   </select>
                 </div>
               </div>
@@ -711,7 +718,7 @@ export default function App() {
               {/* Grid Filter Bar panel */}
               <div className="bg-white border border-gray-150 rounded-2xl p-5 mb-8 shadow-xs grid grid-cols-2 md:grid-cols-6 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Search Query</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{t('search.filters')}</label>
                   <input
                     type="text"
                     value={searchQuery}
@@ -722,7 +729,7 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">City District</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{t('search.city')}</label>
                   <select
                     value={filterCity}
                     onChange={(e) => setFilterCity(e.target.value)}
@@ -736,7 +743,7 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Property Type</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{t('search.type')}</label>
                   <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
@@ -753,7 +760,7 @@ export default function App() {
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Min Price</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{t('search.minPrice')}</label>
                     <input
                       type="number"
                       value={minPrice}
@@ -763,7 +770,7 @@ export default function App() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Max Price</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{t('search.maxPrice')}</label>
                     <input
                       type="number"
                       value={maxPrice}
@@ -775,7 +782,7 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Min Beds</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{t('search.minBeds')}</label>
                   <select
                     value={minBedrooms}
                     onChange={(e) => setMinBedrooms(e.target.value)}
@@ -1203,10 +1210,10 @@ export default function App() {
             >
               {/* Mission Statement Hero */}
               <div className="text-center max-w-3xl mx-auto space-y-4">
-                <span className="text-xs font-bold text-blue-600 uppercase tracking-widest block">La nostra storia</span>
-                <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-gray-900 leading-[1.1]">Quando i sogni diventano casa</h1>
+                <span className="text-xs font-bold text-blue-600 uppercase tracking-widest block">{t('aboutPage.subtitle')}</span>
+                <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-gray-900 leading-[1.1]">{t('aboutPage.title')}</h1>
                 <p className="text-gray-500 text-sm sm:text-base leading-relaxed">
-                  Nasce a Bergamo, città ricca di storia e bellezza, nel cuore pulsante del centro BNBG Immobiliare S.r.l! Una realtà che unisce entusiasmo e competenza con l’obiettivo di accompagnare chi cerca o vende casa in un percorso sereno, chiaro e personalizzato.
+                  {t('aboutPage.desc1')}
                 </p>
               </div>
 
@@ -1221,12 +1228,12 @@ export default function App() {
                 </div>
 
                 <div className="space-y-6 mt-8 lg:mt-0">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Oltre i numeri, le persone.</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('aboutPage.subtitle2')}</h2>
                   <p className="text-gray-500 text-sm leading-relaxed">
-                    Crediamo che l’immobiliare non sia fatto solo di numeri e contratti, ma soprattutto di persone, storie e progetti di vita. Per questo abbiamo scelto di costruire un’agenzia che non si limita a intermediare, ma che ascolta, consiglia e valorizza ogni immobile con cura, attenzione e strumenti moderni.
+                    {t('aboutPage.desc2')}
                   </p>
                   <p className="text-gray-500 text-sm leading-relaxed">
-                    La nostra struttura offre servizi di consulenza mutui, tecnica, legale, edile/catastale e notarile affiancandoVi nella gestione di qualsiasi trattativa. BNBG Immobiliare è stata creata per soddisfare le esigenze di investimenti di alto livello; siamo in grado di offrire la gestione di interi patrimoni immobiliari a reddito.
+                    {t('aboutPage.desc3')}
                   </p>
 
                   <div className="grid grid-cols-3 gap-4 text-center pt-4">
@@ -1235,21 +1242,21 @@ export default function App() {
                         <Award className="w-5 h-5 text-amber-600" />
                       </div>
                       <span className="block font-bold text-base text-gray-900 font-mono">14+</span>
-                      <span className="text-[10px] text-gray-400 uppercase font-semibold">Industry Awards</span>
+                      <span className="text-[10px] text-gray-400 uppercase font-semibold">{t('aboutPage.awards')}</span>
                     </div>
                     <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-2xs flex flex-col items-center justify-center">
                       <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center mb-1">
                         <Leaf className="w-5 h-5 text-emerald-600" />
                       </div>
                       <span className="block font-bold text-base text-gray-900 font-mono">82%</span>
-                      <span className="text-[10px] text-gray-400 uppercase font-semibold">Eco Materials</span>
+                      <span className="text-[10px] text-gray-400 uppercase font-semibold">{t('aboutPage.eco')}</span>
                     </div>
                     <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-2xs flex flex-col items-center justify-center">
                       <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mb-1">
                         <Handshake className="w-5 h-5 text-blue-600" />
                       </div>
                       <span className="block font-bold text-base text-gray-900 font-mono">100%</span>
-                      <span className="text-[10px] text-gray-400 uppercase font-semibold">Secure Escrow</span>
+                      <span className="text-[10px] text-gray-400 uppercase font-semibold">{t('aboutPage.escrow')}</span>
                     </div>
                   </div>
                 </div>
@@ -1258,8 +1265,8 @@ export default function App() {
               {/* Leadership team Grid */}
               <div className="space-y-12">
                 <div className="text-center max-w-3xl mx-auto space-y-2">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Meet Our Relocation specialists</h2>
-                  <p className="text-gray-500 text-sm">We provide decades of local expertise across primary metropolitan hubs.</p>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('aboutPage.teamTitle')}</h2>
+                  <p className="text-gray-500 text-sm">{t('aboutPage.teamDesc')}</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

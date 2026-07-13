@@ -1,37 +1,35 @@
 import React from "react";
 import { MapPin, Phone, Mail, Map, MessageCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface FooterProps {
   onNavigate: (page: string, params?: Record<string, any>) => void;
 }
 
 export default function Footer({ onNavigate }: FooterProps) {
+  const { t } = useTranslation();
+
   return (
     <footer id="footer-section" className="bg-gray-950 text-gray-400 font-sans border-t border-gray-900 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Logo & Description */}
           <div className="md:col-span-1 space-y-4">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => onNavigate("home")}>
-              <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-                B
-              </div>
-              <span className="font-sans font-bold text-xl tracking-tight text-white">
-                BNBG Immobiliare<span className="text-blue-500">.</span>
-              </span>
+            <div className="flex items-center cursor-pointer mb-2" onClick={() => onNavigate("home")}>
+              <img src="/logo.png" alt="BNBG Immobiliare" className="h-20 w-auto brightness-0 invert opacity-90" />
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Quando i sogni diventano casa. Nasce a Bergamo, città ricca di storia e bellezza, nel cuore pulsante del centro BNBG Immobiliare S.r.l!
+              {t('footer.aboutText')}
             </p>
             <p className="text-xs text-gray-500 font-mono">
               © 2026 BNBG Immobiliare S.r.l.
-              <br />All rights reserved.
+              <br />{t('footer.rights')}
             </p>
           </div>
 
           {/* Quick Navigations */}
           <div>
-            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-4">Quick Links</h3>
+            <h3 className="text-white font-semibold text-sm tracking-wider uppercase mb-4">{t('footer.quickLinks')}</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <button 
@@ -109,7 +107,7 @@ export default function Footer({ onNavigate }: FooterProps) {
 
           {/* Contact Information & Maps */}
           <div className="space-y-4">
-            <h3 className="text-white font-semibold text-sm tracking-wider uppercase">Contact Office</h3>
+            <h3 className="text-white font-semibold text-sm tracking-wider uppercase">{t('footer.contactInfo')}</h3>
             <div className="space-y-2 text-sm text-gray-400">
               <p className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-gray-500 shrink-0" />

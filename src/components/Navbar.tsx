@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { User } from "../types";
-import { Home, Search, List, User as UserIcon, LogOut, ShieldAlert, Heart, Menu, X } from "lucide-react";
+import { Home, Search, List, User as UserIcon, LogOut, ShieldAlert, Heart, Menu, X, Globe } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface NavbarProps {
   currentUser: User | null;
@@ -12,6 +13,8 @@ interface NavbarProps {
 export default function Navbar({ currentUser, onNavigate, currentPage, onLogout }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showLangDropdown, setShowLangDropdown] = useState(false);
+  const { t, i18n } = useTranslation();
 
   const handleLinkClick = (page: string, params?: Record<string, any>) => {
     onNavigate(page, params);
@@ -25,19 +28,10 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
           {/* Logo */}
           <div 
             id="nav-logo"
-            className="flex items-center gap-2 cursor-pointer group"
+            className="flex items-center cursor-pointer group"
             onClick={() => handleLinkClick("home")}
           >
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-200 group-hover:bg-blue-700 transition-colors">
-              B
-            </div>
-            <div>
-              <span className="font-sans font-bold text-xl tracking-tight text-gray-900 group-hover:text-blue-600 transition-colors">
-                BNBG
-              </span>
-              <span className="text-blue-600 font-sans font-bold text-xl">.</span>
-              <p className="text-[10px] text-gray-500 font-mono -mt-1 uppercase tracking-wider">Immobiliare</p>
-            </div>
+            <img src="/logo.png" alt="BNBG Immobiliare" className="h-20 w-auto drop-shadow-sm hover:scale-105 transition-transform" />
           </div>
 
           {/* Desktop Navigation */}
@@ -49,7 +43,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                 currentPage === "home" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              Home
+              {t('nav.home')}
             </button>
             <button
               id="nav-link-buy"
@@ -58,7 +52,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                 currentPage === "buy" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              Buy
+              {t('nav.buy')}
             </button>
             <button
               id="nav-link-rent"
@@ -67,7 +61,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                 currentPage === "rent" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              Rent
+              {t('nav.rent')}
             </button>
             <button
               id="nav-link-about"
@@ -76,7 +70,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                 currentPage === "about" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              About
+              {t('nav.about')}
             </button>
             <button
               id="nav-link-contact"
@@ -85,12 +79,44 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                 currentPage === "contact" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              Contact
+              {t('nav.contact')}
             </button>
           </div>
 
-          {/* User Session Section */}
+          {/* User Session & Language Section */}
           <div className="hidden md:flex items-center gap-4">
+            {/* Language Switcher */}
+            <div className="relative">
+              <button
+                onClick={() => setShowLangDropdown(!showLangDropdown)}
+                className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 font-medium text-sm p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-hidden"
+              >
+                <Globe className="w-4 h-4" />
+                <span className="uppercase">{i18n.language}</span>
+              </button>
+              
+              {showLangDropdown && (
+                <div className="absolute right-0 mt-2 w-32 rounded-xl bg-white border border-gray-100 shadow-xl py-2 z-50">
+                  {[
+                    { code: 'en', label: 'English' },
+                    { code: 'it', label: 'Italian' },
+                    { code: 'fr', label: 'French' },
+                    { code: 'ar', label: 'Arabic' }
+                  ].map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        i18n.changeLanguage(lang.code);
+                        setShowLangDropdown(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${i18n.language === lang.code ? 'text-blue-600 font-bold' : 'text-gray-700'}`}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             {currentUser ? (
               <div className="relative">
                 <button
@@ -132,7 +158,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                         className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium flex items-center gap-2.5 transition-colors"
                       >
                         <ShieldAlert className="w-4 h-4" />
-                        Admin Dashboard
+                        {t('nav.adminDashboard')}
                       </button>
                     )}
 
@@ -145,7 +171,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors"
                     >
                       <UserIcon className="w-4 h-4 text-gray-400" />
-                      My Profile
+                      {t('nav.profile')}
                     </button>
 
                     <button
@@ -157,7 +183,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5 transition-colors"
                     >
                       <Heart className="w-4 h-4 text-gray-400" />
-                      Saved Favorites
+                      {t('nav.favorites')}
                     </button>
 
                     <hr className="my-1 border-gray-100" />
@@ -170,19 +196,19 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                       }}
                       className="w-full text-left px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 flex items-center gap-2.5 transition-colors"
                     >
-                      <LogOut className="w-4 h-4 text-gray-400" />
-                      Sign Out
+                      <LogOut className="w-4 h-4" />
+                      {t('nav.signOut')}
                     </button>
                   </div>
                 )}
               </div>
             ) : (
               <button
-                id="nav-login-btn"
+                id="nav-link-login"
                 onClick={() => handleLinkClick("login")}
-                className="font-sans text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-xl shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
+                className="font-sans font-bold text-sm bg-blue-600 text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 shadow-md shadow-blue-200 transition-all active:scale-95"
               >
-                Sign In
+                {t('nav.signIn')}
               </button>
             )}
           </div>
@@ -207,31 +233,31 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
             onClick={() => handleLinkClick("home")}
             className="block w-full text-left px-3 py-2 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50"
           >
-            Home
+            {t('nav.home')}
           </button>
           <button
             onClick={() => handleLinkClick("buy")}
             className="block w-full text-left px-3 py-2 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50"
           >
-            Buy Properties
+            {t('nav.buy')}
           </button>
           <button
             onClick={() => handleLinkClick("rent")}
             className="block w-full text-left px-3 py-2 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50"
           >
-            Rent Properties
+            {t('nav.rent')}
           </button>
           <button
             onClick={() => handleLinkClick("about")}
             className="block w-full text-left px-3 py-2 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50"
           >
-            About Us
+            {t('nav.about')}
           </button>
           <button
             onClick={() => handleLinkClick("contact")}
             className="block w-full text-left px-3 py-2 rounded-xl text-base font-medium text-gray-700 hover:bg-gray-50"
           >
-            Contact
+            {t('nav.contact')}
           </button>
 
           <hr className="border-gray-100 my-2" />
@@ -256,7 +282,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                   className="block w-full text-left py-2 text-base font-medium text-red-600 flex items-center gap-2"
                 >
                   <ShieldAlert className="w-5 h-5" />
-                  Admin Dashboard
+                  {t('nav.adminDashboard')}
                 </button>
               )}
 
@@ -265,7 +291,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                 className="block w-full text-left py-2 text-base font-medium text-gray-700 flex items-center gap-2"
               >
                 <UserIcon className="w-5 h-5 text-gray-400" />
-                My Profile
+                {t('nav.profile')}
               </button>
 
               <button
@@ -273,7 +299,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                 className="block w-full text-left py-2 text-base font-medium text-gray-700 flex items-center gap-2"
               >
                 <Heart className="w-5 h-5 text-gray-400" />
-                Saved Favorites
+                {t('nav.favorites')}
               </button>
 
               <button
@@ -281,18 +307,18 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                   onLogout();
                   setIsOpen(false);
                 }}
-                className="block w-full text-left py-2 text-base font-medium text-gray-500 flex items-center gap-2"
+                className="block w-full text-left py-2 text-base font-medium text-gray-500 flex items-center gap-2 mt-2 border-t border-gray-100 pt-3"
               >
                 <LogOut className="w-5 h-5 text-gray-400" />
-                Sign Out
+                {t('nav.signOut')}
               </button>
             </div>
           ) : (
             <button
               onClick={() => handleLinkClick("login")}
-              className="block w-full text-center text-white bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-xl font-semibold shadow-xs"
+              className="block w-full text-center bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md mt-2"
             >
-              Sign In
+              {t('nav.signIn')}
             </button>
           )}
         </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Property } from "../types";
 import { Heart, MapPin, ExternalLink, BedDouble, Bath, Square, ChevronRight, Star } from "lucide-react";
 
@@ -11,6 +12,8 @@ interface PropertyCardProps {
 }
 
 export default function PropertyCard({ property, isFavorited, onToggleFavorite, onClick }: PropertyCardProps) {
+  const { t } = useTranslation();
+
   const formatPrice = (price: number, status: string) => {
     return status === "rent"
       ? `$${price.toLocaleString()}/mo`
@@ -50,12 +53,12 @@ export default function PropertyCard({ property, isFavorited, onToggleFavorite, 
           <span className={`px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider text-white shadow-sm ${
             property.status === "sale" ? "bg-blue-600" : "bg-emerald-600"
           }`}>
-            For {property.status}
+            {property.status === "sale" ? t('nav.buy') : t('nav.rent')}
           </span>
           {property.featured && (
             <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500 text-white shadow-sm uppercase tracking-wider flex items-center gap-1">
               <Star className="w-3.5 h-3.5 fill-white text-white shrink-0" />
-              <span>Featured</span>
+              <span>{t('property.featured')}</span>
             </span>
           )}
         </div>
@@ -101,11 +104,11 @@ export default function PropertyCard({ property, isFavorited, onToggleFavorite, 
         <div className="grid grid-cols-3 gap-2 py-3 px-1 border-t border-b border-gray-50 text-gray-600 mb-4 text-xs font-sans">
           <div className="flex items-center gap-1.5 justify-center">
             <BedDouble className="w-4 h-4 text-gray-400 shrink-0" />
-            <span className="font-medium truncate">{property.bedrooms} Beds</span>
+            <span className="font-medium truncate">{property.bedrooms} {t('property.beds')}</span>
           </div>
           <div className="flex items-center gap-1.5 justify-center border-l border-r border-gray-100">
             <Bath className="w-4 h-4 text-gray-400 shrink-0" />
-            <span className="font-medium truncate">{property.bathrooms} Baths</span>
+            <span className="font-medium truncate">{property.bathrooms} {t('property.baths')}</span>
           </div>
           <div className="flex items-center gap-1.5 justify-center">
             <Square className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -115,7 +118,7 @@ export default function PropertyCard({ property, isFavorited, onToggleFavorite, 
 
         {/* Card Action Link */}
         <div className="flex items-center justify-between mt-auto pt-2 text-sm text-blue-600 font-semibold group-hover:text-blue-700 transition-colors">
-          <span>Explore property</span>
+          <span>{t('property.viewDetails')}</span>
           <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </div>
       </div>

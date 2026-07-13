@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "buy": "Acheter",
+    "rent": "Louer",
+    "about": "À propos",
+    "contact": "Contact",
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "profile": "Profil",
+    "adminDashboard": "Tableau de bord",
+    "favorites": "Favoris"
+  },
+  "hero": {
+    "title1": "Quand les rêves",
+    "title2": "Deviennent Maison",
+    "subtitle": "Découvrez les propriétés les plus exclusives dans les endroits les plus prisés au monde. Votre sanctuaire parfait vous attend.",
+    "searchPlaceholder": "Rechercher par ville, quartier ou code...",
+    "searchButton": "Rechercher"
+  },
+  "footer": {
+    "aboutUs": "À Propos",
+    "aboutText": "BNBG Immobiliare S.r.l. est une plateforme immobilière premium spécialisée dans des propriétés exceptionnelles pour des clients exigeants du monde entier.",
+    "quickLinks": "Liens Rapides",
+    "contactInfo": "Info Contact",
+    "address": "Bergame, via san bernardino 7/B",
+    "rights": "Tous droits réservés."
+  },
+  "home": {
+    "architecturalCollections": "Collections Architecturales",
+    "architecturalDesc": "Filtrez instantanément les annonces selon votre style de bâtiment préféré.",
+    "listingsCount": "annonces",
+    "curatedShowcases": "Vitrines Sélectionnées",
+    "curatedDesc": "Annonces signature méticuleusement sélectionnées représentant un artisanat de design haut de gamme.",
+    "viewAll": "Voir Toutes Les Vitrines",
+    "noShowcases": "Aucune vitrine n'est actuellement en vedette.",
+    "stats": {
+      "sales": "Volume Total des Ventes",
+      "transactions": "Transactions Premium",
+      "trust": "Score de Confiance Client",
+      "care": "Courtage Dédié"
+    },
+    "latestAdditions": "Derniers Ajouts",
+    "latestDesc": "Nouvelles propriétés introduites sur les marchés de premier choix cette semaine."
+  },
+  "search": {
+    "titleSale": "Propriétés Exclusives à Vendre",
+    "descSale": "Explorez un portefeuille de biens immobiliers de grande valeur prêts pour votre acquisition.",
+    "titleRent": "Locations de Luxe",
+    "descRent": "Découvrez des propriétés méticuleusement sélectionnées à louer dans les meilleurs quartiers.",
+    "filters": "Affiner les Résultats",
+    "city": "Emplacement",
+    "type": "Type de Propriété",
+    "minPrice": "Prix Min",
+    "maxPrice": "Prix Max",
+    "minBeds": "Lits Min",
+    "minBaths": "Bains Min",
+    "sortBy": "Configuration de Tri",
+    "sortNewest": "Nouveautés",
+    "sortOldest": "Plus Ancien",
+    "sortPriceAsc": "Prix: Croissant",
+    "sortPriceDesc": "Prix: Décroissant",
+    "reset": "Effacer les Filtres"
+  },
+  "about": {
+    "coreStrengths": "Points Forts",
+    "title": "Élever les Transactions Immobilières au Rang d'Art",
+    "desc": "Nous comprenons que la recherche d'un bien immobilier consiste à sécuriser un espace de vie à long terme. Nous associons des matériaux de luxe, des données de localisation et un soutien direct d'agent pour protéger vos intérêts.",
+    "vetted": "Garantie Vérifiée",
+    "vettedDesc": "Chaque annonce est vérifiée pour l'exactitude de l'agencement, les normes structurelles et les actes propres.",
+    "district": "Profondeur du Quartier",
+    "districtDesc": "Accès direct aux ventes privées, aux opportunités hors marché et aux rapports scolaires."
+  },
+  "cta": {
+    "title": "Vous cherchez à lister votre domaine de luxe?",
+    "desc": "Connectez-vous directement avec nos courtiers de luxe pour présenter votre propriété dans des catalogues premium.",
+    "contactBtn": "Contacter un Agent",
+    "learnMoreBtn": "En Savoir Plus"
+  },
+  "property": {
+    "viewDetails": "Voir Détails",
+    "beds": "Lits",
+    "baths": "Bains",
+    "sqft": "M²",
+    "featured": "En Vedette"
+  },
+  "aboutPage": {
+    "subtitle": "Notre Histoire",
+    "title": "Quand les rêves deviennent maison",
+    "desc1": "BNBG Immobiliare S.r.l est née à Bergame, une ville riche en histoire et en beauté, en plein cœur du centre ! Une réalité qui allie enthousiasme et compétence dans le but d'accompagner ceux qui cherchent ou vendent une maison sur un chemin serein, clair et personnalisé.",
+    "subtitle2": "Au-delà des chiffres, les personnes.",
+    "desc2": "Nous croyons que l'immobilier n'est pas seulement fait de chiffres et de contrats, mais surtout de personnes, d'histoires et de projets de vie. C'est pourquoi nous avons choisi de construire une agence qui ne se limite pas à l'intermédiation, mais qui écoute, conseille et valorise chaque propriété avec soin, attention et des outils modernes.",
+    "desc3": "Notre structure offre des services de conseil en prêts hypothécaires, techniques, juridiques, cadastraux et notariaux, vous accompagnant dans la gestion de toute négociation. BNBG Immobiliare a été créée pour répondre aux besoins des investissements de haut niveau ; nous sommes en mesure d'offrir la gestion d'actifs immobiliers de rapport entiers.",
+    "awards": "Prix de l'Industrie",
+    "eco": "Matériaux Éco",
+    "escrow": "Dépôt Sécurisé",
+    "teamTitle": "Rencontrez Nos Spécialistes",
+    "teamDesc": "Nous offrons des décennies d'expertise locale dans les principaux centres métropolitains."
+  }
+}

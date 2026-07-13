@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "home": "Home",
+    "buy": "Buy",
+    "rent": "Rent",
+    "about": "About",
+    "contact": "Contact",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "profile": "Profile",
+    "adminDashboard": "Admin Dashboard",
+    "favorites": "Favorites"
+  },
+  "hero": {
+    "title1": "When Dreams",
+    "title2": "Become Home",
+    "subtitle": "Discover the most exclusive properties in the world's most desired locations. Your perfect sanctuary is waiting.",
+    "searchPlaceholder": "Search by city, neighborhood, or zip...",
+    "searchButton": "Search Properties"
+  },
+  "footer": {
+    "aboutUs": "About Us",
+    "aboutText": "BNBG Immobiliare S.r.l. is a premium real estate platform specializing in exceptional properties for discerning clients worldwide.",
+    "quickLinks": "Quick Links",
+    "contactInfo": "Contact Info",
+    "address": "Bergamo, via san bernardino 7/B",
+    "rights": "All rights reserved."
+  },
+  "home": {
+    "architecturalCollections": "Architectural Collections",
+    "architecturalDesc": "Filter listings instantly by your preferred building style and form.",
+    "listingsCount": "listings",
+    "curatedShowcases": "Curated Showcases",
+    "curatedDesc": "Meticulously selected signature listings representing high-end design craftsmanship.",
+    "viewAll": "View All Showcases",
+    "noShowcases": "No showcases flagged featured currently.",
+    "stats": {
+      "sales": "Total Sales Volume",
+      "transactions": "Premium Transactions",
+      "trust": "Client Trust Score",
+      "care": "Dedicated Brokerage Care"
+    },
+    "latestAdditions": "Latest Additions",
+    "latestDesc": "Fresh properties introduced onto the prime markets this week."
+  },
+  "search": {
+    "titleSale": "Exclusive Properties for Sale",
+    "descSale": "Explore a portfolio of high-net-worth real estate ready for your acquisition.",
+    "titleRent": "Luxury Rentals",
+    "descRent": "Discover meticulously curated estates for lease in prime districts.",
+    "filters": "Refine Results",
+    "city": "Location",
+    "type": "Property Type",
+    "minPrice": "Min Price",
+    "maxPrice": "Max Price",
+    "minBeds": "Min Beds",
+    "minBaths": "Min Baths",
+    "sortBy": "Sort Configuration",
+    "sortNewest": "Newest Arrivals",
+    "sortOldest": "Vintage/Oldest",
+    "sortPriceAsc": "Price: Ascending",
+    "sortPriceDesc": "Price: Descending",
+    "reset": "Clear Filters"
+  },
+  "about": {
+    "coreStrengths": "Core Strengths",
+    "title": "Elevating Real Estate Transactions Into Art Forms",
+    "desc": "We understand that searching for real estate is about securing a long-term canvas for life. We align luxury materials, location data, and direct agent support to protect your interests.",
+    "vetted": "Vetted Guarantee",
+    "vettedDesc": "Every listing is cross-referenced for layout accuracy, structural standards, and clean deeds.",
+    "district": "District Depth",
+    "districtDesc": "Direct access to private sales, off-market opportunities, and school reports."
+  },
+  "cta": {
+    "title": "Looking to list your luxury estate?",
+    "desc": "Connect directly with our luxury brokers to showcase your property under premium catalogs.",
+    "contactBtn": "Contact An Agent",
+    "learnMoreBtn": "Learn More"
+  },
+  "property": {
+    "viewDetails": "View Details",
+    "beds": "Beds",
+    "baths": "Baths",
+    "sqft": "Sqft",
+    "featured": "Featured"
+  },
+  "aboutPage": {
+    "subtitle": "Our Story",
+    "title": "When dreams become home",
+    "desc1": "BNBG Immobiliare S.r.l was born in Bergamo, a city rich in history and beauty, in the beating heart of the center! A reality that combines enthusiasm and competence with the aim of accompanying those looking for or selling a home on a serene, clear and personalized path.",
+    "subtitle2": "Beyond numbers, people.",
+    "desc2": "We believe that real estate is not just made of numbers and contracts, but above all of people, stories and life projects. For this reason we have chosen to build an agency that does not limit itself to intermediation, but that listens, advises and enhances every property with care, attention and modern tools.",
+    "desc3": "Our structure offers mortgage, technical, legal, building/cadastral and notary consultancy services, supporting you in the management of any negotiation. BNBG Immobiliare was created to meet the needs of high-level investments; we are able to offer the management of entire income-producing real estate assets.",
+    "awards": "Industry Awards",
+    "eco": "Eco Materials",
+    "escrow": "Secure Escrow",
+    "teamTitle": "Meet Our Real Estate Specialists",
+    "teamDesc": "We provide decades of local expertise across primary metropolitan hubs."
+  }
+}
