@@ -1476,8 +1476,53 @@ export default function AdminDashboard({
                     <input type="text" value={brokerRole} onChange={(e) => setBrokerRole(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none" placeholder="e.g. Senior Relocation Specialist" />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Profile Image URL</label>
-                    <input type="text" value={brokerImage} onChange={(e) => setBrokerImage(e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none" placeholder="https://..." />
+                    <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Profile Image (URL or Upload)</label>
+                    <div className="flex gap-2 items-center">
+                      <input type="text" value={brokerImage} onChange={(e) => setBrokerImage(e.target.value)} className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none" placeholder="https://... or click Upload" />
+                      <label className="cursor-pointer bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-xl border border-blue-200 text-sm font-bold transition-colors whitespace-nowrap">
+                        Upload
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          className="hidden" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              if (!file.type.startsWith("image/")) {
+                                alert("Please select an image file.");
+                                return;
+                              }
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const img = new window.Image();
+                                img.onload = () => {
+                                  const canvas = document.createElement("canvas");
+                                  const maxDim = 300;
+                                  let width = img.width;
+                                  let height = img.height;
+                                  if (width > maxDim || height > maxDim) {
+                                    if (width > height) {
+                                      height = Math.round((height * maxDim) / width);
+                                      width = maxDim;
+                                    } else {
+                                      width = Math.round((width * maxDim) / height);
+                                      height = maxDim;
+                                    }
+                                  }
+                                  canvas.width = width;
+                                  canvas.height = height;
+                                  const ctx = canvas.getContext("2d");
+                                  ctx?.drawImage(img, 0, 0, width, height);
+                                  setBrokerImage(canvas.toDataURL("image/jpeg", 0.8));
+                                };
+                                img.src = event.target?.result as string;
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
                   </div>
                   <div className="pt-2">
                     <button onClick={handleSaveBrokerInfo} disabled={savingBroker} className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-blue-700 disabled:opacity-50 transition-colors shadow-sm cursor-pointer">
