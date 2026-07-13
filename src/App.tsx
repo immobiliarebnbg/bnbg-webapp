@@ -1040,29 +1040,29 @@ export default function App() {
                       <div className="flex flex-col items-center">
                         <BedDouble className="w-6 h-6 text-gray-400 mb-1" />
                         <span className="text-xl font-bold text-gray-900 font-mono">{property.bedrooms}</span>
-                        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Bedrooms</span>
+                        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">{t('propertyDetail.bedrooms')}</span>
                       </div>
                       <div className="flex flex-col items-center border-l border-r border-gray-100">
                         <Bath className="w-6 h-6 text-gray-400 mb-1" />
                         <span className="text-xl font-bold text-gray-900 font-mono">{property.bathrooms}</span>
-                        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Bathrooms</span>
+                        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">{t('propertyDetail.bathrooms')}</span>
                       </div>
                       <div className="flex flex-col items-center">
                         <Square className="w-5.5 h-5.5 text-gray-400 mb-1" />
                         <span className="text-xl font-bold text-gray-900 font-mono">{property.area}</span>
-                        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Square Meters</span>
+                        <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">{t('propertyDetail.squareMeters')}</span>
                       </div>
                     </div>
 
                     {/* Editorial Description */}
                     <div className="space-y-4">
-                      <h3 className="font-bold text-xl text-gray-900 tracking-tight">Editorial Canvas</h3>
+                      <h3 className="font-bold text-xl text-gray-900 tracking-tight">{t('propertyDetail.descriptionTitle')}</h3>
                       <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-sans">{property.description}</p>
                     </div>
 
                     {/* Premium Amenities List */}
                     <div className="space-y-4">
-                      <h3 className="font-bold text-xl text-gray-900 tracking-tight">Key Elements & Amenities</h3>
+                      <h3 className="font-bold text-xl text-gray-900 tracking-tight">{t('propertyDetail.amenitiesTitle')}</h3>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         {property.amenities.map((amen) => (
                           <div
@@ -1079,8 +1079,8 @@ export default function App() {
                     {/* Local Area Map */}
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
-                        <h3 className="font-bold text-xl text-gray-900 tracking-tight">District Street Context</h3>
-                        <span className="text-xs text-gray-400 font-mono uppercase tracking-widest">Vetted Neighborhood</span>
+                        <h3 className="font-bold text-xl text-gray-900 tracking-tight">{t('propertyDetail.mapTitle')}</h3>
+                        <span className="text-xs text-gray-400 font-mono uppercase tracking-widest">{t('propertyDetail.mapSubtitle')}</span>
                       </div>
                       <CustomMap
                         properties={[property]}
@@ -1112,9 +1112,9 @@ export default function App() {
                           />
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">BNBG Broker</p>
+                          <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">{t('propertyDetail.brokerTitle')}</p>
                           <h4 className="font-bold text-base text-gray-900">Vanessa Sterling</h4>
-                          <p className="text-xs text-gray-400">Senior Relocation Specialist</p>
+                          <p className="text-xs text-gray-400">{t('propertyDetail.brokerRole')}</p>
                         </div>
                       </div>
 
@@ -1123,65 +1123,65 @@ export default function App() {
                           <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center mx-auto shadow-md">
                             <CheckCircle2 className="w-6 h-6" />
                           </div>
-                          <h4 className="font-bold text-green-900 text-base">Inquiry Submitted!</h4>
+                          <h4 className="font-bold text-green-900 text-base">{t('propertyDetail.successTitle')}</h4>
                           <p className="text-xs text-green-700 leading-relaxed">
-                            Vanessa has received your relocation brief and will contact you directly via phone or email within 1 business hour.
+                            {t('propertyDetail.successMsg')}
                           </p>
                           <button
                             onClick={() => setInquirySuccess(false)}
                             className="text-xs font-bold text-green-800 hover:underline cursor-pointer"
                           >
-                            Send another brief
+                            {t('propertyDetail.sendAnother')}
                           </button>
                         </div>
                       ) : (
                         <form onSubmit={(e) => handleInquirySubmit(e, property)} className="space-y-4">
-                          <h4 className="font-bold text-sm text-gray-900 mb-3">Schedule Relocation Briefing</h4>
+                          <h4 className="font-bold text-sm text-gray-900 mb-3">{t('propertyDetail.inquiryFormTitle')}</h4>
 
                           <div>
-                            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">My Full Name</label>
+                            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{t('propertyDetail.labelName')}</label>
                             <input
                               type="text"
                               required
                               value={inquiryName}
                               onChange={(e) => setInquiryName(e.target.value)}
                               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-sm text-gray-900"
-                              placeholder="e.g. Eleanor Vance"
+                              placeholder={t('propertyDetail.placeholderName')}
                             />
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">My Email Address</label>
+                            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{t('propertyDetail.labelEmail')}</label>
                             <input
                               type="email"
                               required
                               value={inquiryEmail}
                               onChange={(e) => setInquiryEmail(e.target.value)}
                               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-sm text-gray-900"
-                              placeholder="e.g. eleanor@example.com"
+                              placeholder={t('propertyDetail.placeholderEmail')}
                             />
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">My Phone Number</label>
+                            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{t('propertyDetail.labelPhone')}</label>
                             <input
                               type="tel"
                               value={inquiryPhone}
                               onChange={(e) => setInquiryPhone(e.target.value)}
                               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-sm text-gray-900"
-                              placeholder="e.g. 305-555-0192"
+                              placeholder={t('propertyDetail.placeholderPhone')}
                             />
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Message / Relocation Request</label>
+                            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{t('propertyDetail.labelMessage')}</label>
                             <textarea
                               rows={3}
                               required
                               value={inquiryMessage}
                               onChange={(e) => setInquiryMessage(e.target.value)}
                               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-sm text-gray-900 leading-relaxed"
-                              placeholder="I'm interested in private tours..."
+                              placeholder={t('propertyDetail.placeholderMessage')}
                             />
                           </div>
 
@@ -1190,7 +1190,7 @@ export default function App() {
                             disabled={submittingInquiry}
                             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold text-sm py-3 rounded-xl shadow-md cursor-pointer transition-colors"
                           >
-                            {submittingInquiry ? "Submitting Request..." : "Request Relocation Tour"}
+                            {submittingInquiry ? t('propertyDetail.submittingBtn') : t('propertyDetail.submitBtn')}
                           </button>
                         </form>
                       )}
@@ -1201,7 +1201,7 @@ export default function App() {
                 {/* Similar Properties Showcase list */}
                 {similarProperties.length > 0 && (
                   <div className="mt-20 pt-16 border-t border-gray-150">
-                    <h3 className="font-bold text-2xl text-gray-900 tracking-tight mb-8">Similar Curated Homes</h3>
+                    <h3 className="font-bold text-2xl text-gray-900 tracking-tight mb-8">{t('propertyDetail.similarTitle')}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                       {similarProperties.map((prop) => (
                         <PropertyCard
