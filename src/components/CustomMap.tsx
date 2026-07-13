@@ -199,9 +199,9 @@ export default function CustomMap(props: CustomMapProps) {
         </button>
       </div>
 
-      {/* Real-time free OSM attribution indicator */}
+      {/* Minimal attribution indicator */}
       <div className="absolute bottom-2 right-2 bg-white/80 backdrop-blur-xs px-2 py-0.5 rounded text-[9px] text-slate-400 font-sans pointer-events-none z-[500]">
-        &copy; OpenStreetMap &amp; CartoDB
+        &copy; Google Maps
       </div>
 
       {/* Property Detail Tooltip Card */}
