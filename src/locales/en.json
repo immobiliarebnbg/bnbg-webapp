@@ -227,6 +227,9 @@
     "officeHours": "Office Operating Hours",
     "hoursMonFri": "Monday - Friday: 8:00 AM - 7:00 PM",
     "hoursSat": "Saturday: 9:00 AM - 5:00 PM (Relocation tours)",
-    "hoursSun": "Sunday: Closed (Broker helpline online)"
+    "hoursSun": "Sunday: Closed (Broker helpline online)",
+    "getInTouch": "Get In Touch",
+    "connectTitle": "Connect with Our Offices",
+    "connectDesc": "Have a question? Drop us a brief, and our specialty agents will reach out instantly."
   }
 }

@@ -1396,9 +1396,9 @@ export default function App() {
               className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 font-sans space-y-12"
             >
               <div className="text-center max-w-3xl mx-auto space-y-2">
-                <span className="text-xs font-bold text-blue-600 uppercase tracking-widest block">Get In Touch</span>
-                <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-gray-900 leading-none">Connect with Our Offices</h1>
-                <p className="text-gray-500 text-sm sm:text-base mt-2">Have a question? Drop us a brief, and our specialty agents will reach out instantly.</p>
+                <span className="text-xs font-bold text-blue-600 uppercase tracking-widest block">{t('contactPage.getInTouch')}</span>
+                <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-gray-900 leading-none">{t('contactPage.connectTitle')}</h1>
+                <p className="text-gray-500 text-sm sm:text-base mt-2">{t('contactPage.connectDesc')}</p>
               </div>
 
               {/* Two Column Layout: Contact Form & Coordinates list */}

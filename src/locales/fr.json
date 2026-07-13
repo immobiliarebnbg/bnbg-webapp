@@ -227,6 +227,9 @@
     "officeHours": "Heures de Bureau",
     "hoursMonFri": "Lundi - Vendredi : 08h00 - 19h00",
     "hoursSat": "Samedi : 09h00 - 17h00 (Visites de relocalisation)",
-    "hoursSun": "Dimanche : Fermé (Ligne d'assistance broker en ligne)"
+    "hoursSun": "Dimanche : Fermé (Ligne d'assistance broker en ligne)",
+    "getInTouch": "Contactez-nous",
+    "connectTitle": "Connectez-vous avec nos bureaux",
+    "connectDesc": "Vous avez une question ? Laissez-nous un message et nos agents spécialisés vous contacteront instantanément."
   }
 }

@@ -227,6 +227,9 @@
     "officeHours": "Orari di Ufficio",
     "hoursMonFri": "Lunedì - Venerdì: 08:00 - 19:00",
     "hoursSat": "Sabato: 09:00 - 17:00 (Tour ricollocazione)",
-    "hoursSun": "Domenica: Chiuso (Helpline broker online)"
+    "hoursSun": "Domenica: Chiuso (Helpline broker online)",
+    "getInTouch": "Contattaci",
+    "connectTitle": "Connettiti con i Nostri Uffici",
+    "connectDesc": "Hai una domanda? Inviaci un messaggio e i nostri agenti specializzati ti contatteranno immediatamente."
   }
 }
