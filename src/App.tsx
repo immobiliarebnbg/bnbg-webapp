@@ -12,7 +12,7 @@ import {
   Search, MapPin, ExternalLink, BedDouble, Bath, Square, ChevronRight, Phone, Mail, Clock, 
   ArrowRight, ShieldCheck, Star, Sparkles, Send, Share2, Heart, User as UserIcon, 
   Lock, Eye, EyeOff, CheckCircle2, ChevronLeft, Calendar, Compass, Shield, Award,
-  Leaf, Handshake, Castle, Home, Building2, Layers, Gem, Building, MessageCircle, Map
+  Leaf, Handshake, Castle, Home, Building2, Layers, Gem, Building, MessageCircle, Map, X
 } from "lucide-react";
 
 export default function App() {
@@ -63,6 +63,7 @@ export default function App() {
   const [inquirySuccess, setInquirySuccess] = useState(false);
   const [submittingInquiry, setSubmittingInquiry] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showBlueprintModal, setShowBlueprintModal] = useState(false);
 
   // About & Contact Page Form States
   const [contactName, setContactName] = useState("");
@@ -1005,7 +1006,7 @@ export default function App() {
                     </button>
                     {property.blueprintUrl && (
                       <button
-                        onClick={() => window.open(property.blueprintUrl, '_blank')}
+                        onClick={() => setShowBlueprintModal(true)}
                         className="px-4 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-md transition-colors font-bold text-sm"
                       >
                         <Map className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" />
@@ -1092,7 +1093,7 @@ export default function App() {
                     {/* Blueprint Button */}
                     {property.blueprintUrl && (
                       <button
-                        onClick={() => window.open(property.blueprintUrl, '_blank')}
+                        onClick={() => setShowBlueprintModal(true)}
                         className="w-full mb-4 flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-base shadow-lg transition-all duration-200"
                       >
                         <Map className="w-5 h-5 shrink-0" />
@@ -1626,6 +1627,52 @@ export default function App() {
 
       {/* Global Footer component */}
       <Footer onNavigate={handleNavigate} />
+
+      {/* Blueprint Modal */}
+      <AnimatePresence>
+        {showBlueprintModal && (() => {
+          const prop = properties.find((p) => p.id === navigationParams.propertyId);
+          return prop?.blueprintUrl ? (
+            <motion.div
+              key="blueprint-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+              onClick={() => setShowBlueprintModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                className="relative max-w-5xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <Map className="w-5 h-5 text-blue-600" />
+                    <h3 className="font-bold text-gray-900 text-lg">{t('property.viewBlueprint')} — {prop.title}</h3>
+                  </div>
+                  <button
+                    onClick={() => setShowBlueprintModal(false)}
+                    className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-600" />
+                  </button>
+                </div>
+                <div className="overflow-auto max-h-[80vh] p-4 bg-gray-50">
+                  <img
+                    src={prop.blueprintUrl}
+                    alt={`${prop.title} blueprint`}
+                    className="w-full h-auto rounded-xl object-contain"
+                  />
+                </div>
+              </motion.div>
+            </motion.div>
+          ) : null;
+        })()}
+      </AnimatePresence>
     </div>
   );
 }
