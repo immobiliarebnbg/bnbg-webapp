@@ -360,13 +360,31 @@ app.post("/api/resolve-maps-url", requireAdmin as any, async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: "URL is required" });
 
-    // Fetch the URL, which automatically follows redirects
+    // Fetch the URL, which automatically follows HTTP redirects
     const response = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" }
     });
     
-    // The response.url will be the final long URL containing coordinates
-    res.json({ finalUrl: response.url });
+    let finalUrl = response.url;
+    const text = await response.text();
+    
+    // Check for Google Maps HTML meta redirect
+    // <meta content="0;URL='https://www.google.com/maps/...'" http-equiv="refresh">
+    const metaRefreshMatch = text.match(/URL='([^']+)'/i) || text.match(/URL="([^"]+)"/i);
+    if (metaRefreshMatch && metaRefreshMatch[1]) {
+      finalUrl = metaRefreshMatch[1];
+    } else {
+      // Also check og:url just in case
+      const ogUrlMatch = text.match(/<meta\s+property="og:url"\s+content="([^"]+)"/i);
+      if (ogUrlMatch && ogUrlMatch[1]) {
+        finalUrl = ogUrlMatch[1];
+      }
+    }
+    
+    // Convert HTML encoded ampersands back to normal
+    finalUrl = finalUrl.replace(/&amp;/g, '&');
+
+    res.json({ finalUrl });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
