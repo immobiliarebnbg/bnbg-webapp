@@ -305,6 +305,21 @@ export default function AdminDashboard({
     if (parsedCoords) {
       lat = parsedCoords.lat;
       lng = parsedCoords.lng;
+    } else {
+      // Auto-geocode using OpenStreetMap Nominatim
+      try {
+        const query = `${address}, ${neighborhood ? neighborhood + ', ' : ''}${city}, Italy`;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`, {
+          headers: { "Accept-Language": "it" }
+        });
+        const data = await res.json();
+        if (data && data.length > 0) {
+          lat = parseFloat(data[0].lat);
+          lng = parseFloat(data[0].lon);
+        }
+      } catch (err) {
+        console.warn("Geocoding failed, falling back to defaults", err);
+      }
     }
 
     // Convert price back to USD for the database if they selected EUR
