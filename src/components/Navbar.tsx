@@ -299,6 +299,32 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
 
           <hr className="border-gray-100 my-2" />
 
+          {/* Mobile Language Switcher */}
+          <div className="px-3 py-2 flex flex-col gap-3">
+            <span className="text-base font-medium text-gray-700 flex items-center gap-2">
+              <Globe className="w-5 h-5 text-gray-400" />
+              Language
+            </span>
+            <div className="flex flex-wrap bg-gray-100 rounded-lg p-1 gap-1">
+              {[
+                { code: 'en', label: 'EN' },
+                { code: 'it', label: 'IT' },
+                { code: 'fr', label: 'FR' },
+                { code: 'ar', label: 'AR' }
+              ].map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => i18n.changeLanguage(lang.code)}
+                  className={`flex-1 px-3 py-1.5 text-sm font-bold rounded-md transition-colors ${i18n.language === lang.code ? 'bg-white shadow-xs text-blue-600' : 'text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {lang.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <hr className="border-gray-100 my-2" />
+
           {/* Mobile Currency Switcher */}
           <div className="px-3 py-2 flex items-center justify-between">
             <span className="text-base font-medium text-gray-700 flex items-center gap-2">
