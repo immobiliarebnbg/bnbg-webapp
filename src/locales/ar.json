@@ -65,7 +65,16 @@
     "sortOldest": "الأقدم",
     "sortPriceAsc": "السعر: تصاعدي",
     "sortPriceDesc": "السعر: تنازلي",
-    "reset": "مسح التصفية"
+    "reset": "مسح التصفية",
+    "activeListings": "يتم حالياً عرض {{count}} من القوائم المطابقة النشطة.",
+    "searchPlaceholder": "مثال: مسبح، بحر",
+    "allCities": "جميع المدن",
+    "allTypes": "جميع الأنواع",
+    "allBeds": "جميع الأسرة",
+    "bedsPlus": "{{count}}+ سرير",
+    "amenitiesVibe": "المرافق",
+    "minPricePlaceholder": "$ أدنى",
+    "maxPricePlaceholder": "$ أقصى"
   },
   "about": {
     "coreStrengths": "نقاط القوة الأساسية",
@@ -196,5 +205,10 @@
       "forRent": "للإيجار",
       "available": "متاح"
     }
+  },
+  "amenities": {
+    "Swimming Pool": "مسبح",
+    "Garage": "مرآب",
+    "Furnished": "مفروش"
   }
 }

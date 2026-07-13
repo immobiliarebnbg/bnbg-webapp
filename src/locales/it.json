@@ -65,7 +65,16 @@
     "sortOldest": "Più Vecchi",
     "sortPriceAsc": "Prezzo: Crescente",
     "sortPriceDesc": "Prezzo: Decrescente",
-    "reset": "Cancella Filtri"
+    "reset": "Cancella Filtri",
+    "activeListings": "Attualmente mostriamo {{count}} annunci attivi corrispondenti.",
+    "searchPlaceholder": "es. Piscina, mare",
+    "allCities": "Tutte le Città",
+    "allTypes": "Tutti i Tipi",
+    "allBeds": "Tutti i Letti",
+    "bedsPlus": "{{count}}+ Letti",
+    "amenitiesVibe": "Servizi",
+    "minPricePlaceholder": "€ Min",
+    "maxPricePlaceholder": "€ Max"
   },
   "about": {
     "coreStrengths": "Punti di Forza",
@@ -196,5 +205,10 @@
       "forRent": "IN AFFITTO",
       "available": "Disponibile"
     }
+  },
+  "amenities": {
+    "Swimming Pool": "Piscina",
+    "Garage": "Garage",
+    "Furnished": "Arredato"
   }
 }

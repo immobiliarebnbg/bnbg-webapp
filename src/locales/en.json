@@ -65,7 +65,16 @@
     "sortOldest": "Vintage/Oldest",
     "sortPriceAsc": "Price: Ascending",
     "sortPriceDesc": "Price: Descending",
-    "reset": "Clear Filters"
+    "reset": "Clear Filters",
+    "activeListings": "Currently showing {{count}} active matching listings.",
+    "searchPlaceholder": "e.g. Pool, ocean",
+    "allCities": "All Cities",
+    "allTypes": "All Types",
+    "allBeds": "All Beds",
+    "bedsPlus": "{{count}}+ Beds",
+    "amenitiesVibe": "Amenities Vibe",
+    "minPricePlaceholder": "$ Min",
+    "maxPricePlaceholder": "$ Max"
   },
   "about": {
     "coreStrengths": "Core Strengths",
@@ -196,5 +205,10 @@
       "forRent": "FOR RENT",
       "available": "Available"
     }
+  },
+  "amenities": {
+    "Swimming Pool": "Swimming Pool",
+    "Garage": "Garage",
+    "Furnished": "Furnished"
   }
 }

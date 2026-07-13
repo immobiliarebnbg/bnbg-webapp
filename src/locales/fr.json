@@ -65,7 +65,16 @@
     "sortOldest": "Plus Ancien",
     "sortPriceAsc": "Prix: Croissant",
     "sortPriceDesc": "Prix: Décroissant",
-    "reset": "Effacer les Filtres"
+    "reset": "Effacer les Filtres",
+    "activeListings": "Affichage actuel de {{count}} annonces correspondantes actives.",
+    "searchPlaceholder": "ex. Piscine, mer",
+    "allCities": "Toutes les villes",
+    "allTypes": "Tous les types",
+    "allBeds": "Tous les lits",
+    "bedsPlus": "{{count}}+ Lits",
+    "amenitiesVibe": "Équipements",
+    "minPricePlaceholder": "€ Min",
+    "maxPricePlaceholder": "€ Max"
   },
   "about": {
     "coreStrengths": "Points Forts",
@@ -196,5 +205,10 @@
       "forRent": "À LOUER",
       "available": "Disponible"
     }
+  },
+  "amenities": {
+    "Swimming Pool": "Piscine",
+    "Garage": "Garage",
+    "Furnished": "Meublé"
   }
 }

@@ -777,7 +777,7 @@ export default function App() {
                     {currentPage === "buy" ? t('search.titleSale') : t('search.titleRent')}
                   </h1>
                   <p className="text-sm text-gray-400 mt-0.5">
-                    Currently showing {filteredProperties.length} active matching listings.
+                    {t('search.activeListings', { count: filteredProperties.length })}
                   </p>
                 </div>
 
@@ -805,7 +805,7 @@ export default function App() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 focus:border-blue-500 outline-hidden"
-                    placeholder="e.g. Pool, ocean"
+                    placeholder={t('search.searchPlaceholder')}
                   />
                 </div>
 
@@ -816,7 +816,7 @@ export default function App() {
                     onChange={(e) => setFilterCity(e.target.value)}
                     className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 bg-white outline-hidden"
                   >
-                    <option value="All">All Cities</option>
+                    <option value="All">{t('search.allCities')}</option>
                     {cities.filter(c => properties.some(p => p.city === c)).map((c) => (
                       <option key={c} value={c}>{c}</option>
                     ))}
@@ -830,7 +830,7 @@ export default function App() {
                     onChange={(e) => setFilterType(e.target.value)}
                     className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 bg-white outline-hidden"
                   >
-                    <option value="All">All Types</option>
+                    <option value="All">{t('search.allTypes')}</option>
                     {propertyTypes.filter(type => properties.some(p => p.propertyType === type)).map((type) => (
                       <option key={type} value={type}>
                         {type.charAt(0).toUpperCase() + type.slice(1) + (type.toLowerCase().endsWith("s") || type.toLowerCase().endsWith("ch") || type.toLowerCase().endsWith("sh") ? "" : "s")}
@@ -847,7 +847,7 @@ export default function App() {
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                       className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 outline-hidden"
-                      placeholder="$ Min"
+                      placeholder={t('search.minPricePlaceholder')}
                     />
                   </div>
                   <div>
@@ -857,7 +857,7 @@ export default function App() {
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                       className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 outline-hidden"
-                      placeholder="$ Max"
+                      placeholder={t('search.maxPricePlaceholder')}
                     />
                   </div>
                 </div>
@@ -869,16 +869,16 @@ export default function App() {
                     onChange={(e) => setMinBedrooms(e.target.value)}
                     className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 bg-white outline-hidden"
                   >
-                    <option value="All">All Beds</option>
-                    <option value="1">1+ Beds</option>
-                    <option value="2">2+ Beds</option>
-                    <option value="3">3+ Beds</option>
-                    <option value="4">4+ Beds</option>
+                    <option value="All">{t('search.allBeds')}</option>
+                    <option value="1">{t('search.bedsPlus', { count: 1 })}</option>
+                    <option value="2">{t('search.bedsPlus', { count: 2 })}</option>
+                    <option value="3">{t('search.bedsPlus', { count: 3 })}</option>
+                    <option value="4">{t('search.bedsPlus', { count: 4 })}</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Amenities Vibe</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">{t('search.amenitiesVibe')}</label>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {["Swimming Pool", "Garage", "Furnished"].map((amen) => {
                       const active = selectedAmenities.includes(amen);
@@ -898,7 +898,7 @@ export default function App() {
                               : "bg-white border-gray-200 text-gray-500"
                           }`}
                         >
-                          {amen}
+                          {t(`amenities.${amen}`)}
                         </button>
                       );
                     })}
