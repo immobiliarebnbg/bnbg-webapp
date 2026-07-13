@@ -82,7 +82,8 @@
     "beds": "Beds",
     "baths": "Baths",
     "sqft": "Sqft",
-    "featured": "Featured"
+    "featured": "Featured",
+    "viewBlueprint": "View Blueprint"
   },
   "aboutPage": {
     "subtitle": "Our Story",

@@ -82,7 +82,8 @@
     "beds": "أسرة",
     "baths": "حمامات",
     "sqft": "قدم مربع",
-    "featured": "مميز"
+    "featured": "مميز",
+    "viewBlueprint": "عرض المخطط"
   },
   "aboutPage": {
     "subtitle": "قصتنا",

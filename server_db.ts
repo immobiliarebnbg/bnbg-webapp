@@ -40,6 +40,7 @@ const SEED_PROPERTIES: Property[] = [
     ],
     featured: true,
     available: true,
+    blueprintUrl: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
     createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
   },
@@ -65,6 +66,7 @@ const SEED_PROPERTIES: Property[] = [
     ],
     featured: true,
     available: true,
+    blueprintUrl: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
     createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString()
   },

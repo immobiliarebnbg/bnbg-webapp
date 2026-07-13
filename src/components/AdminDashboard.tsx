@@ -68,6 +68,7 @@ export default function AdminDashboard({
   const [propertyType, setPropertyType] = useState<PropertyType>(propertyTypes[0] || "villa");
   const [address, setAddress] = useState("");
   const [googleMapsUrl, setGoogleMapsUrl] = useState("");
+  const [blueprintUrl, setBlueprintUrl] = useState("");
   const [city, setCity] = useState(cities[0] || "Miami");
   const [neighborhood, setNeighborhood] = useState("");
   const [bedrooms, setBedrooms] = useState("3");
@@ -141,6 +142,7 @@ export default function AdminDashboard({
     setPropertyType("villa");
     setAddress("");
     setGoogleMapsUrl("");
+    setBlueprintUrl("");
     setCity("Miami");
     setNeighborhood("");
     setBedrooms("4");
@@ -166,6 +168,7 @@ export default function AdminDashboard({
     setPropertyType(prop.propertyType);
     setAddress(prop.address);
     setGoogleMapsUrl(prop.googleMapsUrl || "");
+    setBlueprintUrl(prop.blueprintUrl || "");
     setCity(prop.city);
     setNeighborhood(prop.neighborhood);
     setBedrooms(String(prop.bedrooms));
@@ -309,7 +312,8 @@ export default function AdminDashboard({
       ],
       latitude: lat,
       longitude: lng,
-      googleMapsUrl: googleMapsUrl.trim() || undefined
+      googleMapsUrl: googleMapsUrl.trim() || undefined,
+      blueprintUrl: blueprintUrl.trim() || undefined
     };
 
     try {
@@ -1421,6 +1425,17 @@ export default function AdminDashboard({
                     onChange={(e) => setGoogleMapsUrl(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-hidden font-medium text-sm text-gray-900"
                     placeholder="e.g. https://www.google.com/maps/place/..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Blueprint URL (Optional)</label>
+                  <input
+                    type="url"
+                    value={blueprintUrl}
+                    onChange={(e) => setBlueprintUrl(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-hidden font-medium text-sm text-gray-900"
+                    placeholder="e.g. https://images.unsplash.com/photo-..."
                   />
                 </div>
 

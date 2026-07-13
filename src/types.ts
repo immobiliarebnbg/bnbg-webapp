@@ -22,6 +22,7 @@ export interface Property {
   featured: boolean;
   available: boolean;
   googleMapsUrl?: string;
+  blueprintUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -82,7 +82,8 @@
     "beds": "Letti",
     "baths": "Bagni",
     "sqft": "Mq",
-    "featured": "In Evidenza"
+    "featured": "In Evidenza",
+    "viewBlueprint": "Vedi Planimetria"
   },
   "aboutPage": {
     "subtitle": "La nostra storia",

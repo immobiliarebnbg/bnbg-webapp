@@ -12,7 +12,7 @@ import {
   Search, MapPin, ExternalLink, BedDouble, Bath, Square, ChevronRight, Phone, Mail, Clock, 
   ArrowRight, ShieldCheck, Star, Sparkles, Send, Share2, Heart, User as UserIcon, 
   Lock, Eye, EyeOff, CheckCircle2, ChevronLeft, Calendar, Compass, Shield, Award,
-  Leaf, Handshake, Castle, Home, Building2, Layers, Gem, Building, MessageCircle
+  Leaf, Handshake, Castle, Home, Building2, Layers, Gem, Building, MessageCircle, Map
 } from "lucide-react";
 
 export default function App() {
@@ -1003,6 +1003,15 @@ export default function App() {
                         favoriteIds.includes(property.id) ? "fill-red-500 text-red-500" : "text-gray-700"
                       }`} />
                     </button>
+                    {property.blueprintUrl && (
+                      <button
+                        onClick={() => window.open(property.blueprintUrl, '_blank')}
+                        className="px-4 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-md transition-colors font-bold text-sm"
+                      >
+                        <Map className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0 shrink-0" />
+                        {t('property.viewBlueprint')}
+                      </button>
+                    )}
                   </div>
 
                   {/* Thumbnail Row Indicator overlay */}

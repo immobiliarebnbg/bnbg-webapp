@@ -82,7 +82,8 @@
     "beds": "Lits",
     "baths": "Bains",
     "sqft": "M²",
-    "featured": "En Vedette"
+    "featured": "En Vedette",
+    "viewBlueprint": "Voir le plan"
   },
   "aboutPage": {
     "subtitle": "Notre Histoire",
