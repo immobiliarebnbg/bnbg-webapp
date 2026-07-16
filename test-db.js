@@ -1,0 +1,1 @@
+require('dotenv').config(); const { createClient } = require('@supabase/supabase-js'); const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY); supabase.from('properties').select('title, latitude, longitude, address, googleMapsUrl').then(({data}) => console.log(JSON.stringify(data, null, 2)));

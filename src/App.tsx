@@ -469,7 +469,7 @@ export default function App() {
                 {/* Background Image Banner */}
                 <div className="absolute inset-0 z-0">
                   <img width="800" height="600" loading="eager" decoding="async"
-                    src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80"
+                    src="/hero-bg.jpg"
                     alt="Luxury Home Haven"
                     className="w-full h-full object-cover opacity-35"
                   />

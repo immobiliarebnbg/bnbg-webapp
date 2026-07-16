@@ -1,0 +1,1 @@
+import dotenv from 'dotenv'; dotenv.config(); import { createClient } from '@supabase/supabase-js'; const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY); supabase.from('properties').select('*').then(({data}) => console.log(JSON.stringify(data.map(p => ({title: p.title, address: p.address, city: p.city})), null, 2)));
