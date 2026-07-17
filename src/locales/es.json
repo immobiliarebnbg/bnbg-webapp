@@ -1,0 +1,251 @@
+{
+  "seo": {
+    "title": "BNBG Immobiliare | Agencia Inmobiliaria y Casas de Lujo en Bérgamo",
+    "description": "Descubra propiedades de lujo, ventas inmobiliarias e inversiones con BNBG Immobiliare en Bérgamo y más allá. Su socio de confianza.",
+    "keywords": "agencia inmobiliaria, casas de lujo, propiedades, BNBG, Bérgamo, comprar, alquilar, bienes raíces Italia, villas de lujo Italia, propiedad en venta Bérgamo, inversiones inmobiliarias italianas, comprar casa en Italia, apartamentos en Bérgamo, propiedad en venta Italia"
+  },
+  "nav": {
+    "home": "Inicio",
+    "buy": "Comprar",
+    "rent": "Alquilar",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "signIn": "Iniciar Sesión",
+    "signOut": "Cerrar Sesión",
+    "profile": "Perfil",
+    "adminDashboard": "Panel de Administración",
+    "favorites": "Favoritos"
+  },
+  "propertyTypes": {
+    "apartment": "Apartamento",
+    "loft": "Loft",
+    "negozio/ufficio": "Tienda/Oficina",
+    "monolocale": "Estudio",
+    "bilocale": "Apartamento de dos habitaciones",
+    "trilocale": "Apartamento de tres habitaciones",
+    "villa": "Villa",
+    "house": "Casa",
+    "condo": "Condominio",
+    "townhouse": "Casa adosada"
+  },
+  "hero": {
+    "title1": "Cuando los sueños",
+    "title2": "Se convierten en hogar",
+    "subtitle": "Descubra las propiedades más exclusivas en los lugares más deseados del mundo. Su santuario perfecto le espera.",
+    "searchPlaceholder": "Buscar por ciudad, barrio o código postal...",
+    "searchButton": "Buscar Propiedades"
+  },
+  "footer": {
+    "aboutUs": "Sobre Nosotros",
+    "aboutText": "BNBG Immobiliare S.r.l. es una plataforma inmobiliaria premium especializada en propiedades excepcionales para clientes exigentes en todo el mundo.",
+    "quickLinks": "Enlaces Rápidos",
+    "contactInfo": "Información de Contacto",
+    "address": "Bérgamo, via san bernardino 7/B",
+    "rights": "Todos los derechos reservados.",
+    "featuredProperties": "Propiedades Destacadas",
+    "propertiesForSale": "Propiedades en Venta",
+    "propertiesForRent": "Propiedades en Alquiler",
+    "ourVision": "Nuestra Visión e Historia",
+    "googleMaps": "Encuéntrenos en Google Maps ↗"
+  },
+  "home": {
+    "architecturalCollections": "Colecciones Arquitectónicas",
+    "architecturalDesc": "Filtre anuncios instantáneamente por su estilo y forma de edificio preferidos.",
+    "listingsCount": "anuncios",
+    "curatedShowcases": "Vitrinas Seleccionadas",
+    "curatedDesc": "Anuncios exclusivos seleccionados meticulosamente que representan artesanía de diseño de alta gama.",
+    "viewAll": "Ver Todas las Vitrinas",
+    "noShowcases": "Actualmente no hay vitrinas marcadas como destacadas.",
+    "stats": {
+      "sales": "Volumen Total de Ventas",
+      "transactions": "Transacciones Premium",
+      "trust": "Puntuación de Confianza del Cliente",
+      "care": "Atención Dedicada"
+    },
+    "latestAdditions": "Últimas Incorporaciones",
+    "latestDesc": "Nuevas propiedades introducidas en los mercados principales esta semana."
+  },
+  "search": {
+    "titleSale": "Propiedades Exclusivas en Venta",
+    "descSale": "Explore una cartera de bienes raíces de alto patrimonio listos para su adquisición.",
+    "titleRent": "Alquileres de Lujo",
+    "descRent": "Descubra fincas meticulosamente seleccionadas para arrendamiento en distritos de primera.",
+    "filters": "Refinar Resultados",
+    "city": "Ubicación",
+    "type": "Tipo de Propiedad",
+    "minPrice": "Precio Mín.",
+    "maxPrice": "Precio Máx.",
+    "minBeds": "Camas Mín.",
+    "minBaths": "Baños Mín.",
+    "sortBy": "Configuración de Orden",
+    "sortNewest": "Recién Llegados",
+    "sortOldest": "Más Antiguos",
+    "sortPriceAsc": "Precio: Ascendente",
+    "sortPriceDesc": "Precio: Descendente",
+    "reset": "Limpiar Filtros",
+    "activeListings": "Actualmente mostrando {{count}} anuncios coincidentes.",
+    "searchPlaceholder": "Ej. Piscina, océano",
+    "allCities": "Todas las Ciudades",
+    "allTypes": "Todos los Tipos",
+    "allBeds": "Todas las Camas",
+    "bedsPlus": "{{count}}+ Camas",
+    "amenitiesVibe": "Ambiente de Servicios",
+    "minPricePlaceholder": "$ Mín",
+    "maxPricePlaceholder": "$ Máx"
+  },
+  "about": {
+    "coreStrengths": "Puntos Fuertes",
+    "title": "Elevando las Transacciones Inmobiliarias a Formas de Arte",
+    "desc": "Entendemos que la búsqueda de bienes raíces trata de asegurar un lienzo a largo plazo para la vida. Alineamos materiales de lujo, datos de ubicación y soporte directo para proteger sus intereses.",
+    "vetted": "Garantía Comprobada",
+    "vettedDesc": "Cada anuncio se verifica en precisión, estándares estructurales y escrituras limpias.",
+    "district": "Profundidad del Distrito",
+    "districtDesc": "Acceso directo a ventas privadas, oportunidades fuera de mercado y reportes escolares."
+  },
+  "cta": {
+    "title": "¿Busca poner en venta su propiedad de lujo?",
+    "desc": "Conéctese con nuestros corredores para exhibir su propiedad en catálogos premium.",
+    "contactBtn": "Contactar a un Agente",
+    "learnMoreBtn": "Saber Más"
+  },
+  "property": {
+    "viewDetails": "Ver Detalles",
+    "beds": "Habitaciones",
+    "baths": "Baños",
+    "sqft": "Metros Cuadrados",
+    "featured": "Destacado",
+    "viewBlueprint": "Ver Plano"
+  },
+  "propertyDetail": {
+    "bedrooms": "Habitaciones",
+    "bathrooms": "Baños",
+    "squareMeters": "Metros Cuadrados",
+    "descriptionTitle": "Lienzo Editorial",
+    "amenitiesTitle": "Elementos Clave y Servicios",
+    "mapTitle": "Contexto de la Calle del Distrito",
+    "mapSubtitle": "Vecindario Verificado",
+    "similarTitle": "Casas Seleccionadas Similares",
+    "brokerTitle": "Agente BNBG",
+    "brokerRole": "Especialista Sénior en Reubicación",
+    "inquiryFormTitle": "Programar Sesión de Reubicación",
+    "labelName": "Mi Nombre Completo",
+    "labelEmail": "Mi Correo Electrónico",
+    "labelPhone": "Mi Número de Teléfono",
+    "labelMessage": "Mensaje / Solicitud",
+    "placeholderName": "Ej. Carlos García",
+    "placeholderEmail": "Ej. carlos@example.com",
+    "placeholderPhone": "Ej. +34 600 000 000",
+    "placeholderMessage": "Estoy interesado en tours privados...",
+    "submitBtn": "Solicitar Tour de Reubicación",
+    "submittingBtn": "Enviando Solicitud...",
+    "successTitle": "¡Solicitud Enviada!",
+    "successMsg": "Hemos recibido su solicitud y le contactaremos pronto.",
+    "sendAnother": "Enviar otra solicitud"
+  },
+  "aboutPage": {
+    "subtitle": "Nuestra Historia",
+    "title": "Cuando los sueños se convierten en hogar",
+    "desc1": "BNBG Immobiliare S.r.l nació en Bérgamo, una ciudad rica en historia y belleza. Una realidad que combina entusiasmo y competencia para acompañar a quienes buscan o venden un hogar en un camino sereno, claro y personalizado.",
+    "subtitle2": "Más allá de los números, personas.",
+    "desc2": "Creemos que los bienes raíces no solo están hechos de números y contratos, sino sobre todo de personas, historias y proyectos de vida. Por eso hemos elegido construir una agencia que escucha, asesora y valora cada propiedad.",
+    "desc3": "Nuestra estructura ofrece servicios de consultoría hipotecaria, técnica, legal y notarial. BNBG Immobiliare fue creado para satisfacer las necesidades de inversiones de alto nivel.",
+    "awards": "Premios de la Industria",
+    "eco": "Materiales Eco",
+    "escrow": "Depósito Seguro",
+    "teamTitle": "Conozca a Nuestros Especialistas",
+    "teamDesc": "Proporcionamos décadas de experiencia local en centros metropolitanos primarios."
+  },
+  "admin": {
+    "dashboard": "Panel de Administración",
+    "overview": "Visión General",
+    "properties": "Propiedades",
+    "inquiries": "Consultas",
+    "metadata": "Metadatos",
+    "stats": {
+      "totalProperties": "Total Propiedades",
+      "activeRentals": "Alquileres Activos",
+      "activeSales": "Ventas Activas",
+      "totalInquiries": "Total Consultas",
+      "newInquiries": "Nuevas Consultas",
+      "avgSalePrice": "Precio Promedio Venta",
+      "avgRentPrice": "Precio Promedio Alquiler/mes"
+    },
+    "table": {
+      "property": "Propiedad",
+      "location": "Ubicación",
+      "type": "Tipo",
+      "statusPrice": "Estado / Precio",
+      "actions": "Acciones",
+      "date": "Fecha",
+      "client": "Cliente",
+      "message": "Mensaje",
+      "status": "Estado"
+    },
+    "actions": {
+      "addNew": "Añadir Nueva Propiedad",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "save": "Guardar Propiedad",
+      "cancel": "Cancelar",
+      "markContacted": "Marcar Contactado",
+      "markResolved": "Marcar Resuelto",
+      "contacted": "Contactado",
+      "resolved": "Resuelto",
+      "add": "Añadir"
+    },
+    "propertiesTab": {
+      "title": "Gestión de Anuncios Activos",
+      "desc": "Edite especificaciones detalladas o elimine anuncios obsoletos.",
+      "totalSaved": "{{count}} Propiedades Guardadas"
+    },
+    "inquiriesTab": {
+      "title": "Consultas de Clientes",
+      "desc": "Rastree mensajes de visitantes, haga seguimiento o archive.",
+      "messageFrom": "Mensaje de",
+      "receivedOn": "Recibido el",
+      "listing": "Anuncio:",
+      "updateStatus": "Actualizar Estado",
+      "statusNew": "NUEVO"
+    },
+    "metadataTab": {
+      "title": "Gestor de Centros y Tipos",
+      "desc": "Gestione ciudades geográficas editables y categorías.",
+      "cityHubs": "Centros Urbanos ({{count}})",
+      "cityDesc": "Ubicaciones destacadas en mapas y filtros.",
+      "cityPlaceholder": "Ej. Madrid, Barcelona",
+      "propertyTypes": "Tipos de Propiedad ({{count}})",
+      "typeDesc": "Categorías personalizadas para clasificación arquitectónica.",
+      "typePlaceholder": "Ej. cabaña, ático, castillo"
+    },
+    "badges": {
+      "forSale": "EN VENTA",
+      "forRent": "EN ALQUILER",
+      "available": "Disponible"
+    }
+  },
+  "amenities": {
+    "Swimming Pool": "Piscina",
+    "Garage": "Garaje",
+    "Furnished": "Amueblado"
+  },
+  "contactPage": {
+    "successTitle": "Mensaje Entregado con Éxito",
+    "successDesc": "Gracias por su solicitud. Un corredor especializado se pondrá en contacto pronto.",
+    "fullName": "Mi Nombre Completo",
+    "fullNamePlaceholder": "Ej. Juan Pérez",
+    "email": "Mi Correo Electrónico",
+    "emailPlaceholder": "Ej. juan@example.com",
+    "subject": "Asunto",
+    "subjectPlaceholder": "Ej. Consulta de venta",
+    "message": "Mi Mensaje",
+    "messagePlaceholder": "Cuéntenos sus requisitos de reubicación...",
+    "submit": "Enviar Consulta",
+    "hq": "Sede Central",
+    "officeHours": "Horarios",
+    "hoursMonFri": "Lun a Vie 09:00-12:30 y 14:30-18:00",
+    "hoursSat": "Sábado 09:00-12:30",
+    "getInTouch": "Póngase en Contacto",
+    "connectTitle": "Conéctese con Nuestras Oficinas",
+    "connectDesc": "¿Tiene alguna pregunta? Déjenos un mensaje y contactaremos al instante."
+  }
+}

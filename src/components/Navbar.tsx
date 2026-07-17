@@ -138,7 +138,8 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                     { code: 'en', label: 'English' },
                     { code: 'it', label: 'Italian' },
                     { code: 'fr', label: 'French' },
-                    { code: 'ar', label: 'Arabic' }
+                    { code: 'ar', label: 'Arabic' },
+                    { code: 'es', label: 'Spanish' }
                   ].map((lang) => (
                     <button
                       key={lang.code}

@@ -5,12 +5,14 @@ import enTranslation from './locales/en.json';
 import itTranslation from './locales/it.json';
 import frTranslation from './locales/fr.json';
 import arTranslation from './locales/ar.json';
+import esTranslation from './locales/es.json';
 
 const resources = {
   en: { translation: enTranslation },
   it: { translation: itTranslation },
   fr: { translation: frTranslation },
-  ar: { translation: arTranslation }
+  ar: { translation: arTranslation },
+  es: { translation: esTranslation }
 };
 
 i18n
