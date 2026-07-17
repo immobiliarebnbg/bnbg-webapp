@@ -722,8 +722,8 @@ export default function App() {
 
                   <div className="mt-12 lg:mt-0 relative aspect-video sm:aspect-4/3 rounded-3xl overflow-hidden shadow-xl border border-gray-100">
                     <img width="800" height="600" loading="lazy" decoding="async"
-                      src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80"
-                      alt="Elegant Estate Design"
+                      src="/about-storefront.jpg"
+                      alt="BNBG Immobiliare Storefront"
                       className="w-full h-full object-cover"
                     />
                   </div>
