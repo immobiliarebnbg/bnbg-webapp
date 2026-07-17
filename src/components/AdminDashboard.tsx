@@ -1062,7 +1062,7 @@ export default function AdminDashboard({
                     </td>
                     <td className="py-4 px-6">
                       <span className="capitalize px-2 py-0.5 rounded-md text-xs bg-slate-100 text-gray-600 font-medium">
-                        {prop.propertyType}
+                        {t(`propertyTypes.${prop.propertyType.toLowerCase()}`, { defaultValue: prop.propertyType })}
                       </span>
                     </td>
                     <td className="py-4 px-6">

@@ -892,7 +892,7 @@ export default function App() {
                     <option value="All">{t('search.allTypes')}</option>
                     {propertyTypes.filter(type => properties.some(p => p.propertyType === type)).map((type) => (
                       <option key={type} value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1) + (type.toLowerCase().endsWith("s") || type.toLowerCase().endsWith("ch") || type.toLowerCase().endsWith("sh") ? "" : "s")}
+                        {t(`propertyTypes.${type.toLowerCase()}`, { defaultValue: type.charAt(0).toUpperCase() + type.slice(1) })}
                       </option>
                     ))}
                   </select>
@@ -1071,7 +1071,7 @@ export default function App() {
                         </span>
                       )}
                       <span className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold capitalize">
-                        {property.propertyType}
+                        {t(`propertyTypes.${property.propertyType.toLowerCase()}`, { defaultValue: property.propertyType })}
                       </span>
                     </div>
 

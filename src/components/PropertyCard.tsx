@@ -62,7 +62,7 @@ export default function PropertyCard({ property, isFavorited, onToggleFavorite, 
         {/* Property Type Badge */}
         <div className="absolute bottom-4 left-4">
           <span className="px-2.5 py-0.5 text-xs font-medium rounded-md bg-gray-950/70 backdrop-blur-xs text-white capitalize">
-            {property.propertyType}
+            {t(`propertyTypes.${property.propertyType.toLowerCase()}`, { defaultValue: property.propertyType })}
           </span>
         </div>
       </div>
