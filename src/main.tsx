@@ -5,10 +5,14 @@ import './index.css';
 import './i18n';
 import { CurrencyProvider } from './contexts/CurrencyContext';
 
+import { HelmetProvider } from 'react-helmet-async';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CurrencyProvider>
-      <App />
-    </CurrencyProvider>
+    <HelmetProvider>
+      <CurrencyProvider>
+        <App />
+      </CurrencyProvider>
+    </HelmetProvider>
   </StrictMode>,
 );

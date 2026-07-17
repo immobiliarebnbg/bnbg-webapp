@@ -16,6 +16,7 @@ import {
   Leaf, Handshake, Castle, Home, Building2, Layers, Gem, Building, MessageCircle, Map, X,
   Instagram, Facebook
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 const StoryCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -489,6 +490,14 @@ export default function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 text-gray-800">
+      <Helmet>
+        <html lang={i18n.language} />
+        <title>{t('seo.title', { defaultValue: 'BNBG Immobiliare | Real Estate & Luxury Homes' })}</title>
+        <meta name="description" content={t('seo.description', { defaultValue: 'Discover luxury properties, real estate sales, and investments with BNBG Immobiliare in Bergamo and beyond.' })} />
+        <meta name="keywords" content={t('seo.keywords', { defaultValue: 'real estate, luxury homes, immobiliare, Bergamo, buy house, property investments' })} />
+        <meta property="og:title" content={t('seo.title', { defaultValue: 'BNBG Immobiliare | Real Estate & Luxury Homes' })} />
+        <meta property="og:description" content={t('seo.description', { defaultValue: 'Discover luxury properties, real estate sales, and investments with BNBG Immobiliare in Bergamo and beyond.' })} />
+      </Helmet>
       {/* Navigation Header */}
       <Navbar 
         currentUser={currentUser} 
