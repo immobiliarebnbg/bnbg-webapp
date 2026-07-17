@@ -13,7 +13,8 @@ import {
   Search, MapPin, ExternalLink, BedDouble, Bath, Square, ChevronRight, Phone, Mail, Clock, 
   ArrowRight, ShieldCheck, Star, Sparkles, Send, Share2, Heart, User as UserIcon, 
   Lock, Eye, EyeOff, CheckCircle2, ChevronLeft, Calendar, Compass, Shield, Award,
-  Leaf, Handshake, Castle, Home, Building2, Layers, Gem, Building, MessageCircle, Map, X
+  Leaf, Handshake, Castle, Home, Building2, Layers, Gem, Building, MessageCircle, Map, X,
+  Instagram, Facebook
 } from "lucide-react";
 
 export default function App() {
@@ -1505,8 +1506,24 @@ export default function App() {
                     <ul className="text-xs space-y-1.5 text-slate-400">
                       <li>{t('contactPage.hoursMonFri')}</li>
                       <li>{t('contactPage.hoursSat')}</li>
-                      <li>{t('contactPage.hoursSun')}</li>
                     </ul>
+
+                    <hr className="border-slate-800 my-6" />
+                    
+                    <h4 className="font-bold text-sm mb-4 text-white">Social</h4>
+                    <div className="flex gap-4 text-slate-400">
+                      <a href="https://www.instagram.com/bnbgimmobiliare" target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 hover:text-pink-500 transition-colors">
+                        <Instagram className="w-5 h-5" />
+                      </a>
+                      <a href="https://www.facebook.com/share/1BZbQyNLgj/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 hover:text-blue-500 transition-colors">
+                        <Facebook className="w-5 h-5" />
+                      </a>
+                      <a href="https://www.tiktok.com/@bnbgimmobiliare" target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-800 rounded-full hover:bg-slate-700 hover:text-white transition-colors">
+                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.04-.1z" />
+                        </svg>
+                      </a>
+                    </div>
                   </div>
 
                   {/* Visual Map Context */}

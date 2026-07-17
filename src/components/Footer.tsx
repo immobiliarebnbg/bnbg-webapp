@@ -1,5 +1,5 @@
 import React from "react";
-import { MapPin, Phone, Mail, Map, MessageCircle } from "lucide-react";
+import { MapPin, Phone, Mail, Map, MessageCircle, Instagram, Facebook } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface FooterProps {
@@ -25,6 +25,21 @@ export default function Footer({ onNavigate }: FooterProps) {
               © 2026 BNBG Immobiliare S.r.l.
               <br />{t('footer.rights')}
             </p>
+            
+            {/* Social Links */}
+            <div className="flex gap-3 pt-2 text-gray-400">
+              <a href="https://www.instagram.com/bnbgimmobiliare" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-900 rounded-full hover:bg-gray-800 hover:text-pink-500 transition-colors">
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a href="https://www.facebook.com/share/1BZbQyNLgj/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-900 rounded-full hover:bg-gray-800 hover:text-blue-500 transition-colors">
+                <Facebook className="w-4 h-4" />
+              </a>
+              <a href="https://www.tiktok.com/@bnbgimmobiliare" target="_blank" rel="noopener noreferrer" className="p-2 bg-gray-900 rounded-full hover:bg-gray-800 hover:text-white transition-colors">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1.04-.1z" />
+                </svg>
+              </a>
+            </div>
           </div>
 
           {/* Quick Navigations */}
