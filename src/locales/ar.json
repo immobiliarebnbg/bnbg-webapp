@@ -8,13 +8,25 @@
     "home": "الرئيسية",
     "buy": "شراء",
     "rent": "إيجار",
-    "about": "حول",
+    "about": "من نحن",
     "contact": "اتصل بنا",
     "signIn": "تسجيل الدخول",
     "signOut": "تسجيل الخروج",
     "profile": "الملف الشخصي",
-    "adminDashboard": "لوحة الإدارة",
+    "adminDashboard": "لوحة تحكم المشرف",
     "favorites": "المفضلة"
+  },
+  "propertyTypes": {
+    "apartment": "شقة",
+    "loft": "لوفت",
+    "negozio/ufficio": "متجر/مكتب",
+    "monolocale": "استوديو",
+    "bilocale": "شقة بغرفتين",
+    "trilocale": "شقة بثلاث غرف",
+    "villa": "فيلا",
+    "house": "منزل",
+    "condo": "شقة مجمع",
+    "townhouse": "تاون هاوس"
   },
   "hero": {
     "title1": "عندما تصبح",

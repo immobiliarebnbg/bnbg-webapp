@@ -16,6 +16,18 @@
     "adminDashboard": "Dashboard Amministratore",
     "favorites": "Preferiti"
   },
+  "propertyTypes": {
+    "apartment": "Appartamento",
+    "loft": "Loft",
+    "negozio/ufficio": "Negozio/Ufficio",
+    "monolocale": "Monolocale",
+    "bilocale": "Bilocale",
+    "trilocale": "Trilocale",
+    "villa": "Villa",
+    "house": "Casa",
+    "condo": "Condominio",
+    "townhouse": "Villetta a schiera"
+  },
   "hero": {
     "title1": "Quando i sogni",
     "title2": "Diventano Casa",

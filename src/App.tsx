@@ -622,7 +622,8 @@ export default function App() {
                 <div className="flex flex-wrap justify-center gap-4 animate-fade-in">
                   {propertyTypes.filter(type => properties.some(p => p.propertyType === type)).map((type) => {
                     const count = properties.filter(p => p.propertyType === type).length;
-                    const label = type.charAt(0).toUpperCase() + type.slice(1);
+                    const defaultLabel = type.charAt(0).toUpperCase() + type.slice(1);
+                    const label = t(`propertyTypes.${type.toLowerCase()}`, { defaultValue: defaultLabel });
                     
                     const getIconForType = (t: string) => {
                       switch (t.toLowerCase()) {

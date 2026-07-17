@@ -8,13 +8,25 @@
     "home": "Home",
     "buy": "Buy",
     "rent": "Rent",
-    "about": "About",
+    "about": "About Us",
     "contact": "Contact",
     "signIn": "Sign In",
     "signOut": "Sign Out",
     "profile": "Profile",
     "adminDashboard": "Admin Dashboard",
     "favorites": "Favorites"
+  },
+  "propertyTypes": {
+    "apartment": "Apartment",
+    "loft": "Loft",
+    "negozio/ufficio": "Shop/Office",
+    "monolocale": "Studio",
+    "bilocale": "Two-room apartment",
+    "trilocale": "Three-room apartment",
+    "villa": "Villa",
+    "house": "House",
+    "condo": "Condo",
+    "townhouse": "Townhouse"
   },
   "hero": {
     "title1": "When Dreams",

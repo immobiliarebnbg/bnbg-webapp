@@ -13,8 +13,20 @@
     "signIn": "Se connecter",
     "signOut": "Se déconnecter",
     "profile": "Profil",
-    "adminDashboard": "Tableau de bord",
+    "adminDashboard": "Tableau de bord Admin",
     "favorites": "Favoris"
+  },
+  "propertyTypes": {
+    "apartment": "Appartement",
+    "loft": "Loft",
+    "negozio/ufficio": "Boutique/Bureau",
+    "monolocale": "Studio",
+    "bilocale": "Deux pièces",
+    "trilocale": "Trois pièces",
+    "villa": "Villa",
+    "house": "Maison",
+    "condo": "Condominium",
+    "townhouse": "Maison de ville"
   },
   "hero": {
     "title1": "Quand les rêves",
