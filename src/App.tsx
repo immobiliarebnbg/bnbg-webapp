@@ -17,6 +17,52 @@ import {
   Instagram, Facebook
 } from "lucide-react";
 
+const StoryCarousel = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = ["/story-1.jpg", "/story-2.jpg", "/story-3.jpg"];
+
+  const nextImage = () => setCurrentIndex((prev) => (prev + 1) % images.length);
+  const prevImage = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+
+  return (
+    <div className="relative aspect-video sm:aspect-4/3 rounded-3xl overflow-hidden shadow-xl border border-gray-150 group">
+      <img width="800" height="600" loading="lazy" decoding="async"
+        src={images[currentIndex]}
+        alt={`Story image ${currentIndex + 1}`}
+        className="w-full h-full object-cover transition-opacity duration-500"
+      />
+      
+      <button 
+        onClick={prevImage}
+        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 text-gray-800 flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+        aria-label="Previous image"
+      >
+        <ChevronLeft className="w-6 h-6" />
+      </button>
+      <button 
+        onClick={nextImage}
+        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 text-gray-800 flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+        aria-label="Next image"
+      >
+        <ChevronRight className="w-6 h-6" />
+      </button>
+
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        {images.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`w-2 h-2 rounded-full transition-all ${
+              idx === currentIndex ? "bg-white w-4" : "bg-white/50"
+            }`}
+            aria-label={`Go to slide ${idx + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const { t, i18n } = useTranslation();
   const { formatPrice } = useCurrency();
@@ -1340,13 +1386,7 @@ export default function App() {
 
               {/* Story Splits Block */}
               <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
-                <div className="relative aspect-video sm:aspect-4/3 rounded-3xl overflow-hidden shadow-xl border border-gray-150">
-                  <img width="800" height="600" loading="lazy" decoding="async"
-                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
-                    alt="Corporate Workspace Design"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <StoryCarousel />
 
                 <div className="space-y-6 mt-8 lg:mt-0">
                   <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('aboutPage.subtitle2')}</h2>
