@@ -622,7 +622,7 @@ export default function App() {
                 <div className="flex flex-wrap justify-center gap-4 animate-fade-in">
                   {propertyTypes.filter(type => properties.some(p => p.propertyType === type)).map((type) => {
                     const count = properties.filter(p => p.propertyType === type).length;
-                    const label = type.charAt(0).toUpperCase() + type.slice(1) + (type.toLowerCase().endsWith("s") || type.toLowerCase().endsWith("ch") || type.toLowerCase().endsWith("sh") ? "" : "s");
+                    const label = type.charAt(0).toUpperCase() + type.slice(1);
                     
                     const getIconForType = (t: string) => {
                       switch (t.toLowerCase()) {
