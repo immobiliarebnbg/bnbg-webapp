@@ -521,7 +521,7 @@ export default function App() {
               className="space-y-20 pb-20 font-sans"
             >
               {/* Premium Hero Section */}
-              <div id="home-hero" className="relative h-[650px] w-full overflow-hidden bg-slate-900 flex items-center">
+              <div id="home-hero" className="relative min-h-screen w-full overflow-hidden bg-slate-900 flex items-center">
                 {/* Background Image Banner */}
                 <div className="absolute inset-0 z-0">
                   <img width="800" height="600" loading="eager" decoding="async"
