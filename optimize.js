@@ -3,18 +3,18 @@ import fs from "fs/promises";
 import path from "path";
 
 const imagesDir = path.join(process.cwd(), "src/assets/images");
-const publicDir = path.join(process.cwd(), "public");
 
 async function optimizeImages() {
   const images = [
-    { src: path.join(imagesDir, "slide-1.webp"), dest: path.join(imagesDir, "slide-1-temp.webp") },
-    { src: path.join(imagesDir, "slide-2.webp"), dest: path.join(imagesDir, "slide-2-temp.webp") },
-    { src: path.join(imagesDir, "slide-3.webp"), dest: path.join(imagesDir, "slide-3-temp.webp") },
-    { src: path.join(imagesDir, "slide-4.webp"), dest: path.join(imagesDir, "slide-4-temp.webp") },
-    { src: path.join(imagesDir, "slide-5.webp"), dest: path.join(imagesDir, "slide-5-temp.webp") },
-    { src: path.join(imagesDir, "slide-6.webp"), dest: path.join(imagesDir, "slide-6-temp.webp") },
-    { src: path.join(imagesDir, "slide-7.webp"), dest: path.join(imagesDir, "slide-7-temp.webp") },
-    { src: path.join(imagesDir, "hero-bg.webp"), dest: path.join(imagesDir, "hero-bg-temp.webp") }
+    { src: path.join(imagesDir, "new-story-1.png"), dest: path.join(imagesDir, "new-story-1-temp.webp") },
+    { src: path.join(imagesDir, "new-story-2.jpg"), dest: path.join(imagesDir, "new-story-2-temp.webp") },
+    { src: path.join(imagesDir, "new-story-3.jpg"), dest: path.join(imagesDir, "new-story-3-temp.webp") },
+    { src: path.join(imagesDir, "new-story-4.jpg"), dest: path.join(imagesDir, "new-story-4-temp.webp") },
+    { src: path.join(imagesDir, "new-story-5.jpg"), dest: path.join(imagesDir, "new-story-5-temp.webp") },
+    { src: path.join(imagesDir, "new-story-6.jpg"), dest: path.join(imagesDir, "new-story-6-temp.webp") },
+    { src: path.join(imagesDir, "new-story-7.jpg"), dest: path.join(imagesDir, "new-story-7-temp.webp") },
+    { src: path.join(imagesDir, "new-story-8.jpg"), dest: path.join(imagesDir, "new-story-8-temp.webp") },
+    { src: path.join(imagesDir, "new-story-9.jpg"), dest: path.join(imagesDir, "new-story-9-temp.webp") }
   ];
 
   for (const img of images) {
@@ -29,8 +29,9 @@ async function optimizeImages() {
       
       // Delete original to save space
       await fs.unlink(img.src);
-      // Rename temp to original
-      await fs.rename(img.dest, img.src);
+      // Rename temp to original name but with webp extension
+      const finalDest = img.src.replace(/\.(png|jpg)$/, '.webp');
+      await fs.rename(img.dest, finalDest);
     } catch (err) {
       console.error(`Error optimizing ${img.src}:`, err);
     }

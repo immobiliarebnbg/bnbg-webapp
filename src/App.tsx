@@ -18,9 +18,19 @@ import {
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
+import newStory1 from "./assets/images/new-story-1.webp";
+import newStory2 from "./assets/images/new-story-2.webp";
+import newStory3 from "./assets/images/new-story-3.webp";
+import newStory4 from "./assets/images/new-story-4.webp";
+import newStory5 from "./assets/images/new-story-5.webp";
+import newStory6 from "./assets/images/new-story-6.webp";
+import newStory7 from "./assets/images/new-story-7.webp";
+import newStory8 from "./assets/images/new-story-8.webp";
+import newStory9 from "./assets/images/new-story-9.webp";
+
 const StoryCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const images = ["/story-1.jpg", "/story-2.jpg", "/story-3.jpg"];
+  const images = [newStory1, newStory2, newStory3, newStory4, newStory5, newStory6, newStory7, newStory8, newStory9];
 
   const nextImage = () => setCurrentIndex((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
