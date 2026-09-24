@@ -64,18 +64,18 @@ const StoryCarousel = () => {
   );
 };
 
-import slide1 from "./assets/images/slide-1.jpg";
-import slide2 from "./assets/images/slide-2.jpg";
-import slide3 from "./assets/images/slide-3.jpg";
-import slide4 from "./assets/images/slide-4.jpg";
-import slide5 from "./assets/images/slide-5.jpg";
-import slide6 from "./assets/images/slide-6.jpg";
-import slide7 from "./assets/images/slide-7.jpg";
+import slide1 from "./assets/images/slide-1.webp";
+import slide2 from "./assets/images/slide-2.webp";
+import slide3 from "./assets/images/slide-3.webp";
+import slide4 from "./assets/images/slide-4.webp";
+import slide5 from "./assets/images/slide-5.webp";
+import slide6 from "./assets/images/slide-6.webp";
+import slide7 from "./assets/images/slide-7.webp";
 
 const HeroCarouselBackground = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    "./hero-bg.jpg",
+    "./hero-bg.webp",
     slide1,
     slide2,
     slide3,
@@ -99,6 +99,8 @@ const HeroCarouselBackground = () => {
           key={src}
           src={src}
           alt="Luxury Home Haven"
+          loading={index === 0 ? "eager" : "lazy"}
+          decoding={index === 0 ? "sync" : "async"}
           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
           style={{ opacity: index === currentIndex ? 1 : 0 }}
         />
