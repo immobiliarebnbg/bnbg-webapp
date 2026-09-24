@@ -67,18 +67,19 @@ const StoryCarousel = () => {
 const HeroCarouselBackground = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    "/hero-bg.jpg",
-    "/carousel-1.jpg",
-    "/carousel-2.jpg",
-    "/carousel-3.jpg",
-    "/carousel-4.jpg",
-    "/carousel-5.jpg"
+    "/desktop-1.jpg",
+    "/desktop-2.jpg",
+    "/desktop-3.jpg",
+    "/desktop-4.jpg",
+    "/desktop-5.jpg",
+    "/desktop-6.jpg",
+    "/desktop-7.jpg"
   ];
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 1000);
+    }, 3000);
     return () => clearInterval(timer);
   }, []);
 
