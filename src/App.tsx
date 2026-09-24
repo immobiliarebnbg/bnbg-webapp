@@ -84,18 +84,15 @@ const HeroCarouselBackground = () => {
 
   return (
     <div className="absolute inset-0 z-0 bg-slate-900">
-      <AnimatePresence initial={false}>
-        <motion.img
-          key={currentIndex}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
-          src={images[currentIndex]}
+      {images.map((src, index) => (
+        <img
+          key={src}
+          src={src}
           alt="Luxury Home Haven"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+          style={{ opacity: index === currentIndex ? 1 : 0 }}
         />
-      </AnimatePresence>
+      ))}
     </div>
   );
 };
