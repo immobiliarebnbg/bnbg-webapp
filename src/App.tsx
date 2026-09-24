@@ -64,6 +64,7 @@ const StoryCarousel = () => {
   );
 };
 
+import heroBg from "./assets/images/hero-bg.webp";
 import slide1 from "./assets/images/slide-1.webp";
 import slide2 from "./assets/images/slide-2.webp";
 import slide3 from "./assets/images/slide-3.webp";
@@ -75,7 +76,7 @@ import slide7 from "./assets/images/slide-7.webp";
 const HeroCarouselBackground = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    "./hero-bg.webp",
+    heroBg,
     slide1,
     slide2,
     slide3,
