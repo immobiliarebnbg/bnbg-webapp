@@ -100,8 +100,6 @@ const HeroCarouselBackground = () => {
           key={src}
           src={src}
           alt="Luxury Home Haven"
-          loading={index === 0 ? "eager" : "lazy"}
-          decoding={index === 0 ? "sync" : "async"}
           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
           style={{ opacity: index === currentIndex ? 1 : 0 }}
         />
