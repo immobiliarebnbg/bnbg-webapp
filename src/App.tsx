@@ -67,6 +67,7 @@ const StoryCarousel = () => {
 const HeroCarouselBackground = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
+    "/hero-bg.jpg",
     "/desktop-1.jpg",
     "/desktop-2.jpg",
     "/desktop-3.jpg",
