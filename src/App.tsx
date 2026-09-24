@@ -67,14 +67,14 @@ const StoryCarousel = () => {
 const HeroCarouselBackground = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [
-    "/hero-bg.jpg",
-    "/desktop-1.jpg",
-    "/desktop-2.jpg",
-    "/desktop-3.jpg",
-    "/desktop-4.jpg",
-    "/desktop-5.jpg",
-    "/desktop-6.jpg",
-    "/desktop-7.jpg"
+    "./hero-bg.jpg",
+    "./slide-1.jpg",
+    "./slide-2.jpg",
+    "./slide-3.jpg",
+    "./slide-4.jpg",
+    "./slide-5.jpg",
+    "./slide-6.jpg",
+    "./slide-7.jpg"
   ];
 
   useEffect(() => {
