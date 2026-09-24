@@ -24,6 +24,21 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
     setIsOpen(false);
   };
 
+  const getNavLinkClass = (page: string) => {
+    const isActive = currentPage === page;
+    if (currentPage === "home") {
+      return `font-sans text-sm transition-colors mix-blend-difference ${isActive ? 'text-blue-300 font-bold' : 'text-white font-medium hover:text-gray-200'}`;
+    }
+    return `font-sans text-sm font-medium transition-colors ${isActive ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`;
+  };
+
+  const getIconClass = () => {
+    if (currentPage === "home") {
+      return "flex items-center gap-1.5 text-white mix-blend-difference font-medium text-sm p-2 rounded-lg hover:bg-white/10 transition-colors focus:outline-hidden";
+    }
+    return "flex items-center gap-1.5 text-gray-600 hover:text-gray-900 font-medium text-sm p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-hidden";
+  };
+
   return (
     <nav id="navbar-main" className={`top-0 z-50 w-full transition-all duration-300 ${currentPage === 'home' ? 'absolute bg-transparent' : 'sticky bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-xs'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,45 +57,35 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
             <button
               id="nav-link-home"
               onClick={() => handleLinkClick("home")}
-              className={`font-sans text-sm font-medium transition-colors ${
-                currentPage === "home" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
-              }`}
+              className={getNavLinkClass("home")}
             >
               {t('nav.home')}
             </button>
             <button
               id="nav-link-buy"
               onClick={() => handleLinkClick("buy")}
-              className={`font-sans text-sm font-medium transition-colors ${
-                currentPage === "buy" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
-              }`}
+              className={getNavLinkClass("buy")}
             >
               {t('nav.buy')}
             </button>
             <button
               id="nav-link-rent"
               onClick={() => handleLinkClick("rent")}
-              className={`font-sans text-sm font-medium transition-colors ${
-                currentPage === "rent" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
-              }`}
+              className={getNavLinkClass("rent")}
             >
               {t('nav.rent')}
             </button>
             <button
               id="nav-link-about"
               onClick={() => handleLinkClick("about")}
-              className={`font-sans text-sm font-medium transition-colors ${
-                currentPage === "about" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
-              }`}
+              className={getNavLinkClass("about")}
             >
               {t('nav.about')}
             </button>
             <button
               id="nav-link-contact"
               onClick={() => handleLinkClick("contact")}
-              className={`font-sans text-sm font-medium transition-colors ${
-                currentPage === "contact" ? "text-blue-600" : "text-gray-600 hover:text-gray-900"
-              }`}
+              className={getNavLinkClass("contact")}
             >
               {t('nav.contact')}
             </button>
@@ -90,13 +95,13 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
           <div className="hidden md:flex items-center gap-4">
             {/* Currency Switcher */}
             <div className="relative">
-              <button
-                onClick={() => {
-                  setShowCurrencyDropdown(!showCurrencyDropdown);
-                  setShowLangDropdown(false);
-                }}
-                className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 font-medium text-sm p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-hidden"
-              >
+                <button
+                  onClick={() => {
+                    setShowCurrencyDropdown(!showCurrencyDropdown);
+                    setShowLangDropdown(false);
+                  }}
+                  className={getIconClass()}
+                >
                 <CircleDollarSign className="w-4 h-4" />
                 <span>{currency}</span>
               </button>
@@ -126,7 +131,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                   setShowLangDropdown(!showLangDropdown);
                   setShowCurrencyDropdown(false);
                 }}
-                className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 font-medium text-sm p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-hidden"
+                className={getIconClass()}
               >
                 <Globe className="w-4 h-4" />
                 <span className="uppercase">{i18n.language}</span>
@@ -160,14 +165,14 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
                 <button
                   id="nav-user-menu-btn"
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-100 transition-colors focus:outline-hidden"
+                  className={`flex items-center gap-2 p-1.5 rounded-full transition-colors focus:outline-hidden ${currentPage === 'home' ? 'mix-blend-difference text-white hover:bg-white/10' : 'hover:bg-gray-100 text-gray-700'}`}
                 >
                   <img width="32" height="32" loading="lazy" decoding="async"
                     src={currentUser.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(currentUser.username)}`}
                     alt={currentUser.username}
                     className="w-8 h-8 rounded-full border border-gray-200 object-cover"
                   />
-                  <span className="font-sans text-sm font-medium text-gray-700 pr-1 max-w-[120px] truncate">
+                  <span className={`font-sans text-sm font-medium pr-1 max-w-[120px] truncate ${currentPage === 'home' ? 'text-white' : 'text-gray-700'}`}>
                     {currentUser.username}
                   </span>
                 </button>
@@ -256,7 +261,7 @@ export default function Navbar({ currentUser, onNavigate, currentPage, onLogout 
             <button
               id="mobile-menu-btn"
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-500 hover:text-gray-900 p-2 focus:outline-hidden"
+              className={`p-2 focus:outline-hidden ${currentPage === 'home' ? 'text-white mix-blend-difference hover:text-gray-200' : 'text-gray-500 hover:text-gray-900'}`}
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
