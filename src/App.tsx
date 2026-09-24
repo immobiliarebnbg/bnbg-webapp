@@ -64,6 +64,42 @@ const StoryCarousel = () => {
   );
 };
 
+const HeroCarouselBackground = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const images = [
+    "/hero-bg.jpg",
+    "/carousel-1.jpg",
+    "/carousel-2.jpg",
+    "/carousel-3.jpg",
+    "/carousel-4.jpg",
+    "/carousel-5.jpg"
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 z-0 bg-slate-900">
+      <AnimatePresence initial={false}>
+        <motion.img
+          key={currentIndex}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8 }}
+          src={images[currentIndex]}
+          alt="Luxury Home Haven"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </AnimatePresence>
+    </div>
+  );
+};
+
 export default function App() {
   const { t, i18n } = useTranslation();
   const { formatPrice } = useCurrency();
@@ -523,14 +559,7 @@ export default function App() {
               {/* Premium Hero Section */}
               <div id="home-hero" className="relative min-h-screen w-full overflow-hidden bg-slate-900 flex items-center">
                 {/* Background Image Banner */}
-                <div className="absolute inset-0 z-0">
-                  <img width="800" height="600" loading="eager" decoding="async"
-                    src="/hero-bg.jpg"
-                    alt="Luxury Home Haven"
-                    className="w-full h-full object-cover opacity-35"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-                </div>
+                <HeroCarouselBackground />
 
                 {/* Hero Text Contents */}
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
