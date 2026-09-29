@@ -23,7 +23,13 @@ export class Db {
       .select("*")
       .order("createdAt", { ascending: false });
     if (error) { console.error("getProperties:", error.message); return []; }
-    return (data || []) as Property[];
+    
+    // Optimize payload size for list endpoint by only sending the first image
+    const optimized = (data || []).map((p: any) => ({
+      ...p,
+      images: p.images && p.images.length > 0 ? [p.images[0]] : []
+    }));
+    return optimized as Property[];
   }
 
   static async getPropertyById(id: string): Promise<Property | undefined> {

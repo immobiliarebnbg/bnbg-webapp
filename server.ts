@@ -1,11 +1,9 @@
+import "dotenv/config";
 import express from "express";
 import path from "path";
-import dotenv from "dotenv";
 import { createServer as createViteServer } from "vite";
 import { Db } from "./server_db";
 import { GoogleGenAI } from "@google/genai";
-
-dotenv.config();
 
 // Create Gemini Client
 let ai: GoogleGenAI | null = null;
