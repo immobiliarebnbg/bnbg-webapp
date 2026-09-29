@@ -186,10 +186,11 @@ export default function App() {
   const loadProperties = async () => {
     try {
       const res = await fetch("/api/properties");
-      const data = await res.json();
-      if (res.ok) {
-        setProperties(data.properties || []);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
       }
+      const data = await res.json();
+      setProperties(data.properties || []);
     } catch (e) {
       console.error("Error fetching properties", e);
     } finally {
@@ -200,12 +201,13 @@ export default function App() {
   const loadMetadata = async () => {
     try {
       const res = await fetch("/api/meta");
-      const data = await res.json();
-      if (res.ok) {
-        setCities(data.cities || []);
-        setPropertyTypes(data.propertyTypes || []);
-        setBrokerInfo(data.brokerInfo || null);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
       }
+      const data = await res.json();
+      setCities(data.cities || []);
+      setPropertyTypes(data.propertyTypes || []);
+      setBrokerInfo(data.brokerInfo || null);
     } catch (e) {
       console.error("Error fetching metadata", e);
     }

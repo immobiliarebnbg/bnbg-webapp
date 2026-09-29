@@ -133,9 +133,13 @@ export default function AdminDashboard({
         fetch("/api/stats", { headers })
       ]);
 
-      const dataProps = await resProps.json();
-      const dataInqs = await resInqs.json();
-      const dataStats = await resStats.json();
+      let dataProps = {};
+      let dataInqs = {};
+      let dataStats = {};
+
+      if (resProps.ok) dataProps = await resProps.json();
+      if (resInqs.ok) dataInqs = await resInqs.json();
+      if (resStats.ok) dataStats = await resStats.json();
 
       if (resProps.ok) setProperties(dataProps.properties || []);
       if (resInqs.ok) setInquiries(dataInqs.inquiries || []);
