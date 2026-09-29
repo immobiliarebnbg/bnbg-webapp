@@ -17,19 +17,41 @@ const DEFAULT_PROPERTY_TYPES = ["villa", "house", "apartment", "loft", "condo", 
 export class Db {
   // ─── Properties ────────────────────────────────────────────────────────────
 
-  static async getProperties(): Promise<Property[]> {
-    const { data, error } = await supabase
-      .from("properties")
-      .select("*")
-      .limit(100);
-    if (error) { console.error("getProperties:", error.message); return []; }
-    
-    // Optimize payload size for list endpoint by only sending the first image
-    const optimized = (data || []).map((p: any) => ({
-      ...p,
-      images: p.images && p.images.length > 0 ? [p.images[0]] : []
-    }));
-    return optimized as Property[];
+  private static cachedProperties: Property[] | null = null;
+  private static propertiesLastFetched: number = 0;
+  private static propertiesFetchPromise: Promise<Property[]> | null = null;
+  private static CACHE_TTL_MS = 60000; // 1 minute
+
+  static async getProperties(forceRefresh = false): Promise<Property[]> {
+    const now = Date.now();
+    if (!forceRefresh && this.cachedProperties && (now - this.propertiesLastFetched < this.CACHE_TTL_MS)) {
+      return this.cachedProperties;
+    }
+
+    if (!forceRefresh && this.propertiesFetchPromise) {
+      return this.propertiesFetchPromise;
+    }
+
+    this.propertiesFetchPromise = (async () => {
+      const { data, error } = await supabase
+        .from("properties")
+        .select("*")
+        .limit(100);
+      if (error) { console.error("getProperties:", error.message); return this.cachedProperties || []; }
+      
+      // Optimize payload size for list endpoint by only sending the first image
+      const optimized = (data || []).map((p: any) => ({
+        ...p,
+        images: p.images && p.images.length > 0 ? [p.images[0]] : []
+      }));
+      
+      this.cachedProperties = optimized as Property[];
+      this.propertiesLastFetched = Date.now();
+      this.propertiesFetchPromise = null;
+      return this.cachedProperties;
+    })();
+
+    return this.propertiesFetchPromise;
   }
 
   static async getPropertyById(id: string): Promise<Property | undefined> {
@@ -56,6 +78,7 @@ export class Db {
       .select()
       .single();
     if (error) throw new Error(error.message);
+    this.propertiesLastFetched = 0; // Invalidate cache
     return data as Property;
   }
 
@@ -135,13 +158,34 @@ export class Db {
 
   // ─── Inquiries ──────────────────────────────────────────────────────────────
 
-  static async getInquiries(): Promise<Inquiry[]> {
-    const { data, error } = await supabase
-      .from("inquiries")
-      .select("*")
-      .limit(500);
-    if (error) { console.error("getInquiries:", error.message); return []; }
-    return (data || []) as Inquiry[];
+  private static cachedInquiries: Inquiry[] | null = null;
+  private static inquiriesLastFetched: number = 0;
+  private static inquiriesFetchPromise: Promise<Inquiry[]> | null = null;
+
+  static async getInquiries(forceRefresh = false): Promise<Inquiry[]> {
+    const now = Date.now();
+    if (!forceRefresh && this.cachedInquiries && (now - this.inquiriesLastFetched < this.CACHE_TTL_MS)) {
+      return this.cachedInquiries;
+    }
+
+    if (!forceRefresh && this.inquiriesFetchPromise) {
+      return this.inquiriesFetchPromise;
+    }
+
+    this.inquiriesFetchPromise = (async () => {
+      const { data, error } = await supabase
+        .from("inquiries")
+        .select("*")
+        .limit(500);
+      if (error) { console.error("getInquiries:", error.message); return this.cachedInquiries || []; }
+      
+      this.cachedInquiries = (data || []) as Inquiry[];
+      this.inquiriesLastFetched = Date.now();
+      this.inquiriesFetchPromise = null;
+      return this.cachedInquiries;
+    })();
+
+    return this.inquiriesFetchPromise;
   }
 
   static async addInquiry(
