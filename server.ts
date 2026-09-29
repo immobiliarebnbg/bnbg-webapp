@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
+import compression from "compression";
 import { Db } from "./server_db";
 import { GoogleGenAI } from "@google/genai";
 
@@ -405,6 +406,9 @@ app.post("/api/resolve-maps-url", requireAdmin as any, async (req, res) => {
 // ─── Vite / Static Assets ─────────────────────────────────────────────────────
 
 async function startServer() {
+  // Enable gzip/brotli compression
+  app.use(compression());
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -413,7 +417,19 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
+    
+    // Serve static files with 1-year immutable caching for assets
+    app.use(express.static(distPath, {
+      maxAge: '1y',
+      setHeaders: (res, path) => {
+        if (path.includes('/assets/')) {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        } else {
+          res.setHeader('Cache-Control', 'no-cache');
+        }
+      }
+    }));
+
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
     });

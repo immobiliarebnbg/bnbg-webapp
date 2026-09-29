@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, Suspense, lazy } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { Property, User, SearchFilters, PropertyType, PropertyStatus, BrokerInfo } from "./types";
@@ -6,9 +6,11 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { useCurrency } from "./contexts/CurrencyContext";
 import PropertyCard from "./components/PropertyCard";
-import CustomMap from "./components/CustomMap";
-import UserProfile from "./components/UserProfile";
-import AdminDashboard from "./components/AdminDashboard";
+
+// Code Split heavy components to drastically reduce initial bundle size
+const CustomMap = lazy(() => import("./components/CustomMap"));
+const UserProfile = lazy(() => import("./components/UserProfile"));
+const AdminDashboard = lazy(() => import("./components/AdminDashboard"));
 import { 
   Search, MapPin, ExternalLink, BedDouble, Bath, Square, ChevronRight, Phone, Mail, Clock, 
   ArrowRight, ShieldCheck, Star, Sparkles, Send, Share2, Heart, User as UserIcon, 
@@ -1076,11 +1078,13 @@ export default function App() {
                 {/* Geographical Street Map panel (5 columns) */}
                 <div className="lg:col-span-5 relative">
                   <div className="sticky top-20">
-                    <CustomMap
-                      properties={filteredProperties}
-                      onSelectProperty={(prop) => handleNavigate("details", { propertyId: prop.id })}
-                      height="h-[520px] lg:h-[620px]"
-                    />
+                    <Suspense fallback={<div className="h-[520px] lg:h-[620px] bg-slate-100 animate-pulse rounded-3xl flex items-center justify-center text-slate-400">Loading Map...</div>}>
+                      <CustomMap
+                        properties={filteredProperties}
+                        onSelectProperty={(prop) => handleNavigate("details", { propertyId: prop.id })}
+                        height="h-[520px] lg:h-[620px]"
+                      />
+                    </Suspense>
                   </div>
                 </div>
               </div>
@@ -1809,16 +1813,18 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <UserProfile
-                currentUser={currentUser}
-                authToken={authToken}
-                onNavigate={handleNavigate}
-                onUpdateUser={(updated) => {
-                  setCurrentUser(updated);
-                  localStorage.setItem("haven_user", JSON.stringify(updated));
-                }}
-                initialTab={navigationParams.activeTab || "profile"}
-              />
+              <Suspense fallback={<div className="py-24 text-center text-gray-500">Loading Profile...</div>}>
+                <UserProfile
+                  currentUser={currentUser}
+                  authToken={authToken}
+                  onNavigate={handleNavigate}
+                  onUpdateUser={(updated) => {
+                    setCurrentUser(updated);
+                    localStorage.setItem("haven_user", JSON.stringify(updated));
+                  }}
+                  initialTab={navigationParams.activeTab || "profile"}
+                />
+              </Suspense>
             </motion.div>
           )}
 
@@ -1832,14 +1838,16 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <AdminDashboard 
-                authToken={authToken} 
-                onNavigate={handleNavigate}
-                cities={cities}
-                propertyTypes={propertyTypes}
-                brokerInfo={brokerInfo}
-                onRefreshMetadata={loadMetadata}
-              />
+              <Suspense fallback={<div className="py-24 text-center text-gray-500">Loading Admin Dashboard...</div>}>
+                <AdminDashboard 
+                  authToken={authToken} 
+                  onNavigate={handleNavigate}
+                  cities={cities}
+                  propertyTypes={propertyTypes}
+                  brokerInfo={brokerInfo}
+                  onRefreshMetadata={loadMetadata}
+                />
+              </Suspense>
             </motion.div>
           )}
         </AnimatePresence>
