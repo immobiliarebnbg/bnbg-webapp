@@ -21,7 +21,7 @@ export class Db {
     const { data, error } = await supabase
       .from("properties")
       .select("*")
-      .order("createdAt", { ascending: false });
+      .limit(100);
     if (error) { console.error("getProperties:", error.message); return []; }
     
     // Optimize payload size for list endpoint by only sending the first image
@@ -139,7 +139,7 @@ export class Db {
     const { data, error } = await supabase
       .from("inquiries")
       .select("*")
-      .order("createdAt", { ascending: false });
+      .limit(500);
     if (error) { console.error("getInquiries:", error.message); return []; }
     return (data || []) as Inquiry[];
   }
