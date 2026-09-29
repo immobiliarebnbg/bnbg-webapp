@@ -304,7 +304,11 @@ export default function App() {
         .then(res => res.json())
         .then(data => {
           if (data.property) {
-            setProperties(prev => prev.map(p => p.id === data.property.id ? data.property : p));
+            setProperties(prev => {
+              const exists = prev.some(p => p.id === data.property.id);
+              if (exists) return prev.map(p => p.id === data.property.id ? data.property : p);
+              return [...prev, data.property];
+            });
           }
         })
         .catch(err => console.error("Error fetching detailed property", err));
@@ -1089,6 +1093,14 @@ export default function App() {
           {currentPage === "details" && navigationParams.propertyId && (() => {
             const property = properties.find((p) => p.id === navigationParams.propertyId);
             if (!property) {
+              if (loading) {
+                return (
+                  <div className="py-24 text-center">
+                    <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-500 font-medium">Loading property details...</p>
+                  </div>
+                );
+              }
               return (
                 <div className="py-24 text-center">
                   <p className="text-red-500 font-bold">Property not found.</p>
