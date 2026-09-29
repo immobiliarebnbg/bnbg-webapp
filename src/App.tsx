@@ -297,6 +297,20 @@ export default function App() {
     }
   }, [navigationParams.propertyId, i18n.language, properties, currentPage]);
 
+  // Fetch full property details when on the details page (since list endpoint strips images)
+  useEffect(() => {
+    if (currentPage === 'details' && navigationParams.propertyId) {
+      fetch(`/api/properties/${navigationParams.propertyId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.property) {
+            setProperties(prev => prev.map(p => p.id === data.property.id ? data.property : p));
+          }
+        })
+        .catch(err => console.error("Error fetching detailed property", err));
+    }
+  }, [currentPage, navigationParams.propertyId]);
+
 
   const fetchFavoriteIds = async (token: string) => {
     try {
