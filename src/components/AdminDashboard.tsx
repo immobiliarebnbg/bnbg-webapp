@@ -182,7 +182,7 @@ export default function AdminDashboard({
     setShowForm(true);
   };
 
-  const handleOpenEditForm = (prop: Property) => {
+  const handleOpenEditForm = async (prop: Property) => {
     setEditingPropertyId(prop.id);
     setTitle(prop.title);
     
@@ -205,9 +205,20 @@ export default function AdminDashboard({
     setFeatured(prop.featured);
     setAvailable(prop.available);
     setAmenities(prop.amenities);
-    setImages(prop.images);
+    setImages(prop.images); // Set initial single image to avoid UI flash
     setAiError("");
     setShowForm(true);
+
+    // Fetch the full property to get all images (since the list only has the cover)
+    try {
+      const res = await fetch(`/api/properties/${prop.id}`);
+      const data = await res.json();
+      if (data.property) {
+        setImages(data.property.images);
+      }
+    } catch (err) {
+      console.error("Error fetching full property for edit", err);
+    }
   };
 
   const handleAddAmenity = () => {
