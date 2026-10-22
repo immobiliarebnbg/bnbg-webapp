@@ -111,7 +111,11 @@ export class Db {
         return this.cachedProperties;
       } catch (err: any) {
         console.error("MySQL getProperties error:", err.message);
-        return this.cachedProperties || [];
+        this.propertiesFetchPromise = null;
+        if (this.cachedProperties && this.cachedProperties.length > 0) {
+          return this.cachedProperties;
+        }
+        throw err;
       }
     })();
 
