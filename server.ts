@@ -412,28 +412,6 @@ app.post("/api/resolve-maps-url", requireAdmin as any, async (req, res) => {
   }
 });
 
-app.get("/api/db-status", async (_req, res) => {
-  try {
-    const { pool } = await import("./server_db");
-    const [rows] = await pool.query("SELECT count(*) as count FROM properties");
-    res.json({
-      success: true,
-      propertiesCount: (rows as any)[0].count,
-      host: process.env.MYSQL_HOST,
-      database: process.env.MYSQL_DATABASE,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      error: err.message,
-      code: err.code,
-      host: process.env.MYSQL_HOST,
-      database: process.env.MYSQL_DATABASE,
-      user: process.env.MYSQL_USER,
-    });
-  }
-});
-
 // ─── Vite / Static Assets ─────────────────────────────────────────────────────
 
 async function startServer() {
