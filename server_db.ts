@@ -1,18 +1,91 @@
-import { createClient } from "@supabase/supabase-js";
+import "dotenv/config";
+import mysql from "mysql2/promise";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { Property, User, Inquiry, DashboardStats } from "./src/types";
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// ─── Database Engine Configuration ──────────────────────────────────────────
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error("❌ FATAL: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in your environment variables.");
-  process.exit(1);
+const isMysql = Boolean(process.env.MYSQL_DATABASE && process.env.MYSQL_USER);
+
+let pool: mysql.Pool | null = null;
+let supabase: SupabaseClient | null = null;
+
+if (isMysql) {
+  pool = mysql.createPool({
+    host: process.env.MYSQL_HOST || "127.0.0.1",
+    port: parseInt(process.env.MYSQL_PORT || "3306", 10),
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    charset: "utf8mb4",
+  });
+  console.log(`🐬 Database Engine: Connected via MySQL Pool [${process.env.MYSQL_DATABASE}]`);
+} else {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error(
+      "❌ FATAL: No database configured. Please configure Hostinger MySQL (MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD) or Supabase (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)."
+    );
+    process.exit(1);
+  }
+
+  supabase = createClient(supabaseUrl, supabaseKey);
+  console.log("⚡ Database Engine: Connected via Supabase");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export { supabase };
 
 const DEFAULT_CITIES = ["Bergamo", "Milano", "Roma", "Torino", "Venezia"];
-const DEFAULT_PROPERTY_TYPES = ["villa", "house", "apartment", "loft", "condo", "townhouse"];
+const DEFAULT_PROPERTY_TYPES = [
+  "villa",
+  "house",
+  "apartment",
+  "loft",
+  "condo",
+  "townhouse",
+  "negozio/ufficio",
+  "monolocale",
+  "bilocale",
+  "trilocale",
+  "magazzino",
+];
+
+// Helper to format a raw MySQL property record into a typed Property object
+function formatPropertyRow(row: any): Property {
+  let amenities: string[] = [];
+  try {
+    amenities =
+      typeof row.amenities === "string" ? JSON.parse(row.amenities) : row.amenities || [];
+  } catch {
+    amenities = [];
+  }
+
+  let images: string[] = [];
+  try {
+    images = typeof row.images === "string" ? JSON.parse(row.images) : row.images || [];
+  } catch {
+    images = [];
+  }
+
+  return {
+    ...row,
+    price: Number(row.price),
+    bedrooms: Number(row.bedrooms),
+    bathrooms: Number(row.bathrooms),
+    area: Number(row.area),
+    latitude: Number(row.latitude),
+    longitude: Number(row.longitude),
+    featured: Boolean(row.featured),
+    available: Boolean(row.available),
+    amenities,
+    images,
+  };
+}
 
 export class Db {
   // ─── Properties ────────────────────────────────────────────────────────────
@@ -24,7 +97,7 @@ export class Db {
 
   static async getProperties(forceRefresh = false): Promise<Property[]> {
     const now = Date.now();
-    if (!forceRefresh && this.cachedProperties && (now - this.propertiesLastFetched < this.CACHE_TTL_MS)) {
+    if (!forceRefresh && this.cachedProperties && now - this.propertiesLastFetched < this.CACHE_TTL_MS) {
       return this.cachedProperties;
     }
 
@@ -33,18 +106,35 @@ export class Db {
     }
 
     this.propertiesFetchPromise = (async () => {
-      const { data, error } = await supabase
-        .from("properties")
-        .select("*")
-        .limit(100);
-      if (error) { console.error("getProperties:", error.message); return this.cachedProperties || []; }
-      
+      let rawProperties: any[] = [];
+
+      if (isMysql && pool) {
+        try {
+          const [rows] = await pool.query("SELECT * FROM properties LIMIT 100");
+          rawProperties = (rows as any[]).map(formatPropertyRow);
+        } catch (err: any) {
+          console.error("MySQL getProperties error:", err.message);
+          if (supabase) {
+            console.log("ℹ️ MySQL unreachable from current host, falling back to Supabase...");
+            const { data, error } = await supabase.from("properties").select("*").limit(100);
+            if (!error && data) rawProperties = data;
+          }
+        }
+      } else if (supabase) {
+        const { data, error } = await supabase.from("properties").select("*").limit(100);
+        if (error) {
+          console.error("Supabase getProperties:", error.message);
+          return this.cachedProperties || [];
+        }
+        rawProperties = data || [];
+      }
+
       // Optimize payload size for list endpoint by only sending the first image
-      const optimized = (data || []).map((p: any) => ({
+      const optimized = rawProperties.map((p: any) => ({
         ...p,
-        images: p.images && p.images.length > 0 ? [p.images[0]] : []
+        images: p.images && p.images.length > 0 ? [p.images[0]] : [],
       }));
-      
+
       this.cachedProperties = optimized as Property[];
       this.propertiesLastFetched = Date.now();
       this.propertiesFetchPromise = null;
@@ -55,13 +145,23 @@ export class Db {
   }
 
   static async getPropertyById(id: string): Promise<Property | undefined> {
-    const { data, error } = await supabase
-      .from("properties")
-      .select("*")
-      .eq("id", id)
-      .single();
-    if (error) return undefined;
-    return data as Property;
+    if (isMysql && pool) {
+      try {
+        const [rows] = await pool.execute("SELECT * FROM properties WHERE id = ? LIMIT 1", [id]);
+        const list = rows as any[];
+        if (list.length > 0) return formatPropertyRow(list[0]);
+      } catch (err: any) {
+        console.error("MySQL getPropertyById error:", err.message);
+      }
+    }
+
+    if (supabase) {
+      const { data, error } = await supabase.from("properties").select("*").eq("id", id).single();
+      if (error) return undefined;
+      return data as Property;
+    }
+
+    return undefined;
   }
 
   static invalidatePropertiesCache(): void {
@@ -72,88 +172,201 @@ export class Db {
 
   static async addProperty(property: Omit<Property, "id" | "createdAt" | "updatedAt">): Promise<Property> {
     const now = new Date().toISOString();
-    const newProperty = {
+    const newProperty: Property = {
       ...property,
       id: "prop-" + Date.now(),
       createdAt: now,
       updatedAt: now,
     };
-    const { data, error } = await supabase
-      .from("properties")
-      .insert(newProperty)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    
-    const added = data as Property;
+
+    if (isMysql && pool) {
+      await pool.execute(
+        `INSERT INTO properties (
+          id, title, description, status, price, address, city, neighborhood,
+          latitude, longitude, bedrooms, bathrooms, area, propertyType,
+          amenities, images, featured, available, googleMapsUrl, blueprintUrl, createdAt, updatedAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          newProperty.id,
+          newProperty.title,
+          newProperty.description || "",
+          newProperty.status,
+          newProperty.price || 0,
+          newProperty.address || "",
+          newProperty.city,
+          newProperty.neighborhood || "",
+          newProperty.latitude || 0,
+          newProperty.longitude || 0,
+          newProperty.bedrooms || 0,
+          newProperty.bathrooms || 0,
+          newProperty.area || 0,
+          newProperty.propertyType,
+          JSON.stringify(newProperty.amenities || []),
+          JSON.stringify(newProperty.images || []),
+          newProperty.featured ? 1 : 0,
+          newProperty.available ? 1 : 0,
+          newProperty.googleMapsUrl || "",
+          newProperty.blueprintUrl || "",
+          newProperty.createdAt,
+          newProperty.updatedAt,
+        ]
+      );
+    } else if (supabase) {
+      const { data, error } = await supabase.from("properties").insert(newProperty).select().single();
+      if (error) throw new Error(error.message);
+    }
+
     const optimized = {
-      ...added,
-      images: added.images && added.images.length > 0 ? [added.images[0]] : []
+      ...newProperty,
+      images: newProperty.images && newProperty.images.length > 0 ? [newProperty.images[0]] : [],
     };
     if (this.cachedProperties) {
-      this.cachedProperties = [optimized as Property, ...this.cachedProperties.filter((p) => p.id !== added.id)];
+      this.cachedProperties = [optimized as Property, ...this.cachedProperties.filter((p) => p.id !== newProperty.id)];
     } else {
       this.cachedProperties = [optimized as Property];
     }
     this.propertiesLastFetched = Date.now();
     this.propertiesFetchPromise = null;
-    return added;
+    return newProperty;
   }
 
   static async updateProperty(
     id: string,
     updates: Partial<Omit<Property, "id" | "createdAt" | "updatedAt">>
   ): Promise<Property | undefined> {
-    const { data, error } = await supabase
-      .from("properties")
-      .update({ ...updates, updatedAt: new Date().toISOString() })
-      .eq("id", id)
-      .select()
-      .single();
-    if (error) return undefined;
-    
-    const updated = data as Property;
-    const optimized = {
-      ...updated,
-      images: updated.images && updated.images.length > 0 ? [updated.images[0]] : []
-    };
-    if (this.cachedProperties) {
-      this.cachedProperties = this.cachedProperties.map((p) => (p.id === id ? (optimized as Property) : p));
-    }
-    this.propertiesLastFetched = Date.now();
-    this.propertiesFetchPromise = null;
-    return updated;
-  }
+    const updatedAt = new Date().toISOString();
 
-  static async deleteProperty(id: string): Promise<boolean> {
-    const { error } = await supabase.from("properties").delete().eq("id", id);
-    if (!error) {
+    if (isMysql && pool) {
+      const existing = await this.getPropertyById(id);
+      if (!existing) return undefined;
+
+      const merged = { ...existing, ...updates, updatedAt };
+      await pool.execute(
+        `UPDATE properties SET
+          title = ?, description = ?, status = ?, price = ?, address = ?,
+          city = ?, neighborhood = ?, latitude = ?, longitude = ?, bedrooms = ?,
+          bathrooms = ?, area = ?, propertyType = ?, amenities = ?, images = ?,
+          featured = ?, available = ?, googleMapsUrl = ?, blueprintUrl = ?, updatedAt = ?
+        WHERE id = ?`,
+        [
+          merged.title,
+          merged.description || "",
+          merged.status,
+          merged.price || 0,
+          merged.address || "",
+          merged.city,
+          merged.neighborhood || "",
+          merged.latitude || 0,
+          merged.longitude || 0,
+          merged.bedrooms || 0,
+          merged.bathrooms || 0,
+          merged.area || 0,
+          merged.propertyType,
+          JSON.stringify(merged.amenities || []),
+          JSON.stringify(merged.images || []),
+          merged.featured ? 1 : 0,
+          merged.available ? 1 : 0,
+          merged.googleMapsUrl || "",
+          merged.blueprintUrl || "",
+          merged.updatedAt,
+          id,
+        ]
+      );
+
+      const optimized = {
+        ...merged,
+        images: merged.images && merged.images.length > 0 ? [merged.images[0]] : [],
+      };
       if (this.cachedProperties) {
-        this.cachedProperties = this.cachedProperties.filter((p) => p.id !== id);
+        this.cachedProperties = this.cachedProperties.map((p) => (p.id === id ? (optimized as Property) : p));
       }
       this.propertiesLastFetched = Date.now();
       this.propertiesFetchPromise = null;
-      return true;
+      return merged;
     }
+
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("properties")
+        .update({ ...updates, updatedAt })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) return undefined;
+
+      const updated = data as Property;
+      const optimized = {
+        ...updated,
+        images: updated.images && updated.images.length > 0 ? [updated.images[0]] : [],
+      };
+      if (this.cachedProperties) {
+        this.cachedProperties = this.cachedProperties.map((p) => (p.id === id ? (optimized as Property) : p));
+      }
+      this.propertiesLastFetched = Date.now();
+      this.propertiesFetchPromise = null;
+      return updated;
+    }
+
+    return undefined;
+  }
+
+  static async deleteProperty(id: string): Promise<boolean> {
+    if (isMysql && pool) {
+      const [res] = await pool.execute("DELETE FROM properties WHERE id = ?", [id]);
+      const deleted = (res as any).affectedRows > 0;
+      if (deleted) {
+        if (this.cachedProperties) {
+          this.cachedProperties = this.cachedProperties.filter((p) => p.id !== id);
+        }
+        this.propertiesLastFetched = Date.now();
+        this.propertiesFetchPromise = null;
+      }
+      return deleted;
+    }
+
+    if (supabase) {
+      const { error } = await supabase.from("properties").delete().eq("id", id);
+      if (!error) {
+        if (this.cachedProperties) {
+          this.cachedProperties = this.cachedProperties.filter((p) => p.id !== id);
+        }
+        this.propertiesLastFetched = Date.now();
+        this.propertiesFetchPromise = null;
+        return true;
+      }
+    }
+
     return false;
   }
 
   // ─── Users ─────────────────────────────────────────────────────────────────
 
   static async findUserByEmail(email: string): Promise<User | undefined> {
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .ilike("email", email)
-      .single();
-    if (error) return undefined;
-    return data as User;
+    if (isMysql && pool) {
+      try {
+        const [rows] = await pool.execute("SELECT * FROM users WHERE LOWER(email) = LOWER(?) LIMIT 1", [email]);
+        const list = rows as any[];
+        if (list.length > 0) return list[0] as User;
+      } catch (err: any) {
+        console.error("MySQL findUserByEmail error:", err.message);
+      }
+    }
+
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .ilike("email", email)
+        .single();
+      if (error) return undefined;
+      return data as User;
+    }
+
+    return undefined;
   }
 
-  static async addUser(
-    user: Omit<User, "id" | "createdAt"> & { password?: string }
-  ): Promise<User> {
-    const newUser = {
+  static async addUser(user: Omit<User, "id" | "createdAt"> & { password?: string }): Promise<User> {
+    const newUser: User = {
       id: "user-" + Date.now(),
       email: user.email.toLowerCase(),
       username: user.username,
@@ -164,33 +377,81 @@ export class Db {
         `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.username)}`,
       createdAt: new Date().toISOString(),
     };
-    const { data, error } = await supabase
-      .from("users")
-      .insert(newUser)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    return data as User;
+
+    if (isMysql && pool) {
+      await pool.execute(
+        "INSERT INTO users (id, email, username, role, password, avatar, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [
+          newUser.id,
+          newUser.email,
+          newUser.username,
+          newUser.role,
+          newUser.password,
+          newUser.avatar,
+          newUser.createdAt,
+        ]
+      );
+      return newUser;
+    }
+
+    if (supabase) {
+      const { data, error } = await supabase.from("users").insert(newUser).select().single();
+      if (error) throw new Error(error.message);
+      return data as User;
+    }
+
+    return newUser;
   }
 
   static async updateUserProfile(
     email: string,
     updates: { username?: string; avatar?: string; password?: string }
   ): Promise<User | undefined> {
-    const updateData: Record<string, string> = {};
-    if (updates.username) updateData.username = updates.username;
-    if (updates.avatar) updateData.avatar = updates.avatar;
-    if (updates.password) updateData.password = updates.password;
+    if (isMysql && pool) {
+      const fields: string[] = [];
+      const values: any[] = [];
+      if (updates.username !== undefined) {
+        fields.push("username = ?");
+        values.push(updates.username);
+      }
+      if (updates.avatar !== undefined) {
+        fields.push("avatar = ?");
+        values.push(updates.avatar);
+      }
+      if (updates.password !== undefined) {
+        fields.push("password = ?");
+        values.push(updates.password);
+      }
 
-    const { data, error } = await supabase
-      .from("users")
-      .update(updateData)
-      .ilike("email", email)
-      .select()
-      .single();
-    if (error) return undefined;
-    const { password: _, ...safeUser } = data;
-    return safeUser as User;
+      if (fields.length > 0) {
+        values.push(email.toLowerCase());
+        await pool.execute(`UPDATE users SET ${fields.join(", ")} WHERE LOWER(email) = ?`, values);
+      }
+
+      const updated = await this.findUserByEmail(email);
+      if (!updated) return undefined;
+      const { password: _, ...safeUser } = updated;
+      return safeUser as User;
+    }
+
+    if (supabase) {
+      const updateData: Record<string, string> = {};
+      if (updates.username) updateData.username = updates.username;
+      if (updates.avatar) updateData.avatar = updates.avatar;
+      if (updates.password) updateData.password = updates.password;
+
+      const { data, error } = await supabase
+        .from("users")
+        .update(updateData)
+        .ilike("email", email)
+        .select()
+        .single();
+      if (error) return undefined;
+      const { password: _, ...safeUser } = data;
+      return safeUser as User;
+    }
+
+    return undefined;
   }
 
   // ─── Inquiries ──────────────────────────────────────────────────────────────
@@ -201,7 +462,7 @@ export class Db {
 
   static async getInquiries(forceRefresh = false): Promise<Inquiry[]> {
     const now = Date.now();
-    if (!forceRefresh && this.cachedInquiries && (now - this.inquiriesLastFetched < this.CACHE_TTL_MS)) {
+    if (!forceRefresh && this.cachedInquiries && now - this.inquiriesLastFetched < this.CACHE_TTL_MS) {
       return this.cachedInquiries;
     }
 
@@ -210,100 +471,191 @@ export class Db {
     }
 
     this.inquiriesFetchPromise = (async () => {
-      const { data, error } = await supabase
-        .from("inquiries")
-        .select("*")
-        .limit(500);
-      if (error) { console.error("getInquiries:", error.message); return this.cachedInquiries || []; }
-      
-      this.cachedInquiries = (data || []) as Inquiry[];
+      let data: Inquiry[] = [];
+
+      if (isMysql && pool) {
+        try {
+          const [rows] = await pool.query("SELECT * FROM inquiries ORDER BY createdAt DESC LIMIT 500");
+          data = rows as Inquiry[];
+        } catch (err: any) {
+          console.error("MySQL getInquiries error:", err.message);
+          if (supabase) {
+            const { data: supaData } = await supabase.from("inquiries").select("*").limit(500);
+            data = (supaData || []) as Inquiry[];
+          }
+        }
+      } else if (supabase) {
+        const { data: supaData, error } = await supabase.from("inquiries").select("*").limit(500);
+        if (error) {
+          console.error("Supabase getInquiries:", error.message);
+          return this.cachedInquiries || [];
+        }
+        data = (supaData || []) as Inquiry[];
+      }
+
+      this.cachedInquiries = data;
       this.inquiriesLastFetched = Date.now();
-      this.inquiriesFetchPromise = null;
+      this.propertiesFetchPromise = null;
       return this.cachedInquiries;
     })();
 
     return this.inquiriesFetchPromise;
   }
 
-  static async addInquiry(
-    inquiry: Omit<Inquiry, "id" | "createdAt" | "status">
-  ): Promise<Inquiry> {
-    const newInquiry = {
+  static async addInquiry(inquiry: Omit<Inquiry, "id" | "createdAt" | "status">): Promise<Inquiry> {
+    const newInquiry: Inquiry = {
       ...inquiry,
       id: "inq-" + Date.now(),
       createdAt: new Date().toISOString(),
       status: "new",
     };
-    const { data, error } = await supabase
-      .from("inquiries")
-      .insert(newInquiry)
-      .select()
-      .single();
-    if (error) throw new Error(error.message);
-    return data as Inquiry;
+
+    if (isMysql && pool) {
+      await pool.execute(
+        `INSERT INTO inquiries (id, propertyId, propertyTitle, name, email, phone, message, status, createdAt)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          newInquiry.id,
+          newInquiry.propertyId,
+          newInquiry.propertyTitle,
+          newInquiry.name,
+          newInquiry.email,
+          newInquiry.phone,
+          newInquiry.message,
+          newInquiry.status,
+          newInquiry.createdAt,
+        ]
+      );
+      this.cachedInquiries = null;
+      return newInquiry;
+    }
+
+    if (supabase) {
+      const { data, error } = await supabase.from("inquiries").insert(newInquiry).select().single();
+      if (error) throw new Error(error.message);
+      this.cachedInquiries = null;
+      return data as Inquiry;
+    }
+
+    return newInquiry;
   }
 
   static async updateInquiryStatus(
     id: string,
     status: "new" | "contacted" | "resolved"
   ): Promise<Inquiry | undefined> {
-    const { data, error } = await supabase
-      .from("inquiries")
-      .update({ status })
-      .eq("id", id)
-      .select()
-      .single();
-    if (error) return undefined;
-    return data as Inquiry;
+    if (isMysql && pool) {
+      await pool.execute("UPDATE inquiries SET status = ? WHERE id = ?", [status, id]);
+      const [rows] = await pool.execute("SELECT * FROM inquiries WHERE id = ? LIMIT 1", [id]);
+      const list = rows as any[];
+      if (list.length === 0) return undefined;
+      this.cachedInquiries = null;
+      return list[0] as Inquiry;
+    }
+
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("inquiries")
+        .update({ status })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) return undefined;
+      this.cachedInquiries = null;
+      return data as Inquiry;
+    }
+
+    return undefined;
   }
 
   static async deleteInquiry(id: string): Promise<boolean> {
-    const { error } = await supabase.from("inquiries").delete().eq("id", id);
-    return !error;
+    if (isMysql && pool) {
+      const [res] = await pool.execute("DELETE FROM inquiries WHERE id = ?", [id]);
+      this.cachedInquiries = null;
+      return (res as any).affectedRows > 0;
+    }
+
+    if (supabase) {
+      const { error } = await supabase.from("inquiries").delete().eq("id", id);
+      this.cachedInquiries = null;
+      return !error;
+    }
+
+    return false;
   }
 
   // ─── Favorites ──────────────────────────────────────────────────────────────
 
   static async getFavorites(email: string): Promise<string[]> {
-    const { data, error } = await supabase
-      .from("favorites")
-      .select("propertyId")
-      .eq("userEmail", email.toLowerCase());
-    if (error) return [];
-    return (data || []).map((f: any) => f.propertyId);
+    if (isMysql && pool) {
+      try {
+        const [rows] = await pool.execute("SELECT propertyId FROM favorites WHERE LOWER(userEmail) = LOWER(?)", [
+          email,
+        ]);
+        return (rows as any[]).map((f: any) => f.propertyId);
+      } catch (err: any) {
+        console.error("MySQL getFavorites error:", err.message);
+      }
+    }
+
+    if (supabase) {
+      const { data, error } = await supabase
+        .from("favorites")
+        .select("propertyId")
+        .eq("userEmail", email.toLowerCase());
+      if (error) return [];
+      return (data || []).map((f: any) => f.propertyId);
+    }
+
+    return [];
   }
 
   static async toggleFavorite(email: string, propertyId: string): Promise<string[]> {
     const userEmail = email.toLowerCase();
-    const { data: existing } = await supabase
-      .from("favorites")
-      .select("id")
-      .eq("userEmail", userEmail)
-      .eq("propertyId", propertyId)
-      .single();
 
-    if (existing) {
-      await supabase
-        .from("favorites")
-        .delete()
-        .eq("userEmail", userEmail)
-        .eq("propertyId", propertyId);
-    } else {
-      await supabase
-        .from("favorites")
-        .insert({ id: "fav-" + Date.now(), userEmail, propertyId });
+    if (isMysql && pool) {
+      const [rows] = await pool.execute(
+        "SELECT id FROM favorites WHERE LOWER(userEmail) = LOWER(?) AND propertyId = ? LIMIT 1",
+        [userEmail, propertyId]
+      );
+      if ((rows as any[]).length > 0) {
+        await pool.execute("DELETE FROM favorites WHERE LOWER(userEmail) = LOWER(?) AND propertyId = ?", [
+          userEmail,
+          propertyId,
+        ]);
+      } else {
+        await pool.execute("INSERT INTO favorites (id, userEmail, propertyId) VALUES (?, ?, ?)", [
+          "fav-" + Date.now(),
+          userEmail,
+          propertyId,
+        ]);
+      }
+      return Db.getFavorites(userEmail);
     }
 
-    return Db.getFavorites(userEmail);
+    if (supabase) {
+      const { data: existing } = await supabase
+        .from("favorites")
+        .select("id")
+        .eq("userEmail", userEmail)
+        .eq("propertyId", propertyId)
+        .single();
+
+      if (existing) {
+        await supabase.from("favorites").delete().eq("userEmail", userEmail).eq("propertyId", propertyId);
+      } else {
+        await supabase.from("favorites").insert({ id: "fav-" + Date.now(), userEmail, propertyId });
+      }
+      return Db.getFavorites(userEmail);
+    }
+
+    return [];
   }
 
   // ─── Stats ──────────────────────────────────────────────────────────────────
 
   static async getStats(): Promise<DashboardStats> {
-    const [properties, inquiries] = await Promise.all([
-      Db.getProperties(),
-      Db.getInquiries(),
-    ]);
+    const [properties, inquiries] = await Promise.all([Db.getProperties(), Db.getInquiries()]);
 
     const activeRentals = properties.filter((p) => p.status === "rent" && p.available).length;
     const activeSales = properties.filter((p) => p.status === "sale" && p.available).length;
@@ -313,13 +665,9 @@ export class Db {
     const rentProps = properties.filter((p) => p.status === "rent");
 
     const averagePriceSale =
-      saleProps.length > 0
-        ? Math.round(saleProps.reduce((s, p) => s + p.price, 0) / saleProps.length)
-        : 0;
+      saleProps.length > 0 ? Math.round(saleProps.reduce((s, p) => s + p.price, 0) / saleProps.length) : 0;
     const averagePriceRent =
-      rentProps.length > 0
-        ? Math.round(rentProps.reduce((s, p) => s + p.price, 0) / rentProps.length)
-        : 0;
+      rentProps.length > 0 ? Math.round(rentProps.reduce((s, p) => s + p.price, 0) / rentProps.length) : 0;
 
     const byType: Record<string, number> = {};
     const byCity: Record<string, number> = {};
@@ -328,12 +676,19 @@ export class Db {
       byCity[p.city] = (byCity[p.city] || 0) + 1;
     });
 
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const now = new Date();
-    const last6 = Array.from({ length: 6 }).map((_, i) => {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      return { month: months[d.getMonth()] + " " + String(d.getFullYear()).slice(-2), count: 0, mIndex: d.getMonth(), yVal: d.getFullYear() };
-    }).reverse();
+    const last6 = Array.from({ length: 6 })
+      .map((_, i) => {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        return {
+          month: months[d.getMonth()] + " " + String(d.getFullYear()).slice(-2),
+          count: 0,
+          mIndex: d.getMonth(),
+          yVal: d.getFullYear(),
+        };
+      })
+      .reverse();
 
     inquiries.forEach((inq) => {
       const d = new Date(inq.createdAt);
@@ -358,72 +713,147 @@ export class Db {
   // ─── Metadata (Cities & Property Types) ────────────────────────────────────
 
   static async getCities(): Promise<string[]> {
-    try {
-      const { data, error } = await supabase
-        .from("metadata")
-        .select("value")
-        .eq("key", "cities")
-        .single();
-      if (error || !data) return DEFAULT_CITIES;
-      return JSON.parse(data.value);
-    } catch {
-      return DEFAULT_CITIES;
+    if (isMysql && pool) {
+      try {
+        const [rows] = await pool.execute("SELECT `value` FROM metadata WHERE `key` = 'cities' LIMIT 1");
+        const list = rows as any[];
+        if (list.length === 0 || !list[0].value) return DEFAULT_CITIES;
+        return JSON.parse(list[0].value);
+      } catch {
+        return DEFAULT_CITIES;
+      }
     }
+
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from("metadata").select("value").eq("key", "cities").single();
+        if (error || !data) return DEFAULT_CITIES;
+        return JSON.parse(data.value);
+      } catch {
+        return DEFAULT_CITIES;
+      }
+    }
+
+    return DEFAULT_CITIES;
   }
 
   static async updateCities(cities: string[]): Promise<string[]> {
     const clean = cities.map((c) => c.trim()).filter(Boolean);
-    await supabase
-      .from("metadata")
-      .upsert({ key: "cities", value: JSON.stringify(clean) }, { onConflict: "key" });
+
+    if (isMysql && pool) {
+      await pool.execute(
+        "INSERT INTO metadata (`key`, `value`) VALUES ('cities', ?) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)",
+        [JSON.stringify(clean)]
+      );
+      return clean;
+    }
+
+    if (supabase) {
+      await supabase.from("metadata").upsert({ key: "cities", value: JSON.stringify(clean) }, { onConflict: "key" });
+      return clean;
+    }
+
     return clean;
   }
 
   static async getPropertyTypes(): Promise<string[]> {
-    try {
-      const { data, error } = await supabase
-        .from("metadata")
-        .select("value")
-        .eq("key", "propertyTypes")
-        .single();
-      if (error || !data) return DEFAULT_PROPERTY_TYPES;
-      return JSON.parse(data.value);
-    } catch {
-      return DEFAULT_PROPERTY_TYPES;
+    if (isMysql && pool) {
+      try {
+        const [rows] = await pool.execute("SELECT `value` FROM metadata WHERE `key` = 'propertyTypes' LIMIT 1");
+        const list = rows as any[];
+        if (list.length === 0 || !list[0].value) return DEFAULT_PROPERTY_TYPES;
+        return JSON.parse(list[0].value);
+      } catch {
+        return DEFAULT_PROPERTY_TYPES;
+      }
     }
+
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from("metadata")
+          .select("value")
+          .eq("key", "propertyTypes")
+          .single();
+        if (error || !data) return DEFAULT_PROPERTY_TYPES;
+        return JSON.parse(data.value);
+      } catch {
+        return DEFAULT_PROPERTY_TYPES;
+      }
+    }
+
+    return DEFAULT_PROPERTY_TYPES;
   }
 
   static async updatePropertyTypes(types: string[]): Promise<string[]> {
     const clean = types.map((t) => t.trim()).filter(Boolean);
-    await supabase
-      .from("metadata")
-      .upsert({ key: "propertyTypes", value: JSON.stringify(clean) }, { onConflict: "key" });
+
+    if (isMysql && pool) {
+      await pool.execute(
+        "INSERT INTO metadata (`key`, `value`) VALUES ('propertyTypes', ?) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)",
+        [JSON.stringify(clean)]
+      );
+      return clean;
+    }
+
+    if (supabase) {
+      await supabase
+        .from("metadata")
+        .upsert({ key: "propertyTypes", value: JSON.stringify(clean) }, { onConflict: "key" });
+      return clean;
+    }
+
     return clean;
   }
 
   static async getBrokerInfo() {
     const defaultBroker = {
-      name: "Vanessa Sterling",
+      name: "bnbg",
       role: "Senior Relocation Specialist",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80"
+      image:
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80",
     };
-    try {
-      const { data, error } = await supabase
-        .from("metadata")
-        .select("value")
-        .eq("key", "brokerInfo")
-        .single();
-      if (error || !data) return defaultBroker;
-      return JSON.parse(data.value);
-    } catch {
-      return defaultBroker;
+
+    if (isMysql && pool) {
+      try {
+        const [rows] = await pool.execute("SELECT `value` FROM metadata WHERE `key` = 'brokerInfo' LIMIT 1");
+        const list = rows as any[];
+        if (list.length === 0 || !list[0].value) return defaultBroker;
+        return JSON.parse(list[0].value);
+      } catch {
+        return defaultBroker;
+      }
     }
+
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from("metadata").select("value").eq("key", "brokerInfo").single();
+        if (error || !data) return defaultBroker;
+        return JSON.parse(data.value);
+      } catch {
+        return defaultBroker;
+      }
+    }
+
+    return defaultBroker;
   }
 
   static async updateBrokerInfo(brokerInfo: any) {
-    await supabase
-      .from("metadata")
-      .upsert({ key: "brokerInfo", value: JSON.stringify(brokerInfo) }, { onConflict: "key" });
+    if (isMysql && pool) {
+      await pool.execute(
+        "INSERT INTO metadata (`key`, `value`) VALUES ('brokerInfo', ?) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)",
+        [JSON.stringify(brokerInfo)]
+      );
+      return brokerInfo;
+    }
+
+    if (supabase) {
+      await supabase
+        .from("metadata")
+        .upsert({ key: "brokerInfo", value: JSON.stringify(brokerInfo) }, { onConflict: "key" });
+      return brokerInfo;
+    }
+
     return brokerInfo;
   }
 }
