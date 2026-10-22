@@ -24,6 +24,14 @@ const PORT = 3000;
 
 app.use(express.json({ limit: "20mb" }));
 
+// Prevent proxies/browsers from caching dynamic API requests
+app.use("/api", (_req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
+
 // ─── Auth Helpers ─────────────────────────────────────────────────────────────
 
 const getUserFromReq = async (req: express.Request) => {
@@ -186,7 +194,8 @@ app.post("/api/meta/broker", requireAdmin as any, async (req, res) => {
 
 app.get("/api/properties", async (req, res) => {
   try {
-    const properties = await Db.getProperties();
+    const force = req.query.force === "true" || req.query.refresh === "1";
+    const properties = await Db.getProperties(force);
     res.json({ properties });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -425,12 +434,13 @@ async function startServer() {
         if (path.includes('/assets/')) {
           res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
         } else {
-          res.setHeader('Cache-Control', 'no-cache');
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         }
       }
     }));
 
-    app.get("*", (req, res) => {
+    app.get("*", (_req, res) => {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.sendFile(path.join(distPath, "index.html"));
     });
   }

@@ -185,19 +185,36 @@ export default function App() {
   const [contactSuccess, setContactSuccess] = useState(false);
 
   // Fetch all listings
-  const loadProperties = async () => {
+  const loadProperties = async (silent = false) => {
+    if (!silent && properties.length === 0) setLoading(true);
     try {
       const res = await fetch("/api/properties");
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
-      setProperties(data.properties || []);
+      if (data.properties) {
+        setProperties(data.properties);
+      }
     } catch (e) {
       console.error("Error fetching properties", e);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePropertySaved = (savedProp: Property) => {
+    setProperties((prev) => {
+      const exists = prev.some((p) => p.id === savedProp.id);
+      if (exists) {
+        return prev.map((p) => (p.id === savedProp.id ? savedProp : p));
+      }
+      return [savedProp, ...prev];
+    });
+  };
+
+  const handlePropertyDeleted = (id: string) => {
+    setProperties((prev) => prev.filter((p) => p.id !== id));
   };
 
   const loadMetadata = async () => {
@@ -285,8 +302,22 @@ export default function App() {
     // Call once on mount
     handleHashChange();
     
+    let lastAutoSync = Date.now();
+    const handleAutoSync = () => {
+      if (document.visibilityState === "visible" && Date.now() - lastAutoSync > 15000) {
+        lastAutoSync = Date.now();
+        loadProperties(true);
+      }
+    };
+
     window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    document.addEventListener('visibilitychange', handleAutoSync);
+    window.addEventListener('focus', handleAutoSync);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      document.removeEventListener('visibilitychange', handleAutoSync);
+      window.removeEventListener('focus', handleAutoSync);
+    };
   }, []);
 
   // Trigger translation whenever the viewed property or language changes
@@ -1846,6 +1877,9 @@ export default function App() {
                   propertyTypes={propertyTypes}
                   brokerInfo={brokerInfo}
                   onRefreshMetadata={loadMetadata}
+                  onPropertySaved={handlePropertySaved}
+                  onPropertyDeleted={handlePropertyDeleted}
+                  onRefreshProperties={loadProperties}
                 />
               </Suspense>
             </motion.div>

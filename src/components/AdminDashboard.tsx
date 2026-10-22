@@ -11,6 +11,9 @@ interface AdminDashboardProps {
   propertyTypes?: string[];
   brokerInfo?: BrokerInfo | null;
   onRefreshMetadata?: () => void;
+  onPropertySaved?: (property: Property) => void;
+  onPropertyDeleted?: (id: string) => void;
+  onRefreshProperties?: () => void;
 }
 
 const parseLatLngFromGoogleMapsUrl = (url: string): { lat: number; lng: number } | null => {
@@ -58,6 +61,9 @@ export default function AdminDashboard({
   propertyTypes = ["villa", "house", "apartment", "loft", "condo", "townhouse"],
   brokerInfo,
   onRefreshMetadata,
+  onPropertySaved,
+  onPropertyDeleted,
+  onRefreshProperties,
 }: AdminDashboardProps) {
   const { formatPrice, currency } = useCurrency();
   const { t } = useTranslation();
@@ -122,13 +128,13 @@ export default function AdminDashboard({
   const TYPES = propertyTypes;
   const STANDARD_AMENITIES = ["Swimming Pool", "Garage", "Garden", "Parking", "Furnished", "Balcony", "Fireplace", "Smart Home System"];
 
-  const loadDashboardData = async () => {
-    setLoading(true);
+  const loadDashboardData = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const headers = { "Authorization": `Bearer ${authToken}` };
 
       const [resProps, resInqs, resStats] = await Promise.all([
-        fetch("/api/properties"),
+        fetch("/api/properties?force=true"),
         fetch("/api/inquiries", { headers }),
         fetch("/api/stats", { headers })
       ]);
@@ -141,13 +147,13 @@ export default function AdminDashboard({
       if (resInqs.ok) dataInqs = await resInqs.json();
       if (resStats.ok) dataStats = await resStats.json();
 
-      if (resProps.ok) setProperties(dataProps.properties || []);
+      if (resProps.ok && dataProps.properties) setProperties(dataProps.properties);
       if (resInqs.ok) setInquiries(dataInqs.inquiries || []);
       if (resStats.ok) setStats(dataStats.stats || null);
     } catch (err) {
       console.error("Error fetching admin data", err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -310,12 +316,24 @@ export default function AdminDashboard({
     // Determine correct coordinates with fallback
     let lat = 37.7749;
     let lng = -122.4194;
+    let coordsParsed = false;
 
     if (editingPropertyId) {
       const existing = properties.find((p) => p.id === editingPropertyId);
       if (existing) {
-        lat = existing.latitude;
-        lng = existing.longitude;
+        lat = existing.latitude || lat;
+        lng = existing.longitude || lng;
+        
+        // Fast-path: if location fields are unchanged and we already have valid coords, skip geocoding!
+        const locationUnchanged =
+          existing.address === address &&
+          existing.city === city &&
+          (existing.neighborhood || "") === (neighborhood || "") &&
+          (existing.googleMapsUrl || "").trim() === googleMapsUrl.trim();
+        
+        if (locationUnchanged && existing.latitude && existing.longitude) {
+          coordsParsed = true;
+        }
       }
     } else {
       const defaults = getCityDefaults(city);
@@ -323,25 +341,26 @@ export default function AdminDashboard({
       lng = defaults.lng;
     }
 
-    let coordsParsed = false;
-
-    // Try to extract from custom google maps url if specified
-    if (googleMapsUrl && googleMapsUrl.trim().length > 0) {
+    // Try to extract from custom google maps url if specified and not already parsed
+    if (!coordsParsed && googleMapsUrl && googleMapsUrl.trim().length > 0) {
       let parsedCoords = parseLatLngFromGoogleMapsUrl(googleMapsUrl);
       
-      // If local regex failed, it might be a short link or a complex place URL. Resolve it via backend.
+      // If local regex failed, it might be a short link or a complex place URL. Resolve it via backend with a fast 1.5s timeout.
       if (!parsedCoords) {
         try {
-          // Use the admin token for auth
           const token = localStorage.getItem("adminToken");
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 1500);
           const res = await fetch('/api/resolve-maps-url', {
             method: 'POST',
             headers: { 
               'Content-Type': 'application/json',
               ...(token ? { 'Authorization': `Bearer ${token}` } : {})
             },
-            body: JSON.stringify({ url: googleMapsUrl })
+            body: JSON.stringify({ url: googleMapsUrl }),
+            signal: controller.signal
           });
+          clearTimeout(timeoutId);
           if (res.ok) {
             const data = await res.json();
             if (data.finalUrl) {
@@ -361,26 +380,26 @@ export default function AdminDashboard({
     }
 
     if (!coordsParsed) {
-      // Auto-geocode using Photon (Komoot) which is much better for Italian addresses
+      // Auto-geocode using Photon (Komoot) with a fast 1.5s timeout
       try {
-        const queriesToTry = [
-          `${address} ${neighborhood ? neighborhood + ' ' : ''}${city} Italy`,
-          `${address} ${city} Italy`,
-          `${address} Italy`
-        ];
-        
-        for (const query of queriesToTry) {
-          const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=1`);
+        const query = `${address} ${neighborhood ? neighborhood + ' ' : ''}${city} Italy`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=1`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
           const data = await res.json();
           if (data && data.features && data.features.length > 0) {
             const coords = data.features[0].geometry.coordinates;
-            lat = parseFloat(coords[1]); // lat is the second element
-            lng = parseFloat(coords[0]); // lon is the first element
-            break; // Stop trying once we find a match
+            lat = parseFloat(coords[1]);
+            lng = parseFloat(coords[0]);
+            coordsParsed = true;
           }
         }
       } catch (err) {
-        console.warn("Geocoding failed, falling back to defaults", err);
+        console.warn("Geocoding failed or timed out, falling back to defaults", err);
       }
     }
 
@@ -426,8 +445,27 @@ export default function AdminDashboard({
       });
 
       if (res.ok) {
+        const data = await res.json();
+        const savedProperty = data.property;
+
+        if (savedProperty) {
+          // Instantly update local state in AdminDashboard so UI reflects change in 0ms
+          setProperties((prev) => {
+            if (editingPropertyId) {
+              return prev.map((p) => (p.id === savedProperty.id ? { ...p, ...savedProperty } : p));
+            } else {
+              return [savedProperty, ...prev.filter((p) => p.id !== savedProperty.id)];
+            }
+          });
+
+          // Instantly sync with parent website state (App.tsx)
+          onPropertySaved?.(savedProperty);
+        }
+
         setShowForm(false);
-        loadDashboardData();
+        setEditingPropertyId(null);
+        // Refresh inquiries and stats silently in background without blocking UI
+        loadDashboardData(true);
       }
     } catch (err) {
       console.error("Error saving property", err);
@@ -439,7 +477,10 @@ export default function AdminDashboard({
   const handleDeleteProperty = async (id: string) => {
     if (!confirm("Are you sure you want to delete this listing permanently?")) return;
 
-    setActionLoading(true);
+    // Instantly remove from Admin list and parent website state
+    setProperties((prev) => prev.filter((p) => p.id !== id));
+    onPropertyDeleted?.(id);
+
     try {
       const res = await fetch(`/api/properties/${id}`, {
         method: "DELETE",
@@ -448,12 +489,13 @@ export default function AdminDashboard({
         }
       });
       if (res.ok) {
-        loadDashboardData();
+        loadDashboardData(true);
+      } else {
+        loadDashboardData(true);
       }
     } catch (err) {
       console.error("Error deleting property", err);
-    } finally {
-      setActionLoading(false);
+      loadDashboardData(true);
     }
   };
 

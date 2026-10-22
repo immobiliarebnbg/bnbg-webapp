@@ -64,6 +64,12 @@ export class Db {
     return data as Property;
   }
 
+  static invalidatePropertiesCache(): void {
+    this.cachedProperties = null;
+    this.propertiesLastFetched = 0;
+    this.propertiesFetchPromise = null;
+  }
+
   static async addProperty(property: Omit<Property, "id" | "createdAt" | "updatedAt">): Promise<Property> {
     const now = new Date().toISOString();
     const newProperty = {
@@ -78,8 +84,20 @@ export class Db {
       .select()
       .single();
     if (error) throw new Error(error.message);
-    this.propertiesLastFetched = 0; // Invalidate cache
-    return data as Property;
+    
+    const added = data as Property;
+    const optimized = {
+      ...added,
+      images: added.images && added.images.length > 0 ? [added.images[0]] : []
+    };
+    if (this.cachedProperties) {
+      this.cachedProperties = [optimized as Property, ...this.cachedProperties.filter((p) => p.id !== added.id)];
+    } else {
+      this.cachedProperties = [optimized as Property];
+    }
+    this.propertiesLastFetched = Date.now();
+    this.propertiesFetchPromise = null;
+    return added;
   }
 
   static async updateProperty(
@@ -93,12 +111,31 @@ export class Db {
       .select()
       .single();
     if (error) return undefined;
-    return data as Property;
+    
+    const updated = data as Property;
+    const optimized = {
+      ...updated,
+      images: updated.images && updated.images.length > 0 ? [updated.images[0]] : []
+    };
+    if (this.cachedProperties) {
+      this.cachedProperties = this.cachedProperties.map((p) => (p.id === id ? (optimized as Property) : p));
+    }
+    this.propertiesLastFetched = Date.now();
+    this.propertiesFetchPromise = null;
+    return updated;
   }
 
   static async deleteProperty(id: string): Promise<boolean> {
     const { error } = await supabase.from("properties").delete().eq("id", id);
-    return !error;
+    if (!error) {
+      if (this.cachedProperties) {
+        this.cachedProperties = this.cachedProperties.filter((p) => p.id !== id);
+      }
+      this.propertiesLastFetched = Date.now();
+      this.propertiesFetchPromise = null;
+      return true;
+    }
+    return false;
   }
 
   // ─── Users ─────────────────────────────────────────────────────────────────
