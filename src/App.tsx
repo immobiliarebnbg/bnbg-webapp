@@ -1301,24 +1301,17 @@ export default function App() {
                   <div>
                     <div className="flex items-center gap-2.5 mb-2 flex-wrap">
                       {property.dealStatus === "sold" ? (
-                        <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider text-white bg-rose-600 shadow-sm flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                        <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-rose-600 shadow-sm">
                           {t('property.sold', { defaultValue: 'SOLD' })}
                         </span>
                       ) : property.dealStatus === "rented" ? (
-                        <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider text-white bg-purple-700 shadow-sm flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                        <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-purple-700 shadow-sm">
                           {t('property.rented', { defaultValue: 'RENTED' })}
                         </span>
                       ) : (
                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white ${
                           property.status === "sale" ? "bg-blue-600" : "bg-emerald-600"
                         }`}>
-                          For {property.status}
-                        </span>
-                      )}
-                      {(property.dealStatus === "sold" || property.dealStatus === "rented") && (
-                        <span className="px-2.5 py-0.5 rounded-md bg-slate-900/60 text-white text-xs font-bold uppercase">
                           For {property.status}
                         </span>
                       )}

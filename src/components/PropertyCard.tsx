@@ -44,41 +44,20 @@ export default function PropertyCard({ property, isFavorited, onToggleFavorite, 
           />
         </button>
 
-        {/* Deal Status Tag (Right side near favorite button) */}
-        {property.dealStatus && property.dealStatus !== "available" && (
-          <div className="absolute top-4 right-14 z-10 pointer-events-none">
-            <span className={`px-2.5 py-1 text-[11px] font-black uppercase tracking-wider rounded-full shadow-md border ${
-              property.dealStatus === "sold"
-                ? "bg-rose-600 text-white border-rose-400"
-                : "bg-purple-700 text-white border-purple-400"
-            }`}>
-              {property.dealStatus === "sold" ? t('property.sold', { defaultValue: 'SOLD' }) : t('property.rented', { defaultValue: 'RENTED' })}
-            </span>
-          </div>
-        )}
-
         {/* Status Badges */}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2 items-center">
           {property.dealStatus === "sold" ? (
-            <span className="px-3 py-1 text-xs font-black rounded-full uppercase tracking-wider text-white shadow-md bg-rose-600 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+            <span className="px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider text-white shadow-sm bg-rose-600">
               {t('property.sold', { defaultValue: 'SOLD' })}
             </span>
           ) : property.dealStatus === "rented" ? (
-            <span className="px-3 py-1 text-xs font-black rounded-full uppercase tracking-wider text-white shadow-md bg-purple-700 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+            <span className="px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider text-white shadow-sm bg-purple-700">
               {t('property.rented', { defaultValue: 'RENTED' })}
             </span>
           ) : (
             <span className={`px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider text-white shadow-sm ${
               property.status === "sale" ? "bg-blue-600" : "bg-emerald-600"
             }`}>
-              {property.status === "sale" ? t('nav.buy') : t('nav.rent')}
-            </span>
-          )}
-
-          {(property.dealStatus === "sold" || property.dealStatus === "rented") && (
-            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider text-white bg-slate-900/60 backdrop-blur-xs">
               {property.status === "sale" ? t('nav.buy') : t('nav.rent')}
             </span>
           )}
