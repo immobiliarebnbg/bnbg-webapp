@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Property, Inquiry, DashboardStats, PropertyType, PropertyStatus, BrokerInfo } from "../types";
-import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone, User as UserIcon, Archive, ArchiveRestore } from "lucide-react";
+import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone, User as UserIcon, Archive, ArchiveRestore, Search } from "lucide-react";
 import { useCurrency } from "../contexts/CurrencyContext";
 import { useTranslation } from "react-i18next";
 
@@ -108,8 +108,9 @@ export default function AdminDashboard({
   const [generatingDescription, setGeneratingDescription] = useState(false);
   const [aiError, setAiError] = useState("");
 
-  // Properties table filter & archive state
+  // Properties table filter & search & archive state
   const [propertyAvailabilityFilter, setPropertyAvailabilityFilter] = useState<"all" | "available" | "archived">("all");
+  const [propertySearchQuery, setPropertySearchQuery] = useState("");
   const [togglingPropertyId, setTogglingPropertyId] = useState<string | null>(null);
   const [archiveToast, setArchiveToast] = useState<string>("");
 
@@ -559,12 +560,35 @@ export default function AdminDashboard({
   const archivedCount = useMemo(() => properties.filter((p) => !p.available).length, [properties]);
 
   const displayedProperties = useMemo(() => {
+    const q = propertySearchQuery.trim().toLowerCase();
+
     return properties.filter((p) => {
-      if (propertyAvailabilityFilter === "available") return p.available;
-      if (propertyAvailabilityFilter === "archived") return !p.available;
+      // 1. Availability filter (All / Available / Archived)
+      if (propertyAvailabilityFilter === "available" && !p.available) return false;
+      if (propertyAvailabilityFilter === "archived" && p.available) return false;
+
+      // 2. Search query filter
+      if (q) {
+        const titleMatch = p.title?.toLowerCase().includes(q);
+        const cityMatch = p.city?.toLowerCase().includes(q);
+        const neighborhoodMatch = p.neighborhood?.toLowerCase().includes(q);
+        const addressMatch = p.address?.toLowerCase().includes(q);
+        const typeMatch = p.propertyType?.toLowerCase().includes(q);
+        const idMatch = p.id?.toLowerCase().includes(q);
+        const statusMatch = (p.status === "sale" ? "sale vendit for sale" : "rent affitt for rent").includes(q);
+
+        // Price search: match numeric portion if digits entered
+        const numericQuery = q.replace(/[^0-9]/g, "");
+        const priceStr = String(p.price || 0);
+        const priceMatch = numericQuery.length > 0 && priceStr.includes(numericQuery);
+
+        const matches = titleMatch || cityMatch || neighborhoodMatch || addressMatch || typeMatch || idMatch || statusMatch || priceMatch;
+        if (!matches) return false;
+      }
+
       return true;
     });
-  }, [properties, propertyAvailabilityFilter]);
+  }, [properties, propertyAvailabilityFilter, propertySearchQuery]);
 
   const showMetaSuccess = (msg: string) => {
     setMetaSuccess(msg);
@@ -1158,49 +1182,81 @@ export default function AdminDashboard({
             </div>
           )}
 
-          <div className="px-6 py-5 border-b border-gray-50 bg-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h3 className="font-bold text-base text-gray-900">{t('admin.propertiesTab.title')}</h3>
-              <p className="text-xs text-gray-400 mt-0.5">{t('admin.propertiesTab.desc')}</p>
+          <div className="px-6 py-5 border-b border-gray-100 bg-slate-50 flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h3 className="font-bold text-base text-gray-900">{t('admin.propertiesTab.title')}</h3>
+                <p className="text-xs text-gray-400 mt-0.5">{t('admin.propertiesTab.desc')}</p>
+              </div>
+
+              {/* Availability Filter Chips */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setPropertyAvailabilityFilter("all")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    propertyAvailabilityFilter === "all"
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  All ({properties.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPropertyAvailabilityFilter("available")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    propertyAvailabilityFilter === "available"
+                      ? "bg-green-600 text-white shadow-xs"
+                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-green-400" />
+                  Available ({availableCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPropertyAvailabilityFilter("archived")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    propertyAvailabilityFilter === "archived"
+                      ? "bg-red-600 text-white shadow-xs"
+                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-red-400" />
+                  Archived ({archivedCount})
+                </button>
+              </div>
             </div>
 
-            {/* Availability Filter Chips */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                type="button"
-                onClick={() => setPropertyAvailabilityFilter("all")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  propertyAvailabilityFilter === "all"
-                    ? "bg-blue-600 text-white shadow-xs"
-                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                All ({properties.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => setPropertyAvailabilityFilter("available")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  propertyAvailabilityFilter === "available"
-                    ? "bg-green-600 text-white shadow-xs"
-                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                <span className="w-2 h-2 rounded-full bg-green-400" />
-                Available ({availableCount})
-              </button>
-              <button
-                type="button"
-                onClick={() => setPropertyAvailabilityFilter("archived")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  propertyAvailabilityFilter === "archived"
-                    ? "bg-red-600 text-white shadow-xs"
-                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                <span className="w-2 h-2 rounded-full bg-red-400" />
-                Archived ({archivedCount})
-              </button>
+            {/* Properties Search Bar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2 border-t border-gray-100">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={propertySearchQuery}
+                  onChange={(e) => setPropertySearchQuery(e.target.value)}
+                  placeholder="Search listings by title, city, neighborhood, address, price, or ID..."
+                  className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-9 py-2 text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all shadow-xs"
+                />
+                {propertySearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setPropertySearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5 rounded-full hover:bg-gray-100 cursor-pointer"
+                    title="Clear search"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {propertySearchQuery && (
+                <div className="text-xs text-gray-500 font-medium whitespace-nowrap self-end sm:self-center">
+                  Showing <span className="font-bold text-gray-900">{displayedProperties.length}</span> of {properties.length}
+                </div>
+              )}
             </div>
           </div>
 
@@ -1220,7 +1276,20 @@ export default function AdminDashboard({
                 {displayedProperties.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-12 text-center text-gray-400 text-sm">
-                      No properties found matching this availability filter.
+                      {propertySearchQuery ? (
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <p>No listings found matching &ldquo;<span className="font-semibold text-gray-700">{propertySearchQuery}</span>&rdquo;</p>
+                          <button
+                            type="button"
+                            onClick={() => setPropertySearchQuery("")}
+                            className="text-xs text-blue-600 hover:text-blue-700 font-semibold cursor-pointer underline"
+                          >
+                            Clear search
+                          </button>
+                        </div>
+                      ) : (
+                        "No properties found matching this availability filter."
+                      )}
                     </td>
                   </tr>
                 ) : (
