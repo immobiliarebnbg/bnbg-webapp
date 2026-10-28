@@ -177,11 +177,20 @@
       "location": "Emplacement",
       "type": "Type",
       "statusPrice": "Statut / Prix",
+      "dealStatus": "Vitrine / Statut",
+      "availability": "Disponibilité",
       "actions": "Actions",
       "date": "Date",
       "client": "Client",
       "message": "Message",
       "status": "Statut"
+    },
+    "filters": {
+      "all": "Tous",
+      "available": "Disponibles",
+      "sold": "Vendus",
+      "rented": "Loués",
+      "archived": "Archivés"
     },
     "actions": {
       "addNew": "Ajouter Propriété",
@@ -219,11 +228,31 @@
       "typeDesc": "Catégories personnalisées pour la classification.",
       "typePlaceholder": "ex. chalet, penthouse"
     },
+    "search": {
+      "placeholder": "Rechercher des annonces par titre, lieu ou prix...",
+      "clear": "Effacer la recherche",
+      "showing": "Affichage de",
+      "of": "sur",
+      "noMatching": "Aucune annonce trouvée pour",
+      "noFilterResults": "Aucune propriété ne correspond à ce filtre de disponibilité."
+    },
     "badges": {
       "forSale": "À VENDRE",
       "forRent": "À LOUER",
       "available": "Disponible",
+      "sold": "Vendu",
+      "rented": "Loué",
       "archived": "Archivé"
+    },
+    "form": {
+      "dealStatusTitle": "Statut Vitrine & Transaction",
+      "dealStatusDesc": "Mettez en valeur les transactions réussies avec des étiquettes « Vendu » ou « Loué »",
+      "featuredListing": "Annonce en Vedette",
+      "featuredDesc": "Mettre en valeur cette propriété sur la page d'accueil",
+      "statusAvailable": "Disponible (Publié)",
+      "statusArchived": "Archivé (Masqué)",
+      "visibleDesc": "Visible par les visiteurs sur le site dans les cartes et catalogues",
+      "archivedDesc": "Archivé: Entièrement retiré et masqué du site"
     }
   },
   "amenities": {

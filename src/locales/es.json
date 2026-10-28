@@ -177,11 +177,20 @@
       "location": "Ubicación",
       "type": "Tipo",
       "statusPrice": "Estado / Precio",
+      "dealStatus": "Escaparate / Estado",
+      "availability": "Disponibilidad",
       "actions": "Acciones",
       "date": "Fecha",
       "client": "Cliente",
       "message": "Mensaje",
       "status": "Estado"
+    },
+    "filters": {
+      "all": "Todos",
+      "available": "Disponibles",
+      "sold": "Vendidos",
+      "rented": "Alquilados",
+      "archived": "Archivados"
     },
     "actions": {
       "addNew": "Añadir Nueva Propiedad",
@@ -219,11 +228,31 @@
       "typeDesc": "Categorías personalizadas para clasificación arquitectónica.",
       "typePlaceholder": "Ej. cabaña, ático, castillo"
     },
+    "search": {
+      "placeholder": "Buscar propiedades por título, ubicación o precio...",
+      "clear": "Borrar búsqueda",
+      "showing": "Mostrando",
+      "of": "de",
+      "noMatching": "No se encontraron propiedades que coincidan con",
+      "noFilterResults": "No se encontraron propiedades que coincidan con este filtro de disponibilidad."
+    },
     "badges": {
       "forSale": "EN VENTA",
       "forRent": "EN ALQUILER",
       "available": "Disponible",
+      "sold": "Vendido",
+      "rented": "Alquilado",
       "archived": "Archivado"
+    },
+    "form": {
+      "dealStatusTitle": "Estado de Escaparate y Trato",
+      "dealStatusDesc": "Muestre transacciones exitosas con etiquetas destacadas de «Vendido» o «Alquilado»",
+      "featuredListing": "Propiedad Destacada",
+      "featuredDesc": "Destacar esta propiedad en la página principal",
+      "statusAvailable": "Disponible (Publicado)",
+      "statusArchived": "Archivado (Oculto)",
+      "visibleDesc": "Visible para los visitantes en los mapas y catálogos de la web",
+      "archivedDesc": "Archivado: Completamente eliminado y oculto del sitio"
     }
   },
   "amenities": {

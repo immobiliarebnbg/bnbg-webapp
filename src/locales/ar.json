@@ -177,11 +177,20 @@
       "location": "الموقع",
       "type": "النوع",
       "statusPrice": "الحالة / السعر",
+      "dealStatus": "حالة العرض / المعاملة",
+      "availability": "التوفر",
       "actions": "إجراءات",
       "date": "التاريخ",
       "client": "العميل",
       "message": "الرسالة",
       "status": "الحالة"
+    },
+    "filters": {
+      "all": "الكل",
+      "available": "متاح",
+      "sold": "تم البيع",
+      "rented": "تم التأجير",
+      "archived": "مؤرشف"
     },
     "actions": {
       "addNew": "إضافة عقار",
@@ -219,11 +228,31 @@
       "typeDesc": "فئات مخصصة للتصنيف المعماري.",
       "typePlaceholder": "مثال: كوخ، بنتهاوس، قلعة"
     },
+    "search": {
+      "placeholder": "ابحث عن العقارات حسب العنوان أو الموقع أو السعر...",
+      "clear": "مسح البحث",
+      "showing": "عرض",
+      "of": "من",
+      "noMatching": "لم يتم العثور على عقارات مطابقة لـ",
+      "noFilterResults": "لا توجد عقارات مطابقة لفلتر التوفر هذا."
+    },
     "badges": {
       "forSale": "للبيع",
       "forRent": "للإيجار",
       "available": "متاح",
+      "sold": "تم البيع",
+      "rented": "تم التأجير",
       "archived": "مؤرشف"
+    },
+    "form": {
+      "dealStatusTitle": "حالة الصفقة والعرض",
+      "dealStatusDesc": "اعرض المعاملات الناجحة مع علامات بارزة مثل «تم البيع» أو «تم التأجير»",
+      "featuredListing": "عقار مميز",
+      "featuredDesc": "إبراز هذا العقار في الصفحة الرئيسية",
+      "statusAvailable": "متاح (منشور)",
+      "statusArchived": "مؤرشف (مخفي)",
+      "visibleDesc": "مرئي للزوار على الموقع في الخرائط والكتالوجات",
+      "archivedDesc": "مؤرشف: تمت إزالته وإخفاؤه تماماً من الموقع"
     }
   },
   "amenities": {

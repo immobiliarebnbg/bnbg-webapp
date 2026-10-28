@@ -177,11 +177,20 @@
       "location": "Luogo",
       "type": "Tipo",
       "statusPrice": "Stato / Prezzo",
+      "dealStatus": "Vetrina / Stato",
+      "availability": "Disponibilità",
       "actions": "Azioni",
       "date": "Data",
       "client": "Cliente",
       "message": "Messaggio",
       "status": "Stato"
+    },
+    "filters": {
+      "all": "Tutti",
+      "available": "Disponibili",
+      "sold": "Venduti",
+      "rented": "Affittati",
+      "archived": "Archiviati"
     },
     "actions": {
       "addNew": "Aggiungi Proprietà",
@@ -219,11 +228,31 @@
       "typeDesc": "Categorie personalizzate per la classificazione.",
       "typePlaceholder": "es. baita, attico"
     },
+    "search": {
+      "placeholder": "Cerca annunci per titolo, luogo o prezzo...",
+      "clear": "Cancella ricerca",
+      "showing": "Visualizzazione di",
+      "of": "su",
+      "noMatching": "Nessun annuncio trovato per",
+      "noFilterResults": "Nessuna proprietà corrisponde a questo filtro di disponibilità."
+    },
     "badges": {
       "forSale": "IN VENDITA",
       "forRent": "IN AFFITTO",
       "available": "Disponibile",
+      "sold": "Venduto",
+      "rented": "Affittato",
       "archived": "Archiviato"
+    },
+    "form": {
+      "dealStatusTitle": "Stato Vetrina & Trattativa",
+      "dealStatusDesc": "Mostra le trattative concluse con etichette evidenti come \"Venduto\" o \"Affittato\"",
+      "featuredListing": "Annuncio in Evidenza",
+      "featuredDesc": "Metti in risalto questa proprietà sulla home page",
+      "statusAvailable": "Disponibile (Pubblicato)",
+      "statusArchived": "Archiviato (Nascosto)",
+      "visibleDesc": "Visibile ai visitatori sul sito nelle mappe e cataloghi",
+      "archivedDesc": "Archiviato: Completamente rimosso e nascosto dal sito"
     }
   },
   "amenities": {

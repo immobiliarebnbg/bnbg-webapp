@@ -1359,7 +1359,7 @@ export default function AdminDashboard({
                       : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
                   }`}
                 >
-                  All ({properties.length})
+                  {t('admin.filters.all', { defaultValue: 'All' })} ({properties.length})
                 </button>
                 <button
                   type="button"
@@ -1371,7 +1371,7 @@ export default function AdminDashboard({
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-green-400" />
-                  Available ({availableCount})
+                  {t('admin.filters.available', { defaultValue: 'Available' })} ({availableCount})
                 </button>
                 <button
                   type="button"
@@ -1383,7 +1383,7 @@ export default function AdminDashboard({
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-rose-400" />
-                  Sold ({soldCount})
+                  {t('admin.filters.sold', { defaultValue: 'Sold' })} ({soldCount})
                 </button>
                 <button
                   type="button"
@@ -1395,7 +1395,7 @@ export default function AdminDashboard({
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-purple-400" />
-                  Rented ({rentedCount})
+                  {t('admin.filters.rented', { defaultValue: 'Rented' })} ({rentedCount})
                 </button>
                 <button
                   type="button"
@@ -1407,7 +1407,7 @@ export default function AdminDashboard({
                   }`}
                 >
                   <span className="w-2 h-2 rounded-full bg-red-400" />
-                  Archived ({archivedCount})
+                  {t('admin.filters.archived', { defaultValue: 'Archived' })} ({archivedCount})
                 </button>
               </div>
             </div>
@@ -1420,7 +1420,7 @@ export default function AdminDashboard({
                   type="text"
                   value={propertySearchQuery}
                   onChange={(e) => setPropertySearchQuery(e.target.value)}
-                  placeholder="Search listings by title, location, or price..."
+                  placeholder={t('admin.search.placeholder', { defaultValue: 'Search listings by title, location, or price...' })}
                   className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-9 py-2 text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all shadow-xs"
                 />
                 {propertySearchQuery && (
@@ -1428,7 +1428,7 @@ export default function AdminDashboard({
                     type="button"
                     onClick={() => setPropertySearchQuery("")}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5 rounded-full hover:bg-gray-100 cursor-pointer"
-                    title="Clear search"
+                    title={t('admin.search.clear', { defaultValue: 'Clear search' })}
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -1437,7 +1437,9 @@ export default function AdminDashboard({
 
               {propertySearchQuery && (
                 <div className="text-xs text-gray-500 font-medium whitespace-nowrap self-end sm:self-center">
-                  Showing <span className="font-bold text-gray-900">{displayedProperties.length}</span> of {properties.length}
+                  {t('admin.search.showing', { defaultValue: 'Showing' })}{' '}
+                  <span className="font-bold text-gray-900">{displayedProperties.length}</span>{' '}
+                  {t('admin.search.of', { defaultValue: 'of' })} {properties.length}
                 </div>
               )}
             </div>
@@ -1451,8 +1453,8 @@ export default function AdminDashboard({
                   <th className="py-4 px-6 text-left">{t('admin.table.location')}</th>
                   <th className="py-4 px-6 text-left">{t('admin.table.type')}</th>
                   <th className="py-4 px-6 text-left">{t('admin.table.statusPrice')}</th>
-                  <th className="py-4 px-6 text-left">Deal / Showcase</th>
-                  <th className="py-4 px-6 text-left">Availability</th>
+                  <th className="py-4 px-6 text-left">{t('admin.table.dealStatus', { defaultValue: 'Deal / Showcase' })}</th>
+                  <th className="py-4 px-6 text-left">{t('admin.table.availability', { defaultValue: 'Availability' })}</th>
                   <th className="py-4 px-6 text-right">{t('admin.table.actions')}</th>
                 </tr>
               </thead>
@@ -1462,17 +1464,21 @@ export default function AdminDashboard({
                     <td colSpan={7} className="py-12 text-center text-gray-400 text-sm">
                       {propertySearchQuery ? (
                         <div className="flex flex-col items-center justify-center gap-2">
-                          <p>No listings found matching &ldquo;<span className="font-semibold text-gray-700">{propertySearchQuery}</span>&rdquo;</p>
+                          <p>
+                            {t('admin.search.noMatching', { defaultValue: 'No listings found matching' })} &ldquo;
+                            <span className="font-semibold text-gray-700">{propertySearchQuery}</span>
+                            &rdquo;
+                          </p>
                           <button
                             type="button"
                             onClick={() => setPropertySearchQuery("")}
                             className="text-xs text-blue-600 hover:text-blue-700 font-semibold cursor-pointer underline"
                           >
-                            Clear search
+                            {t('admin.search.clear', { defaultValue: 'Clear search' })}
                           </button>
                         </div>
                       ) : (
-                        "No properties found matching this availability filter."
+                        t('admin.search.noFilterResults', { defaultValue: 'No properties found matching this availability filter.' })
                       )}
                     </td>
                   </tr>
@@ -1521,11 +1527,11 @@ export default function AdminDashboard({
                               ? "bg-purple-50 border-purple-300 text-purple-700 font-black"
                               : "bg-slate-50 border-gray-200 text-gray-700 hover:bg-slate-100"
                           }`}
-                          title="Change showcase/deal status"
+                          title={t('admin.table.dealStatus', { defaultValue: 'Change showcase/deal status' })}
                         >
-                          <option value="available">Available</option>
-                          <option value="sold">Sold</option>
-                          <option value="rented">Rented</option>
+                          <option value="available">{t('admin.badges.available', { defaultValue: 'Available' })}</option>
+                          <option value="sold">{t('admin.badges.sold', { defaultValue: 'Sold' })}</option>
+                          <option value="rented">{t('admin.badges.rented', { defaultValue: 'Rented' })}</option>
                         </select>
                       </td>
                       <td className="py-4 px-6">
@@ -2499,9 +2505,11 @@ export default function AdminDashboard({
               {/* Deal & Showcase Status */}
               <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70">
                 <div className="mb-2.5">
-                  <span className="block text-sm font-bold text-gray-800">Deal & Showcase Status</span>
+                  <span className="block text-sm font-bold text-gray-800">
+                    {t('admin.form.dealStatusTitle', { defaultValue: 'Deal & Showcase Status' })}
+                  </span>
                   <span className="text-xs text-gray-500">
-                    Showcase successful transactions with prominent &ldquo;Sold&rdquo; or &ldquo;Rented&rdquo; labels
+                    {t('admin.form.dealStatusDesc', { defaultValue: 'Showcase successful transactions with prominent "Sold" or "Rented" labels' })}
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-2.5">
@@ -2515,7 +2523,7 @@ export default function AdminDashboard({
                     }`}
                   >
                     <span className={`w-2 h-2 rounded-full ${dealStatus === "available" ? "bg-white" : "bg-blue-500"}`} />
-                    Available
+                    {t('admin.badges.available', { defaultValue: 'Available' })}
                   </button>
                   <button
                     type="button"
@@ -2527,7 +2535,7 @@ export default function AdminDashboard({
                     }`}
                   >
                     <span className={`w-2 h-2 rounded-full ${dealStatus === "sold" ? "bg-white" : "bg-rose-500"}`} />
-                    Sold
+                    {t('admin.badges.sold', { defaultValue: 'Sold' })}
                   </button>
                   <button
                     type="button"
@@ -2539,7 +2547,7 @@ export default function AdminDashboard({
                     }`}
                   >
                     <span className={`w-2 h-2 rounded-full ${dealStatus === "rented" ? "bg-white" : "bg-purple-500"}`} />
-                    Rented
+                    {t('admin.badges.rented', { defaultValue: 'Rented' })}
                   </button>
                 </div>
               </div>
@@ -2548,8 +2556,12 @@ export default function AdminDashboard({
               <div className="grid grid-cols-2 gap-4 border-t border-gray-50 pt-5">
                 <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100">
                   <div>
-                    <span className="block text-sm font-bold text-gray-800">Featured Listing</span>
-                    <span className="text-[10px] text-gray-400">Highlight this property on the homepage</span>
+                    <span className="block text-sm font-bold text-gray-800">
+                      {t('admin.form.featuredListing', { defaultValue: 'Featured Listing' })}
+                    </span>
+                    <span className="text-[10px] text-gray-400">
+                      {t('admin.form.featuredDesc', { defaultValue: 'Highlight this property on the homepage' })}
+                    </span>
                   </div>
                   <input
                     type="checkbox"
@@ -2564,12 +2576,14 @@ export default function AdminDashboard({
                 }`}>
                   <div>
                     <span className="block text-sm font-bold text-gray-800">
-                      {available ? "Available (Published)" : "Archived (Hidden)"}
+                      {available
+                        ? t('admin.form.statusAvailable', { defaultValue: 'Available (Published)' })
+                        : t('admin.form.statusArchived', { defaultValue: 'Archived (Hidden)' })}
                     </span>
                     <span className="text-[10px] text-gray-500">
                       {available
-                        ? "Visible to visitors on website sale/rent maps & catalogs"
-                        : "Archived: Completely removed and hidden from the website"}
+                        ? t('admin.form.visibleDesc', { defaultValue: 'Visible to visitors on website sale/rent maps & catalogs' })
+                        : t('admin.form.archivedDesc', { defaultValue: 'Archived: Completely removed and hidden from the website' })}
                     </span>
                   </div>
                   <input

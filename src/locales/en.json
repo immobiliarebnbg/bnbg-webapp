@@ -177,11 +177,20 @@
       "location": "Location",
       "type": "Type",
       "statusPrice": "Status / Price",
+      "dealStatus": "Deal / Showcase",
+      "availability": "Availability",
       "actions": "Actions",
       "date": "Date",
       "client": "Client",
       "message": "Message",
       "status": "Status"
+    },
+    "filters": {
+      "all": "All",
+      "available": "Available",
+      "sold": "Sold",
+      "rented": "Rented",
+      "archived": "Archived"
     },
     "actions": {
       "addNew": "Add New Property",
@@ -219,11 +228,31 @@
       "typeDesc": "Custom categories for architectural classification.",
       "typePlaceholder": "e.g. cabin, penthouse, castle"
     },
+    "search": {
+      "placeholder": "Search listings by title, location, or price...",
+      "clear": "Clear search",
+      "showing": "Showing",
+      "of": "of",
+      "noMatching": "No listings found matching",
+      "noFilterResults": "No properties found matching this availability filter."
+    },
     "badges": {
       "forSale": "FOR SALE",
       "forRent": "FOR RENT",
       "available": "Available",
+      "sold": "Sold",
+      "rented": "Rented",
       "archived": "Archived"
+    },
+    "form": {
+      "dealStatusTitle": "Deal & Showcase Status",
+      "dealStatusDesc": "Showcase successful transactions with prominent \"Sold\" or \"Rented\" labels",
+      "featuredListing": "Featured Listing",
+      "featuredDesc": "Highlight this property on the homepage",
+      "statusAvailable": "Available (Published)",
+      "statusArchived": "Archived (Hidden)",
+      "visibleDesc": "Visible to visitors on website sale/rent maps & catalogs",
+      "archivedDesc": "Archived: Completely removed and hidden from the website"
     }
   },
   "amenities": {
