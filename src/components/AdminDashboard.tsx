@@ -574,7 +574,6 @@ export default function AdminDashboard({
         const neighborhoodMatch = p.neighborhood?.toLowerCase().includes(q);
         const addressMatch = p.address?.toLowerCase().includes(q);
         const typeMatch = p.propertyType?.toLowerCase().includes(q);
-        const idMatch = p.id?.toLowerCase().includes(q);
         const statusMatch = (p.status === "sale" ? "sale vendit for sale" : "rent affitt for rent").includes(q);
 
         // Price search: match numeric portion if digits entered
@@ -582,7 +581,7 @@ export default function AdminDashboard({
         const priceStr = String(p.price || 0);
         const priceMatch = numericQuery.length > 0 && priceStr.includes(numericQuery);
 
-        const matches = titleMatch || cityMatch || neighborhoodMatch || addressMatch || typeMatch || idMatch || statusMatch || priceMatch;
+        const matches = titleMatch || cityMatch || neighborhoodMatch || addressMatch || typeMatch || statusMatch || priceMatch;
         if (!matches) return false;
       }
 
@@ -1237,7 +1236,7 @@ export default function AdminDashboard({
                   type="text"
                   value={propertySearchQuery}
                   onChange={(e) => setPropertySearchQuery(e.target.value)}
-                  placeholder="Search listings by title, city, neighborhood, address, price, or ID..."
+                  placeholder="Search listings by title, location, or price..."
                   className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-9 py-2 text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all shadow-xs"
                 />
                 {propertySearchQuery && (
