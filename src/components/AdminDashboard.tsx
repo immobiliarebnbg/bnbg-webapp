@@ -54,6 +54,102 @@ const getCityDefaults = (cityName: string) => {
   }
 };
 
+function parseSearchNumber(input: string): number | null {
+  const trimmed = input.trim().toLowerCase();
+  // Check for shorthand k (thousands) or m (millions) e.g. "215k", "1.5m", "1,5m"
+  const kMatch = trimmed.match(/^([0-9]+(?:[\.,][0-9]+)?)\s*k$/i);
+  if (kMatch) {
+    return Math.round(parseFloat(kMatch[1].replace(",", ".")) * 1000);
+  }
+  const mMatch = trimmed.match(/^([0-9]+(?:[\.,][0-9]+)?)\s*m$/i);
+  if (mMatch) {
+    return Math.round(parseFloat(mMatch[1].replace(",", ".")) * 1000000);
+  }
+
+  // Strip currency symbols, commas, periods, spaces
+  const digitsOnly = trimmed.replace(/[^0-9]/g, "");
+  if (!digitsOnly) return null;
+  return parseInt(digitsOnly, 10);
+}
+
+function matchPropertyPrice(p: Property, query: string, currency: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return false;
+
+  // The actual prices displayed to the user
+  const priceEur = Math.round(p.price * 0.92);
+  const priceUsd = Math.round(p.price);
+  const activePrice = currency === "EUR" ? priceEur : priceUsd;
+
+  // 1. Range comparison: "< 200000", "<= 200k", "under 200000", "max 200000"
+  const underMatch = q.match(/^(?:<|<=|under|below|max|meno di)\s*(.+)$/i);
+  if (underMatch) {
+    const maxVal = parseSearchNumber(underMatch[1]);
+    if (maxVal !== null) {
+      return activePrice <= maxVal || priceEur <= maxVal || priceUsd <= maxVal;
+    }
+  }
+
+  // 2. Range comparison: "> 100000", ">= 100k", "over 100000", "min 100000", "above 100000"
+  const overMatch = q.match(/^(?:>|>=|over|above|min|più di|piu di)\s*(.+)$/i);
+  if (overMatch) {
+    const minVal = parseSearchNumber(overMatch[1]);
+    if (minVal !== null) {
+      return activePrice >= minVal || priceEur >= minVal || priceUsd >= minVal;
+    }
+  }
+
+  // 3. Range comparison: "100k - 200k", "100000 - 200000", "100000-200000"
+  const rangeMatch = q.match(/^([0-9\.,km\s]+)\s*-\s*([0-9\.,km\s]+)$/i);
+  if (rangeMatch) {
+    const minVal = parseSearchNumber(rangeMatch[1]);
+    const maxVal = parseSearchNumber(rangeMatch[2]);
+    if (minVal !== null && maxVal !== null) {
+      return (
+        (activePrice >= minVal && activePrice <= maxVal) ||
+        (priceEur >= minVal && priceEur <= maxVal) ||
+        (priceUsd >= minVal && priceUsd <= maxVal)
+      );
+    }
+  }
+
+  // 4. Exact / shorthand parsed number: e.g. "215k" -> 215000
+  if (q.endsWith("k") || q.endsWith("m")) {
+    const parsedNum = parseSearchNumber(q);
+    if (parsedNum !== null) {
+      return activePrice === parsedNum || priceEur === parsedNum || priceUsd === parsedNum;
+    }
+  }
+
+  // 5. Numeric digits substring / prefix matching:
+  // e.g. user typed "215000", "215", "690", "139000", "€139.000", "139,000"
+  const queryDigits = q.replace(/[^0-9]/g, "");
+  if (queryDigits.length > 0) {
+    const eurStr = String(priceEur);
+    const usdStr = String(priceUsd);
+    const rawStr = String(p.price || 0);
+
+    if (
+      eurStr.includes(queryDigits) ||
+      usdStr.includes(queryDigits) ||
+      rawStr.includes(queryDigits)
+    ) {
+      return true;
+    }
+  }
+
+  // 6. Formatted string check: e.g. "€215", "215,000", "€690/mo"
+  const formattedEur = `€${priceEur.toLocaleString('en-US')}`.toLowerCase();
+  const formattedEurDots = `€${priceEur.toLocaleString('de-DE')}`.toLowerCase();
+  const formattedUsd = `$${priceUsd.toLocaleString('en-US')}`.toLowerCase();
+
+  return (
+    formattedEur.includes(q) ||
+    formattedEurDots.includes(q) ||
+    formattedUsd.includes(q)
+  );
+}
+
 export default function AdminDashboard({ 
   authToken, 
   onNavigate,
@@ -569,25 +665,30 @@ export default function AdminDashboard({
 
       // 2. Search query filter
       if (q) {
-        const titleMatch = p.title?.toLowerCase().includes(q);
-        const cityMatch = p.city?.toLowerCase().includes(q);
-        const neighborhoodMatch = p.neighborhood?.toLowerCase().includes(q);
-        const addressMatch = p.address?.toLowerCase().includes(q);
-        const typeMatch = p.propertyType?.toLowerCase().includes(q);
-        const statusMatch = (p.status === "sale" ? "sale vendit for sale" : "rent affitt for rent").includes(q);
+        // Multi-word search support (e.g. "Bergamo 125000" or "Trilocale Curno")
+        const terms = q.split(/\s+/).filter(Boolean);
 
-        // Price search: match numeric portion if digits entered
-        const numericQuery = q.replace(/[^0-9]/g, "");
-        const priceStr = String(p.price || 0);
-        const priceMatch = numericQuery.length > 0 && priceStr.includes(numericQuery);
+        const matchesAllTerms = terms.every((term) => {
+          const titleMatch = p.title?.toLowerCase().includes(term);
+          const cityMatch = p.city?.toLowerCase().includes(term);
+          const neighborhoodMatch = p.neighborhood?.toLowerCase().includes(term);
+          const addressMatch = p.address?.toLowerCase().includes(term);
+          const typeMatch = p.propertyType?.toLowerCase().includes(term);
+          const statusMatch = (p.status === "sale" ? "sale vendit for sale" : "rent affitt for rent").includes(term);
+          const priceMatch = matchPropertyPrice(p, term, currency);
 
-        const matches = titleMatch || cityMatch || neighborhoodMatch || addressMatch || typeMatch || statusMatch || priceMatch;
-        if (!matches) return false;
+          return titleMatch || cityMatch || neighborhoodMatch || addressMatch || typeMatch || statusMatch || priceMatch;
+        });
+
+        // Or whole query matches (especially for operators like "< 200000", "100k - 200k", "under 150000")
+        const wholeQueryMatches = matchPropertyPrice(p, q, currency);
+
+        if (!matchesAllTerms && !wholeQueryMatches) return false;
       }
 
       return true;
     });
-  }, [properties, propertyAvailabilityFilter, propertySearchQuery]);
+  }, [properties, propertyAvailabilityFilter, propertySearchQuery, currency]);
 
   const showMetaSuccess = (msg: string) => {
     setMetaSuccess(msg);
