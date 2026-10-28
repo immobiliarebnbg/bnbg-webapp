@@ -1,6 +1,6 @@
 import "dotenv/config";
 import mysql from "mysql2/promise";
-import { Property, User, Inquiry, DashboardStats } from "./src/types";
+import { Property, PropertyDealStatus, User, Inquiry, DashboardStats } from "./src/types";
 
 // ─── Database Engine Configuration ──────────────────────────────────────────
 
@@ -71,6 +71,7 @@ function formatPropertyRow(row: any): Property {
     longitude: Number(row.longitude),
     featured: row.featured === 1 || row.featured === true || row.featured === "1",
     available: row.available === 1 || row.available === true || row.available === "1",
+    dealStatus: (row.dealStatus as PropertyDealStatus) || "available",
     amenities,
     images,
   };
@@ -153,8 +154,8 @@ export class Db {
       `INSERT INTO properties (
         id, title, description, status, price, address, city, neighborhood,
         latitude, longitude, bedrooms, bathrooms, area, propertyType,
-        amenities, images, featured, available, googleMapsUrl, blueprintUrl, createdAt, updatedAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        amenities, images, featured, available, googleMapsUrl, blueprintUrl, dealStatus, createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         newProperty.id,
         newProperty.title,
@@ -176,6 +177,7 @@ export class Db {
         newProperty.available ? 1 : 0,
         newProperty.googleMapsUrl || "",
         newProperty.blueprintUrl || "",
+        newProperty.dealStatus || "available",
         newProperty.createdAt,
         newProperty.updatedAt,
       ]
@@ -208,7 +210,7 @@ export class Db {
         title = ?, description = ?, status = ?, price = ?, address = ?,
         city = ?, neighborhood = ?, latitude = ?, longitude = ?, bedrooms = ?,
         bathrooms = ?, area = ?, propertyType = ?, amenities = ?, images = ?,
-        featured = ?, available = ?, googleMapsUrl = ?, blueprintUrl = ?, updatedAt = ?
+        featured = ?, available = ?, googleMapsUrl = ?, blueprintUrl = ?, dealStatus = ?, updatedAt = ?
       WHERE id = ?`,
       [
         merged.title,
@@ -230,6 +232,7 @@ export class Db {
         merged.available ? 1 : 0,
         merged.googleMapsUrl || "",
         merged.blueprintUrl || "",
+        merged.dealStatus || "available",
         merged.updatedAt,
         id,
       ]

@@ -114,6 +114,8 @@
     "baths": "Bains",
     "sqft": "M²",
     "featured": "En Vedette",
+    "sold": "Vendu",
+    "rented": "Loué",
     "viewBlueprint": "Voir le plan"
   },
   "propertyDetail": {

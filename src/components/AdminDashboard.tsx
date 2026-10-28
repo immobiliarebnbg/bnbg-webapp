@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { Property, Inquiry, DashboardStats, PropertyType, PropertyStatus, BrokerInfo } from "../types";
+import { Property, PropertyDealStatus, Inquiry, DashboardStats, PropertyType, PropertyStatus, BrokerInfo } from "../types";
 import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone, User as UserIcon, Archive, ArchiveRestore, Search } from "lucide-react";
 import { useCurrency } from "../contexts/CurrencyContext";
 import { useTranslation } from "react-i18next";
@@ -191,6 +191,7 @@ export default function AdminDashboard({
   const [description, setDescription] = useState("");
   const [featured, setFeatured] = useState(false);
   const [available, setAvailable] = useState(true);
+  const [dealStatus, setDealStatus] = useState<PropertyDealStatus>("available");
   const [amenityInput, setAmenityInput] = useState("");
   const [amenities, setAmenities] = useState<string[]>([]);
   const [imageInput, setImageInput] = useState("");
@@ -205,7 +206,7 @@ export default function AdminDashboard({
   const [aiError, setAiError] = useState("");
 
   // Properties table filter & search & archive state
-  const [propertyAvailabilityFilter, setPropertyAvailabilityFilter] = useState<"all" | "available" | "archived">("all");
+  const [propertyAvailabilityFilter, setPropertyAvailabilityFilter] = useState<"all" | "available" | "sold" | "rented" | "archived">("all");
   const [propertySearchQuery, setPropertySearchQuery] = useState("");
   const [togglingPropertyId, setTogglingPropertyId] = useState<string | null>(null);
   const [archiveToast, setArchiveToast] = useState<string>("");
@@ -281,6 +282,7 @@ export default function AdminDashboard({
     setDescription("");
     setFeatured(false);
     setAvailable(true);
+    setDealStatus("available");
     setAmenities(["Swimming Pool", "Garage", "Parking"]);
     setImages([
       "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80",
@@ -312,6 +314,7 @@ export default function AdminDashboard({
     setDescription(prop.description);
     setFeatured(prop.featured);
     setAvailable(prop.available);
+    setDealStatus(prop.dealStatus || "available");
     setAmenities(prop.amenities);
     setImages(prop.images); // Set initial single image to avoid UI flash
     setAiError("");
@@ -523,6 +526,7 @@ export default function AdminDashboard({
       description,
       featured,
       available,
+      dealStatus,
       amenities,
       images: images.length > 0 ? images : [
         "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80"
@@ -652,15 +656,63 @@ export default function AdminDashboard({
     }
   };
 
-  const availableCount = useMemo(() => properties.filter((p) => p.available).length, [properties]);
+  const handleSetDealStatus = async (prop: Property, newDealStatus: PropertyDealStatus) => {
+    const updatedProp: Property = { ...prop, dealStatus: newDealStatus };
+    setProperties((prev) => prev.map((p) => (p.id === prop.id ? updatedProp : p)));
+    onPropertySaved?.(updatedProp);
+
+    const statusLabel = newDealStatus === "sold" ? "Sold" : newDealStatus === "rented" ? "Rented" : "Available";
+    setArchiveToast(`Listing "${prop.title}" marked as ${statusLabel}.`);
+    setTimeout(() => setArchiveToast(""), 4000);
+
+    try {
+      setTogglingPropertyId(prop.id);
+      const res = await fetch(`/api/properties/${prop.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ dealStatus: newDealStatus })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.property) {
+          setProperties((prev) => prev.map((p) => (p.id === prop.id ? data.property : p)));
+          onPropertySaved?.(data.property);
+        }
+        loadDashboardData(true);
+      } else {
+        setProperties((prev) => prev.map((p) => (p.id === prop.id ? prop : p)));
+        onPropertySaved?.(prop);
+        setArchiveToast("Failed to update deal status. Reverted.");
+        setTimeout(() => setArchiveToast(""), 4000);
+      }
+    } catch (err) {
+      console.error("Error setting property deal status:", err);
+      setProperties((prev) => prev.map((p) => (p.id === prop.id ? prop : p)));
+      onPropertySaved?.(prop);
+      setArchiveToast("Network error updating deal status. Reverted.");
+      setTimeout(() => setArchiveToast(""), 4000);
+    } finally {
+      setTogglingPropertyId(null);
+    }
+  };
+
+  const availableCount = useMemo(() => properties.filter((p) => p.available && (!p.dealStatus || p.dealStatus === "available")).length, [properties]);
+  const soldCount = useMemo(() => properties.filter((p) => p.dealStatus === "sold").length, [properties]);
+  const rentedCount = useMemo(() => properties.filter((p) => p.dealStatus === "rented").length, [properties]);
   const archivedCount = useMemo(() => properties.filter((p) => !p.available).length, [properties]);
 
   const displayedProperties = useMemo(() => {
     const q = propertySearchQuery.trim().toLowerCase();
 
     return properties.filter((p) => {
-      // 1. Availability filter (All / Available / Archived)
-      if (propertyAvailabilityFilter === "available" && !p.available) return false;
+      // 1. Availability and deal status filter
+      if (propertyAvailabilityFilter === "available" && (!p.available || (p.dealStatus && p.dealStatus !== "available"))) return false;
+      if (propertyAvailabilityFilter === "sold" && p.dealStatus !== "sold") return false;
+      if (propertyAvailabilityFilter === "rented" && p.dealStatus !== "rented") return false;
       if (propertyAvailabilityFilter === "archived" && p.available) return false;
 
       // 2. Search query filter
@@ -675,9 +727,16 @@ export default function AdminDashboard({
           const addressMatch = p.address?.toLowerCase().includes(term);
           const typeMatch = p.propertyType?.toLowerCase().includes(term);
           const statusMatch = (p.status === "sale" ? "sale vendit for sale" : "rent affitt for rent").includes(term);
+          const dealMatch = (
+            p.dealStatus === "sold"
+              ? "sold venduto"
+              : p.dealStatus === "rented"
+              ? "rented affittato locato"
+              : "available disponibile"
+          ).includes(term);
           const priceMatch = matchPropertyPrice(p, term, currency);
 
-          return titleMatch || cityMatch || neighborhoodMatch || addressMatch || typeMatch || statusMatch || priceMatch;
+          return titleMatch || cityMatch || neighborhoodMatch || addressMatch || typeMatch || statusMatch || dealMatch || priceMatch;
         });
 
         // Or whole query matches (especially for operators like "< 200000", "100k - 200k", "under 150000")
@@ -1289,7 +1348,7 @@ export default function AdminDashboard({
                 <p className="text-xs text-gray-400 mt-0.5">{t('admin.propertiesTab.desc')}</p>
               </div>
 
-              {/* Availability Filter Chips */}
+              {/* Availability & Deal Filter Chips */}
               <div className="flex items-center gap-2 flex-wrap">
                 <button
                   type="button"
@@ -1313,6 +1372,30 @@ export default function AdminDashboard({
                 >
                   <span className="w-2 h-2 rounded-full bg-green-400" />
                   Available ({availableCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPropertyAvailabilityFilter("sold")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    propertyAvailabilityFilter === "sold"
+                      ? "bg-rose-600 text-white shadow-xs"
+                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-rose-400" />
+                  Sold ({soldCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPropertyAvailabilityFilter("rented")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    propertyAvailabilityFilter === "rented"
+                      ? "bg-purple-700 text-white shadow-xs"
+                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  Rented ({rentedCount})
                 </button>
                 <button
                   type="button"
@@ -1368,6 +1451,7 @@ export default function AdminDashboard({
                   <th className="py-4 px-6 text-left">{t('admin.table.location')}</th>
                   <th className="py-4 px-6 text-left">{t('admin.table.type')}</th>
                   <th className="py-4 px-6 text-left">{t('admin.table.statusPrice')}</th>
+                  <th className="py-4 px-6 text-left">Deal / Showcase</th>
                   <th className="py-4 px-6 text-left">Availability</th>
                   <th className="py-4 px-6 text-right">{t('admin.table.actions')}</th>
                 </tr>
@@ -1375,7 +1459,7 @@ export default function AdminDashboard({
               <tbody className="divide-y divide-gray-50 text-sm text-gray-700">
                 {displayedProperties.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-gray-400 text-sm">
+                    <td colSpan={7} className="py-12 text-center text-gray-400 text-sm">
                       {propertySearchQuery ? (
                         <div className="flex flex-col items-center justify-center gap-2">
                           <p>No listings found matching &ldquo;<span className="font-semibold text-gray-700">{propertySearchQuery}</span>&rdquo;</p>
@@ -1424,6 +1508,25 @@ export default function AdminDashboard({
                         <span className={`inline-block text-[10px] font-bold uppercase ${prop.status === "sale" ? "text-blue-600" : "text-emerald-600"}`}>
                           {prop.status === "sale" ? t('admin.badges.forSale') : t('admin.badges.forRent')}
                         </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <select
+                          value={prop.dealStatus || "available"}
+                          disabled={togglingPropertyId === prop.id}
+                          onChange={(e) => handleSetDealStatus(prop, e.target.value as PropertyDealStatus)}
+                          className={`text-xs font-bold rounded-lg px-2.5 py-1 border transition-all cursor-pointer shadow-xs focus:outline-hidden ${
+                            prop.dealStatus === "sold"
+                              ? "bg-rose-50 border-rose-300 text-rose-700 font-black"
+                              : prop.dealStatus === "rented"
+                              ? "bg-purple-50 border-purple-300 text-purple-700 font-black"
+                              : "bg-slate-50 border-gray-200 text-gray-700 hover:bg-slate-100"
+                          }`}
+                          title="Change showcase/deal status"
+                        >
+                          <option value="available">Available</option>
+                          <option value="sold">Sold</option>
+                          <option value="rented">Rented</option>
+                        </select>
                       </td>
                       <td className="py-4 px-6">
                         <button
@@ -2390,6 +2493,54 @@ export default function AdminDashboard({
                       </div>
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Deal & Showcase Status */}
+              <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70">
+                <div className="mb-2.5">
+                  <span className="block text-sm font-bold text-gray-800">Deal & Showcase Status</span>
+                  <span className="text-xs text-gray-500">
+                    Showcase successful transactions with prominent &ldquo;Sold&rdquo; or &ldquo;Rented&rdquo; labels
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setDealStatus("available")}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      dealStatus === "available"
+                        ? "bg-blue-600 text-white border-blue-600 shadow-xs"
+                        : "bg-white text-gray-600 border-gray-200 hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${dealStatus === "available" ? "bg-white" : "bg-blue-500"}`} />
+                    Available
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDealStatus("sold")}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      dealStatus === "sold"
+                        ? "bg-rose-600 text-white border-rose-600 shadow-xs"
+                        : "bg-white text-gray-600 border-gray-200 hover:bg-rose-50 hover:text-rose-600"
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${dealStatus === "sold" ? "bg-white" : "bg-rose-500"}`} />
+                    Sold
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDealStatus("rented")}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      dealStatus === "rented"
+                        ? "bg-purple-700 text-white border-purple-700 shadow-xs"
+                        : "bg-white text-gray-600 border-gray-200 hover:bg-purple-50 hover:text-purple-700"
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${dealStatus === "rented" ? "bg-white" : "bg-purple-500"}`} />
+                    Rented
+                  </button>
                 </div>
               </div>
 

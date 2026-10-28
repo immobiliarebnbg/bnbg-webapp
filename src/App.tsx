@@ -161,6 +161,7 @@ export default function App() {
   const [sortBy, setSortBy] = useState<string>("newest");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [showArchivedAdmin, setShowArchivedAdmin] = useState(false);
+  const [filterDealStatus, setFilterDealStatus] = useState<"all" | "available" | "closed">("all");
 
   // Detailed Property Page States
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -534,6 +535,10 @@ export default function App() {
       // Filter by sale/rent status if on appropriate tab
       if (requiredStatus && prop.status !== requiredStatus) return false;
 
+      // Filter by deal status (all / available / closed deals showcase)
+      if (filterDealStatus === "available" && prop.dealStatus && prop.dealStatus !== "available") return false;
+      if (filterDealStatus === "closed" && (!prop.dealStatus || prop.dealStatus === "available")) return false;
+
       // Text query (title, description, city, neighborhood, address)
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -542,7 +547,8 @@ export default function App() {
           prop.description.toLowerCase().includes(query) ||
           prop.city.toLowerCase().includes(query) ||
           prop.address.toLowerCase().includes(query) ||
-          prop.neighborhood.toLowerCase().includes(query);
+          prop.neighborhood.toLowerCase().includes(query) ||
+          (prop.dealStatus === "sold" ? "sold venduto" : prop.dealStatus === "rented" ? "rented affittato" : "").includes(query);
         if (!matchesQuery) return false;
       }
 
@@ -581,7 +587,7 @@ export default function App() {
       if (sortBy === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // newest
     });
-  }, [properties, searchQuery, filterCity, filterType, minPrice, maxPrice, minBedrooms, minBathrooms, sortBy, selectedAmenities, currentPage, currentUser, showArchivedAdmin]);
+  }, [properties, searchQuery, filterCity, filterType, minPrice, maxPrice, minBedrooms, minBathrooms, sortBy, selectedAmenities, currentPage, currentUser, showArchivedAdmin, filterDealStatus]);
 
   const featuredProperties = useMemo(() => {
     return properties.filter((p) => p.featured && p.available).slice(0, 3);
@@ -589,6 +595,10 @@ export default function App() {
 
   const latestProperties = useMemo(() => {
     return properties.filter((p) => p.available).slice(0, 4);
+  }, [properties]);
+
+  const closedProperties = useMemo(() => {
+    return properties.filter((p) => p.available && (p.dealStatus === "sold" || p.dealStatus === "rented")).slice(0, 4);
   }, [properties]);
 
   const handleCategoryClick = (type: PropertyType) => {
@@ -845,6 +855,48 @@ export default function App() {
                 )}
               </div>
 
+              {/* Recently Sold & Rented Showcase */}
+              {closedProperties.length > 0 && (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+                    <div>
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold uppercase tracking-wider mb-2">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>{t('home.closedShowcaseTag', { defaultValue: 'Track Record of Excellence' })}</span>
+                      </div>
+                      <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+                        {t('home.closedShowcaseTitle', { defaultValue: 'Recently Sold & Rented Properties' })}
+                      </h2>
+                      <p className="text-gray-500 mt-2">
+                        {t('home.closedShowcaseDesc', { defaultValue: 'Explore our latest successfully closed transactions and proven market success.' })}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setFilterDealStatus("closed");
+                        handleNavigate("buy");
+                      }}
+                      className="inline-flex items-center gap-2 text-sm font-bold text-rose-600 hover:text-rose-700 hover:underline transition-colors cursor-pointer"
+                    >
+                      {t('home.viewAllClosed', { defaultValue: 'View All Closed Deals' })}
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {closedProperties.map((prop) => (
+                      <PropertyCard
+                        key={prop.id}
+                        property={prop}
+                        isFavorited={favoriteIds.includes(prop.id)}
+                        onToggleFavorite={handleToggleFavorite}
+                        onClick={() => handleNavigate("details", { propertyId: prop.id })}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Why Choose Us */}
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
@@ -941,8 +993,46 @@ export default function App() {
                   </p>
                 </div>
 
-                {/* Sorter and City filter shortcuts */}
+                {/* Sorter and Deal status filter shortcuts */}
                 <div className="flex gap-2 w-full md:w-auto overflow-x-auto shrink-0 pb-1 md:pb-0 items-center">
+                  {/* Deal Status Showcase Toggle */}
+                  <div className="flex bg-slate-100 p-1 rounded-xl shrink-0 border border-slate-200">
+                    <button
+                      type="button"
+                      onClick={() => setFilterDealStatus("all")}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        filterDealStatus === "all"
+                          ? "bg-white text-gray-900 shadow-xs"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      {t('search.allProperties', { defaultValue: 'All Listings' })}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilterDealStatus("available")}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        filterDealStatus === "available"
+                          ? "bg-white text-blue-600 shadow-xs"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      {t('search.availableOnly', { defaultValue: 'Available' })}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilterDealStatus("closed")}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        filterDealStatus === "closed"
+                          ? "bg-rose-600 text-white shadow-xs"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${filterDealStatus === "closed" ? "bg-white" : "bg-rose-500"}`} />
+                      {t('search.soldAndRented', { defaultValue: 'Sold & Rented' })}
+                    </button>
+                  </div>
+
                   {currentUser?.role === "admin" && (
                     <button
                       type="button"
@@ -1210,11 +1300,28 @@ export default function App() {
                 <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
                   <div>
                     <div className="flex items-center gap-2.5 mb-2 flex-wrap">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white ${
-                        property.status === "sale" ? "bg-blue-600" : "bg-emerald-600"
-                      }`}>
-                        For {property.status}
-                      </span>
+                      {property.dealStatus === "sold" ? (
+                        <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider text-white bg-rose-600 shadow-sm flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                          {t('property.sold', { defaultValue: 'SOLD' })}
+                        </span>
+                      ) : property.dealStatus === "rented" ? (
+                        <span className="px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider text-white bg-purple-700 shadow-sm flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                          {t('property.rented', { defaultValue: 'RENTED' })}
+                        </span>
+                      ) : (
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white ${
+                          property.status === "sale" ? "bg-blue-600" : "bg-emerald-600"
+                        }`}>
+                          For {property.status}
+                        </span>
+                      )}
+                      {(property.dealStatus === "sold" || property.dealStatus === "rented") && (
+                        <span className="px-2.5 py-0.5 rounded-md bg-slate-900/60 text-white text-xs font-bold uppercase">
+                          For {property.status}
+                        </span>
+                      )}
                       {property.featured && (
                         <span className="px-2.5 py-1 rounded-full bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
                           <Star className="w-3 h-3 fill-white text-white shrink-0" />
@@ -1253,6 +1360,16 @@ export default function App() {
 
                 {/* Gorgeous Sliding Image Gallery */}
                 <div className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-150 shadow-xl mb-10 group aspect-video sm:aspect-21/9 max-h-[500px]">
+                  {property.dealStatus && property.dealStatus !== "available" && (
+                    <div className="absolute top-6 left-6 z-10 pointer-events-none">
+                      <div className={`px-4 py-1.5 rounded-2xl font-black text-xs sm:text-sm tracking-widest uppercase shadow-2xl text-white backdrop-blur-md flex items-center gap-2 border ${
+                        property.dealStatus === "sold" ? "bg-rose-600/90 border-rose-400" : "bg-purple-700/90 border-purple-400"
+                      }`}>
+                        <span className="w-2 h-2 rounded-full bg-white" />
+                        <span>{property.dealStatus === "sold" ? t('property.sold', { defaultValue: 'SOLD' }) : t('property.rented', { defaultValue: 'RENTED' })}</span>
+                      </div>
+                    </div>
+                  )}
                   <img width="800" height="600" loading="lazy" decoding="async"
                     src={property.images[activeImageIndex] || "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"}
                     alt={property.title}
@@ -1442,6 +1559,18 @@ export default function App() {
                         </div>
                       ) : (
                         <form onSubmit={(e) => handleInquirySubmit(e, property)} className="space-y-4">
+                          {property.dealStatus && property.dealStatus !== "available" && (
+                            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-750 text-xs shadow-xs">
+                              <span className="font-bold text-gray-900 block mb-1">
+                                {property.dealStatus === "sold"
+                                  ? t('propertyDetail.soldNoticeTitle', { defaultValue: 'This property has been sold' })
+                                  : t('propertyDetail.rentedNoticeTitle', { defaultValue: 'This property has been rented' })}
+                              </span>
+                              <p className="text-[11px] text-gray-600 leading-relaxed">
+                                {t('propertyDetail.soldNoticeDesc', { defaultValue: 'Interested in similar properties or future opportunities in this area? Get in touch with our specialist below.' })}
+                              </p>
+                            </div>
+                          )}
                           <h4 className="font-bold text-sm text-gray-900 mb-3">{t('propertyDetail.inquiryFormTitle')}</h4>
 
                           <div>

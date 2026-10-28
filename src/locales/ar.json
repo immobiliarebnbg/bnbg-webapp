@@ -114,6 +114,8 @@
     "baths": "حمامات",
     "sqft": "قدم مربع",
     "featured": "مميز",
+    "sold": "تم البيع",
+    "rented": "تم التأجير",
     "viewBlueprint": "عرض المخطط"
   },
   "propertyDetail": {

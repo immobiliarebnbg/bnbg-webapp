@@ -114,6 +114,8 @@
     "baths": "Bagni",
     "sqft": "Mq",
     "featured": "In Evidenza",
+    "sold": "Venduto",
+    "rented": "Affittato",
     "viewBlueprint": "Vedi Planimetria"
   },
   "propertyDetail": {

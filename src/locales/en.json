@@ -114,6 +114,8 @@
     "baths": "Baths",
     "sqft": "Sqft",
     "featured": "Featured",
+    "sold": "Sold",
+    "rented": "Rented",
     "viewBlueprint": "View Blueprint"
   },
   "propertyDetail": {

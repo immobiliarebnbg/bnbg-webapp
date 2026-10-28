@@ -114,6 +114,8 @@
     "baths": "Baños",
     "sqft": "Metros Cuadrados",
     "featured": "Destacado",
+    "sold": "Vendido",
+    "rented": "Alquilado",
     "viewBlueprint": "Ver Plano"
   },
   "propertyDetail": {

@@ -2,11 +2,14 @@ export type PropertyStatus = "sale" | "rent";
 
 export type PropertyType = string;
 
+export type PropertyDealStatus = "available" | "sold" | "rented";
+
 export interface Property {
   id: string;
   title: string;
   description: string;
   status: PropertyStatus;
+  dealStatus?: PropertyDealStatus;
   price: number;
   address: string;
   city: string;
@@ -53,6 +56,7 @@ export interface Inquiry {
 
 export interface SearchFilters {
   status?: PropertyStatus;
+  dealStatus?: PropertyDealStatus | "all";
   minPrice?: number;
   maxPrice?: number;
   city?: string;
