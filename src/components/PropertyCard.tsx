@@ -57,6 +57,11 @@ export default function PropertyCard({ property, isFavorited, onToggleFavorite, 
               <span>{t('property.featured')}</span>
             </span>
           )}
+          {!property.available && (
+            <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-red-600 text-white shadow-sm uppercase tracking-wider">
+              {t('admin.badges.archived', { defaultValue: 'Archived' })}
+            </span>
+          )}
         </div>
 
         {/* Property Type Badge */}

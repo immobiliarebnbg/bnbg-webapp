@@ -220,7 +220,8 @@
     "badges": {
       "forSale": "EN VENTA",
       "forRent": "EN ALQUILER",
-      "available": "Disponible"
+      "available": "Disponible",
+      "archived": "Archivado"
     }
   },
   "amenities": {

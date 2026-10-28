@@ -248,7 +248,7 @@ app.get("/api/favorites", requireAuth as any, async (req, res) => {
     const user = (req as any).user;
     const favoriteIds = await Db.getFavorites(user.email);
     const allProperties = await Db.getProperties();
-    const properties = allProperties.filter((p) => favoriteIds.includes(p.id));
+    const properties = allProperties.filter((p) => favoriteIds.includes(p.id) && p.available);
     res.json({ favorites: properties, favoriteIds });
   } catch (err: any) {
     res.status(500).json({ error: err.message });

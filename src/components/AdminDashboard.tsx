@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Property, Inquiry, DashboardStats, PropertyType, PropertyStatus, BrokerInfo } from "../types";
-import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone, User as UserIcon } from "lucide-react";
+import { Plus, Edit, Trash2, Mail, BarChart3, Building, MessageSquare, Clipboard, Sparkles, CheckCircle, CheckCircle2, HelpCircle, Loader2, RefreshCw, X, Trash, Upload, Link, Phone, User as UserIcon, Archive, ArchiveRestore } from "lucide-react";
 import { useCurrency } from "../contexts/CurrencyContext";
 import { useTranslation } from "react-i18next";
 
@@ -107,6 +107,11 @@ export default function AdminDashboard({
   // AI Generation State
   const [generatingDescription, setGeneratingDescription] = useState(false);
   const [aiError, setAiError] = useState("");
+
+  // Properties table filter & archive state
+  const [propertyAvailabilityFilter, setPropertyAvailabilityFilter] = useState<"all" | "available" | "archived">("all");
+  const [togglingPropertyId, setTogglingPropertyId] = useState<string | null>(null);
+  const [archiveToast, setArchiveToast] = useState<string>("");
 
   // Metadata management state
   const [newCityInput, setNewCityInput] = useState("");
@@ -498,6 +503,68 @@ export default function AdminDashboard({
       loadDashboardData(true);
     }
   };
+
+  const handleToggleArchive = async (prop: Property) => {
+    const nextAvailable = !prop.available;
+    const updatedProp: Property = { ...prop, available: nextAvailable };
+
+    // Optimistically update properties list in AdminDashboard and sync to App.tsx
+    setProperties((prev) => prev.map((p) => (p.id === prop.id ? updatedProp : p)));
+    onPropertySaved?.(updatedProp);
+
+    setArchiveToast(
+      nextAvailable
+        ? `Listing "${prop.title}" restored and published to website.`
+        : `Listing "${prop.title}" archived and removed from website.`
+    );
+    setTimeout(() => setArchiveToast(""), 4000);
+
+    try {
+      setTogglingPropertyId(prop.id);
+      const res = await fetch(`/api/properties/${prop.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ available: nextAvailable })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.property) {
+          setProperties((prev) => prev.map((p) => (p.id === prop.id ? data.property : p)));
+          onPropertySaved?.(data.property);
+        }
+        loadDashboardData(true);
+      } else {
+        // Rollback on server error
+        setProperties((prev) => prev.map((p) => (p.id === prop.id ? prop : p)));
+        onPropertySaved?.(prop);
+        setArchiveToast("Failed to update listing status. Reverted.");
+        setTimeout(() => setArchiveToast(""), 4000);
+      }
+    } catch (err) {
+      console.error("Error toggling property availability:", err);
+      setProperties((prev) => prev.map((p) => (p.id === prop.id ? prop : p)));
+      onPropertySaved?.(prop);
+      setArchiveToast("Network error updating listing status. Reverted.");
+      setTimeout(() => setArchiveToast(""), 4000);
+    } finally {
+      setTogglingPropertyId(null);
+    }
+  };
+
+  const availableCount = useMemo(() => properties.filter((p) => p.available).length, [properties]);
+  const archivedCount = useMemo(() => properties.filter((p) => !p.available).length, [properties]);
+
+  const displayedProperties = useMemo(() => {
+    return properties.filter((p) => {
+      if (propertyAvailabilityFilter === "available") return p.available;
+      if (propertyAvailabilityFilter === "archived") return !p.available;
+      return true;
+    });
+  }, [properties, propertyAvailabilityFilter]);
 
   const showMetaSuccess = (msg: string) => {
     setMetaSuccess(msg);
@@ -1075,14 +1142,66 @@ export default function AdminDashboard({
       {/* TAB: ACTIVE LISTINGS TABLE */}
       {!loading && activeTab === "properties" && (
         <div id="properties-tab-panel" className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-xs animate-in fade-in duration-200">
-          <div className="px-6 py-5 border-b border-gray-50 bg-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          {archiveToast && (
+            <div className="bg-blue-50 border-b border-blue-100 px-6 py-3 text-xs font-semibold text-blue-700 flex items-center justify-between animate-in fade-in duration-150">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>{archiveToast}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setArchiveToast("")}
+                className="text-blue-400 hover:text-blue-700 font-bold ml-4 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
+          <div className="px-6 py-5 border-b border-gray-50 bg-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h3 className="font-bold text-base text-gray-900">{t('admin.propertiesTab.title')}</h3>
               <p className="text-xs text-gray-400 mt-0.5">{t('admin.propertiesTab.desc')}</p>
             </div>
-            <span className="font-mono text-xs text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md font-bold">
-              {t('admin.propertiesTab.totalSaved').replace('{{count}}', String(properties.length))}
-            </span>
+
+            {/* Availability Filter Chips */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setPropertyAvailabilityFilter("all")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  propertyAvailabilityFilter === "all"
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                }`}
+              >
+                All ({properties.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setPropertyAvailabilityFilter("available")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  propertyAvailabilityFilter === "available"
+                    ? "bg-green-600 text-white shadow-xs"
+                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-green-400" />
+                Available ({availableCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => setPropertyAvailabilityFilter("archived")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  propertyAvailabilityFilter === "archived"
+                    ? "bg-red-600 text-white shadow-xs"
+                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-red-400" />
+                Archived ({archivedCount})
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -1098,66 +1217,93 @@ export default function AdminDashboard({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50 text-sm text-gray-700">
-                {properties.map((prop) => (
-                  <tr key={prop.id} className="hover:bg-slate-50/40 transition-colors">
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <img width="44" height="44" loading="lazy" decoding="async"
-                          src={prop.images[0]}
-                          alt=""
-                          className="w-11 h-11 rounded-lg object-cover shrink-0 border border-gray-100"
-                        />
-                        <div className="min-w-0">
-                          <p className="font-bold text-gray-900 truncate max-w-[200px]">{prop.title}</p>
-                          <p className="font-mono text-[10px] text-gray-400">{prop.id}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6">
-                      <p className="font-medium text-gray-800">{prop.city}</p>
-                      <p className="text-xs text-gray-400 truncate max-w-[150px]">{prop.neighborhood || "General"}</p>
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className="capitalize px-2 py-0.5 rounded-md text-xs bg-slate-100 text-gray-600 font-medium">
-                        {t(`propertyTypes.${prop.propertyType.toLowerCase()}`, { defaultValue: prop.propertyType })}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <p className="font-bold text-gray-900">
-                        {formatPrice(prop.price, prop.status)}
-                      </p>
-                      <span className={`inline-block text-[10px] font-bold uppercase ${prop.status === "sale" ? "text-blue-600" : "text-emerald-600"}`}>
-                        {prop.status === "sale" ? t('admin.badges.forSale') : t('admin.badges.forRent')}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        prop.available ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${prop.available ? "bg-green-500" : "bg-red-500"}`} />
-                        {prop.available ? t('admin.badges.available') : "Archived"}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-right space-x-1 whitespace-nowrap">
-                      <button
-                        type="button"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenEditForm(prop); }}
-                        className="p-1.5 rounded-lg border border-gray-100 hover:bg-gray-100 text-gray-600 transition-colors inline-flex items-center cursor-pointer"
-                        title="Edit Listing"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDeleteProperty(prop.id); }}
-                        className="p-1.5 rounded-lg border border-red-50 hover:bg-red-50 text-red-600 transition-colors inline-flex items-center cursor-pointer"
-                        title="Delete Listing"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                {displayedProperties.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-gray-400 text-sm">
+                      No properties found matching this availability filter.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  displayedProperties.map((prop) => (
+                    <tr key={prop.id} className={`hover:bg-slate-50/40 transition-colors ${!prop.available ? "bg-red-50/20" : ""}`}>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                          <img width="44" height="44" loading="lazy" decoding="async"
+                            src={prop.images[0]}
+                            alt=""
+                            className="w-11 h-11 rounded-lg object-cover shrink-0 border border-gray-100"
+                          />
+                          <div className="min-w-0">
+                            <p className="font-bold text-gray-900 truncate max-w-[200px]">{prop.title}</p>
+                            <p className="font-mono text-[10px] text-gray-400">{prop.id}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <p className="font-medium text-gray-800">{prop.city}</p>
+                        <p className="text-xs text-gray-400 truncate max-w-[150px]">{prop.neighborhood || "General"}</p>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="capitalize px-2 py-0.5 rounded-md text-xs bg-slate-100 text-gray-600 font-medium">
+                          {t(`propertyTypes.${prop.propertyType.toLowerCase()}`, { defaultValue: prop.propertyType })}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <p className="font-bold text-gray-900">
+                          {formatPrice(prop.price, prop.status)}
+                        </p>
+                        <span className={`inline-block text-[10px] font-bold uppercase ${prop.status === "sale" ? "text-blue-600" : "text-emerald-600"}`}>
+                          {prop.status === "sale" ? t('admin.badges.forSale') : t('admin.badges.forRent')}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <button
+                          type="button"
+                          disabled={togglingPropertyId === prop.id}
+                          onClick={() => handleToggleArchive(prop)}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all hover:scale-105 active:scale-95 disabled:opacity-50 ${
+                            prop.available ? "bg-green-50 text-green-700 hover:bg-green-100" : "bg-red-50 text-red-700 hover:bg-red-100"
+                          }`}
+                          title={prop.available ? "Click to archive (hide from website)" : "Click to restore (publish to website)"}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${prop.available ? "bg-green-500" : "bg-red-500"}`} />
+                          {prop.available ? t('admin.badges.available') : t('admin.badges.archived', { defaultValue: "Archived" })}
+                        </button>
+                      </td>
+                      <td className="py-4 px-6 text-right space-x-1 whitespace-nowrap">
+                        <button
+                          type="button"
+                          disabled={togglingPropertyId === prop.id}
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleToggleArchive(prop); }}
+                          className={`p-1.5 rounded-lg border transition-colors inline-flex items-center cursor-pointer disabled:opacity-50 ${
+                            prop.available
+                              ? "border-amber-100 hover:bg-amber-50 text-amber-600"
+                              : "border-green-100 hover:bg-green-50 text-green-600"
+                          }`}
+                          title={prop.available ? "Archive Listing (Hide from Website)" : "Restore Listing (Publish to Website)"}
+                        >
+                          {prop.available ? <Archive className="w-4 h-4" /> : <ArchiveRestore className="w-4 h-4" />}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleOpenEditForm(prop); }}
+                          className="p-1.5 rounded-lg border border-gray-100 hover:bg-gray-100 text-gray-600 transition-colors inline-flex items-center cursor-pointer"
+                          title="Edit Listing"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDeleteProperty(prop.id); }}
+                          className="p-1.5 rounded-lg border border-red-50 hover:bg-red-50 text-red-600 transition-colors inline-flex items-center cursor-pointer"
+                          title="Delete Listing"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -2093,16 +2239,24 @@ export default function AdminDashboard({
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                <div className={`flex items-center justify-between p-3.5 rounded-xl border transition-colors ${
+                  available ? "bg-slate-50 border-slate-100" : "bg-red-50/40 border-red-100"
+                }`}>
                   <div>
-                    <span className="block text-sm font-bold text-gray-800">Available Status</span>
-                    <span className="text-[10px] text-gray-400">List on active sale/rent maps & catalogs</span>
+                    <span className="block text-sm font-bold text-gray-800">
+                      {available ? "Available (Published)" : "Archived (Hidden)"}
+                    </span>
+                    <span className="text-[10px] text-gray-500">
+                      {available
+                        ? "Visible to visitors on website sale/rent maps & catalogs"
+                        : "Archived: Completely removed and hidden from the website"}
+                    </span>
                   </div>
                   <input
                     type="checkbox"
                     checked={available}
                     onChange={(e) => setAvailable(e.target.checked)}
-                    className="w-5 h-5 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="w-5 h-5 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
                 </div>
               </div>

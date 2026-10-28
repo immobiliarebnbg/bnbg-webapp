@@ -220,7 +220,8 @@
     "badges": {
       "forSale": "للبيع",
       "forRent": "للإيجار",
-      "available": "متاح"
+      "available": "متاح",
+      "archived": "مؤرشف"
     }
   },
   "amenities": {

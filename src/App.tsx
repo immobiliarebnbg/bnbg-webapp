@@ -16,7 +16,7 @@ import {
   ArrowRight, ShieldCheck, Star, Sparkles, Send, Share2, Heart, User as UserIcon, 
   Lock, Eye, EyeOff, CheckCircle2, ChevronLeft, Calendar, Compass, Shield, Award,
   Leaf, Handshake, Castle, Home, Building2, Layers, Gem, Building, MessageCircle, Map, X,
-  Instagram, Facebook
+  Instagram, Facebook, Archive, ArchiveRestore
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 
@@ -160,6 +160,7 @@ export default function App() {
   const [minBathrooms, setMinBathrooms] = useState("All");
   const [sortBy, setSortBy] = useState<string>("newest");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [showArchivedAdmin, setShowArchivedAdmin] = useState(false);
 
   // Detailed Property Page States
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -527,8 +528,8 @@ export default function App() {
     const requiredStatus = currentPage === "buy" ? "sale" : currentPage === "rent" ? "rent" : null;
 
     return properties.filter((prop) => {
-      // Filter out unavailable listings unless admin
-      if (!prop.available && currentUser?.role !== "admin") return false;
+      // Filter out unavailable/archived listings from the website unless admin explicitly enabled preview
+      if (!prop.available && (!showArchivedAdmin || currentUser?.role !== "admin")) return false;
 
       // Filter by sale/rent status if on appropriate tab
       if (requiredStatus && prop.status !== requiredStatus) return false;
@@ -580,7 +581,7 @@ export default function App() {
       if (sortBy === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // newest
     });
-  }, [properties, searchQuery, filterCity, filterType, minPrice, maxPrice, minBedrooms, minBathrooms, sortBy, selectedAmenities, currentPage, currentUser]);
+  }, [properties, searchQuery, filterCity, filterType, minPrice, maxPrice, minBedrooms, minBathrooms, sortBy, selectedAmenities, currentPage, currentUser, showArchivedAdmin]);
 
   const featuredProperties = useMemo(() => {
     return properties.filter((p) => p.featured && p.available).slice(0, 3);
@@ -720,8 +721,8 @@ export default function App() {
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-4 animate-fade-in">
-                  {propertyTypes.filter(type => properties.some(p => p.propertyType === type)).map((type) => {
-                    const count = properties.filter(p => p.propertyType === type).length;
+                  {propertyTypes.filter(type => properties.some(p => p.available && p.propertyType === type)).map((type) => {
+                    const count = properties.filter(p => p.available && p.propertyType === type).length;
                     const defaultLabel = type.charAt(0).toUpperCase() + type.slice(1);
                     const label = t(`propertyTypes.${type.toLowerCase()}`, { defaultValue: defaultLabel });
                     
@@ -941,7 +942,22 @@ export default function App() {
                 </div>
 
                 {/* Sorter and City filter shortcuts */}
-                <div className="flex gap-2 w-full md:w-auto overflow-x-auto shrink-0 pb-1 md:pb-0">
+                <div className="flex gap-2 w-full md:w-auto overflow-x-auto shrink-0 pb-1 md:pb-0 items-center">
+                  {currentUser?.role === "admin" && (
+                    <button
+                      type="button"
+                      onClick={() => setShowArchivedAdmin(!showArchivedAdmin)}
+                      className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
+                        showArchivedAdmin
+                          ? "bg-red-50 text-red-700 border-red-200 shadow-xs"
+                          : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                      }`}
+                      title="Admin preview toggle: Show or hide archived listings in this catalog view"
+                    >
+                      <Archive className="w-3.5 h-3.5" />
+                      <span>{showArchivedAdmin ? "Archived: Shown" : "Archived: Hidden"}</span>
+                    </button>
+                  )}
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
@@ -976,7 +992,7 @@ export default function App() {
                     className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 bg-white outline-hidden"
                   >
                     <option value="All">{t('search.allCities')}</option>
-                    {cities.filter(c => properties.some(p => p.city === c)).map((c) => (
+                    {cities.filter(c => properties.some(p => (showArchivedAdmin || p.available) && p.city === c)).map((c) => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
@@ -990,7 +1006,7 @@ export default function App() {
                     className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 bg-white outline-hidden"
                   >
                     <option value="All">{t('search.allTypes')}</option>
-                    {propertyTypes.filter(type => properties.some(p => p.propertyType === type)).map((type) => (
+                    {propertyTypes.filter(type => properties.some(p => (showArchivedAdmin || p.available) && p.propertyType === type)).map((type) => (
                       <option key={type} value={type}>
                         {t(`propertyTypes.${type.toLowerCase()}`, { defaultValue: type.charAt(0).toUpperCase() + type.slice(1) })}
                       </option>
@@ -1127,7 +1143,7 @@ export default function App() {
               ======================================================= */}
           {currentPage === "details" && navigationParams.propertyId && (() => {
             const property = properties.find((p) => p.id === navigationParams.propertyId);
-            if (!property) {
+            if (!property || (!property.available && currentUser?.role !== "admin")) {
               if (loading) {
                 return (
                   <div className="py-24 text-center">
@@ -1137,9 +1153,15 @@ export default function App() {
                 );
               }
               return (
-                <div className="py-24 text-center">
-                  <p className="text-red-500 font-bold">Property not found.</p>
-                  <button onClick={() => handleNavigate("home")} className="text-blue-600 font-semibold mt-4">Back Home</button>
+                <div className="py-24 text-center max-w-md mx-auto px-4">
+                  <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+                    <Compass className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-bold text-xl text-gray-900">Property Unavailable</h3>
+                  <p className="text-gray-500 text-sm mt-2">This listing has been archived and is no longer available on the website.</p>
+                  <button onClick={() => handleNavigate("buy")} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-xs mt-6 cursor-pointer">
+                    Browse Active Listings
+                  </button>
                 </div>
               );
             }
@@ -1156,6 +1178,25 @@ export default function App() {
                 exit={{ opacity: 0 }}
                 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 font-sans"
               >
+                {/* Admin Warning Banner for Archived Listings */}
+                {!property.available && currentUser?.role === "admin" && (
+                  <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+                    <div className="flex items-center gap-3">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold uppercase bg-amber-200 text-amber-900">
+                        Archived Listing
+                      </span>
+                      <span className="text-sm">
+                        This property is archived and <strong>hidden from website visitors</strong>.
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleNavigate("admin")}
+                      className="px-3.5 py-1.5 text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white rounded-xl shadow-xs shrink-0 cursor-pointer"
+                    >
+                      Manage in Admin
+                    </button>
+                  </div>
+                )}
                 {/* Back Link */}
                 <button
                   onClick={() => handleNavigate(property.status === "sale" ? "buy" : "rent")}

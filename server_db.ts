@@ -69,8 +69,8 @@ function formatPropertyRow(row: any): Property {
     area: Number(row.area),
     latitude: Number(row.latitude),
     longitude: Number(row.longitude),
-    featured: Boolean(row.featured),
-    available: Boolean(row.available),
+    featured: row.featured === 1 || row.featured === true || row.featured === "1",
+    available: row.available === 1 || row.available === true || row.available === "1",
     amenities,
     images,
   };
